@@ -9,13 +9,15 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mata.mataapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "package": "com.mata.mataapp",
       "edgeToEdgeEnabled": true
     },
     "web": {
@@ -32,6 +34,20 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-build-properties",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "1055741094999553",
+          "clientToken": "3018d73a3e523935f573460470ee70f9",
+          "displayName": "Mata",
+          "scheme": "fb1055741094999553",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true,
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ]
     ],
