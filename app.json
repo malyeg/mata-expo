@@ -52,6 +52,8 @@
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",
         {
