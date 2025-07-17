@@ -1,50 +1,67 @@
 // app/_layout.tsx
-import { AuthProvider, useAuth } from "@/contexts/AuthContext"; // Adjust path
-import { Slot, useRouter, useSegments } from "expo-router";
+import { toastConfig } from "@/components/core/Toaster";
+import { useAuthStore } from "@/store/auth-store";
+import { Stack } from "expo-router";
 import React, { useEffect } from "react";
+import { StyleSheet } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import Toast from "react-native-toast-message";
+import { authGuards } from "../navigation/guards";
+declare global {
+  var RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS: boolean | undefined;
+}
+
+globalThis.RNFB_SILENCE_MODULAR_DEPRECATION_WARNINGS = true;
 
 const InitialLayout = () => {
-  const { user, isLoading } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
+  const { _initializeOnFirstAccess, authListener, isInitialized } =
+    useAuthStore();
 
   useEffect(() => {
-    console.log("InitialLayout useEffect triggered");
-    if (isLoading) return; // Don't redirect until auth state is confirmed
+    _initializeOnFirstAccess();
 
-    const inAuthGroup = segments[0] === "(auth)";
+    return () => {
+      authListener && authListener();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    console.log(
-      `User: ${user?.id}, isLoading: ${isLoading}, inAuthGroup: ${inAuthGroup}`
-    );
+  if (!isInitialized) {
+    console.log("InitialLayout - Waiting for auth store initialization...");
+    return null; // or a loading component
+  }
 
-    if (!user && !inAuthGroup) {
-      // Redirect to the sign-in page if the user is not authenticated
-      // and is not already in the (auth) group.
-      console.log("Redirecting to sign-in");
-      router.replace("/(auth)/sign-in");
-    } else if (user && inAuthGroup) {
-      // Redirect away from the auth pages if the user is authenticated
-      // and is currently in the (auth) group.
-      console.log("Redirecting to home");
-      router.replace("/(main)/home"); // Or your main authenticated route
-    } else {
-      // User is authenticated and in the main app group, do nothing
-      console.log("User is authenticated and in the main app group");
-    }
-  }, [user, isLoading, segments, router]); // Add dependencies
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Protected guard={authGuards.canAccessAuth()}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
 
-  // Slot renders the current child route (either from (app) or (auth))
-  return <Slot />;
+      <Stack.Protected guard={authGuards.canAccessApp()}>
+        <Stack.Screen name="(main)" />
+      </Stack.Protected>
+    </Stack>
+  );
 };
 
 // Main Root Layout component
 const RootLayout = () => {
   return (
-    <AuthProvider>
+    <GestureHandlerRootView style={styles.container}>
       <InitialLayout />
-    </AuthProvider>
+      <Toast config={toastConfig} />
+    </GestureHandlerRootView>
   );
 };
 
 export default RootLayout;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -1,8 +1,7 @@
-import remoteConfig, {
-  FirebaseRemoteConfigTypes,
-} from "@react-native-firebase/remote-config";
-import DeviceInfo from "react-native-device-info";
+import { remoteConfig } from "@/firebase";
 import crashlytics from "@react-native-firebase/crashlytics";
+import { FirebaseRemoteConfigTypes } from "@react-native-firebase/remote-config";
+import DeviceInfo from "react-native-device-info";
 import { LoggerFactory } from "../utils/logger";
 // import {firebase} from '@react-native-firebase/analytics';
 const defaultVersioning: VersioningInfo = {
@@ -62,14 +61,14 @@ const logger = LoggerFactory.getLogger("ConfigApi");
 class AppConfigApi {
   fetchConfig = async (minimumFetchIntervalMillis: number) => {
     try {
-      await remoteConfig().setConfigSettings({
+      await remoteConfig.setConfigSettings({
         minimumFetchIntervalMillis,
       });
-      await remoteConfig().setDefaults(defaultConfig);
-      const fetchedRemotely = await remoteConfig().fetchAndActivate();
+      await remoteConfig.setDefaults(defaultConfig);
+      const fetchedRemotely = await remoteConfig.fetchAndActivate();
       if (fetchedRemotely) {
         logger.trace("Configs were retrieved from the backend and activated.");
-        logger.trace(remoteConfig().getAll());
+        logger.trace(remoteConfig.getAll());
       } else {
         logger.trace(
           "No configs were fetched from the backend, and the local configs were already activated."
@@ -81,11 +80,11 @@ class AppConfigApi {
   };
 
   getValue = (key: keyof typeof defaultConfig) => {
-    return remoteConfig().getValue(key as string);
+    return remoteConfig.getValue(key as string);
   };
 
   getConfig = () => {
-    return remoteConfig().getAll();
+    return remoteConfig.getAll();
   };
   getVersionInfo = () => {
     try {
@@ -121,7 +120,7 @@ class AppConfigApi {
   };
 
   private versionToNumber(version: string, length = 3) {
-    var n = version.replace(/\./g, "");
+    let n = version.replace(/\./g, "");
     while (n.length < length) {
       n += "0";
     }

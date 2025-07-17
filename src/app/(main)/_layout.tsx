@@ -1,10 +1,10 @@
 // app/(app)/_layout.tsx
-import React, { useEffect } from "react";
-import { Stack, useRouter } from "expo-router"; // Or Tabs
-import { Button } from "react-native";
-import { signOut } from "@react-native-firebase/auth";
 import { auth } from "@/firebase"; // Adjust path
-import { useAuth } from "@/contexts/AuthContext"; // Adjust path
+import useAuth from "@/hooks/useAuth";
+import { signOut } from "@react-native-firebase/auth";
+import { Stack, useRouter } from "expo-router"; // Or Tabs
+import React, { useEffect } from "react";
+import { Button } from "react-native";
 
 const AppLayout = () => {
   const { user } = useAuth();
@@ -32,14 +32,13 @@ const AppLayout = () => {
   return (
     <Stack>
       <Stack.Screen
-        name="home"
+        name="index"
         options={{
           title: "Home",
           headerRight: () => <Button onPress={handleLogout} title="Logout" />,
         }}
       />
       {/* Add other authenticated screens here */}
-      {/* <Stack.Screen name="profile" options={{ title: 'Profile' }} /> */}
     </Stack>
     // Or use Tabs:
     // <Tabs>

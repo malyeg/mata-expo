@@ -7,11 +7,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const AuthLayout = () => {
   // Redirect logic is handled in the root _layout.tsx
   // This layout just defines the stack navigator for the auth routes
-  const { top, bottom } = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
+  console.log("AuthLayout");
   return (
     <Stack
+      initialRouteName="sign-in"
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         contentStyle: {
           flex: 1,
           paddingTop: 0,
@@ -36,12 +38,12 @@ const AuthLayout = () => {
           ) : null,
       }}
     >
-      <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-      <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-      <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
+      <Stack.Screen name="sign-in" />
+      <Stack.Screen name="sign-up" />
+      <Stack.Screen name="forgot-password" />
       <Stack.Screen name="legal-information" />
       <Stack.Screen
-        name="terms-of-service"
+        name="terms"
         options={{
           headerShown: true,
         }}

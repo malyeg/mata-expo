@@ -1,5 +1,5 @@
 import profilesApi from "@/api/profileApi";
-import { useAuth } from "@/contexts/AuthContext";
+import useAuth from "@/hooks/useAuth";
 import { Profile } from "@/models/Profile.model";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";

@@ -46,13 +46,16 @@ const SignInScreen = () => {
 
   const onFormSuccess = async (data: SignInFormValues) => {
     hideToast();
+    console.log("SignInScreen.onFormSuccess", data);
     const credentials: ICredentials = {
       username: data.username,
       password: data.password,
     };
     try {
-      await request(() => signIn(credentials));
+      const resp = await request(() => signIn(credentials));
+      console.log("SignInScreen.onFormSuccess resp");
     } catch (err) {
+      console.error("SignInScreen.onFormSuccess error", err);
       showToast({
         type: "error",
         code: (err as any).code,

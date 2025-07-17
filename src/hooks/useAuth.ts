@@ -1,12 +1,11 @@
-import { useContext } from "react";
+import { Profile } from "@/models/Profile.model";
+import { useAuthStore } from "@/store/auth-store";
 import authApi from "../api/authApi";
 import profilesApi from "../api/profileApi";
-import { AuthActionType, ICredentials } from "../contexts/AuthReducer";
-import { Profile } from "@/models/Profile.model";
-import { AuthContext } from "@/contexts/AuthContext";
+import { ICredentials } from "../contexts/AuthReducer";
 
 const useAuth = () => {
-  const session = useContext(AuthContext);
+  const session = useAuthStore();
 
   const sendPasswordResetEmail = async (email: string) => {
     await authApi.sendPasswordResetEmail(email);
@@ -14,7 +13,7 @@ const useAuth = () => {
 
   const changePassword = async (oldPassword: string, newPassword: string) => {
     const credentials: ICredentials = {
-      username: session?.user?.username!,
+      username: session.user?.username!,
       password: oldPassword,
     };
     await authApi.changePassword(credentials, newPassword);
@@ -75,7 +74,6 @@ const useAuth = () => {
     // fbSignIn: session.fbSignIn,
     // appleSignIn: session.appleSignIn,
     // guestSignIn: session.guestSignIn,
-    // deleteAccount: authContext.deleteAccount,
   };
 };
 
