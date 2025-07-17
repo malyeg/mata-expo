@@ -1,13 +1,13 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import theme from '../../../styles/theme';
-import {Icon} from '../../core';
-import PressableOpacity from '../../core/PressableOpacity';
+import theme from "@/../styles/theme";
+import { Icon } from "@/core";
+import PressableOpacity from "@/core/PressableOpacity";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
 interface ItemEditIconProps {
   onDelete?: () => void;
 }
-const ItemEditIcon = ({onDelete}: ItemEditIconProps) => {
+const ItemEditIcon = ({ onDelete }: ItemEditIconProps) => {
   const onEdit = () => {};
   const onDeleteHandler = async () => {
     if (onDelete) {
@@ -42,7 +42,7 @@ export default React.memo(ItemEditIcon);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   editIcon: {
     // marginHorizontal: 5,

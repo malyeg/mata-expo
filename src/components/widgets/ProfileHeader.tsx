@@ -1,4 +1,8 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import ratingApi from "@/api/ratingApi";
+import useAuth from "@/hooks/useAuth";
+import theme from "@/styles/theme";
+import { useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Pressable,
   StyleProp,
@@ -7,15 +11,10 @@ import {
   View,
   ViewProps,
   ViewStyle,
-} from 'react-native';
-import ratingApi from '../../api/ratingApi';
-import {screens} from '../../config/constants';
-import useAuth from '../../hooks/useAuth';
-import useNavigationHelper from '../../hooks/useNavigationHelper';
-import theme from '../../styles/theme';
-import {Icon, Image, Text} from '../core';
-import {IconProps} from '../core/Icon';
-import Rate from './rating/Rate';
+} from "react-native";
+import { Icon, Image, Text } from "../core";
+import { IconProps } from "../core/Icon";
+import Rate from "./rating/Rate";
 
 interface ProfileHeaderProps extends ViewProps {
   userNameStyle?: StyleProp<TextStyle>;
@@ -33,8 +32,8 @@ const ProfileHeader = ({
   showEditIcon,
   onPress,
 }: ProfileHeaderProps) => {
-  const {navigation} = useNavigationHelper();
-  const {user, profile} = useAuth();
+  const router = useRouter();
+  const { user, profile } = useAuth();
   const [rate, setRate] = useState<number | undefined>();
 
   useEffect(() => {
@@ -47,8 +46,8 @@ const ProfileHeader = ({
   }, [profile?.ratings]);
 
   const openEditProfile = useCallback(() => {
-    navigation.navigate(screens.EDIT_PROFILE);
-  }, [navigation]);
+    router.push("/edit-profile");
+  }, [router]);
   const profileIconSize = icon?.size ?? IMAGE_SIZE;
   return (
     <Pressable style={[styles.container, style]} hitSlop={10} onPress={onPress}>
@@ -61,17 +60,18 @@ const ProfileHeader = ({
             height: profileIconSize,
             borderRadius: profileIconSize / 2,
           },
-        ]}>
+        ]}
+      >
         {profile.image ? (
           <Image uri={profile.image.url} style={styles.profileImage} />
         ) : (
           <Icon
             style={[styles.profileIcon, icon?.style]}
-            name={icon?.name ?? 'profile'}
+            name={icon?.name ?? "profile"}
             color={icon?.color ?? theme.colors.white}
             // size={icon?.size ?? profileIconSize * 0.5}
             size={IMAGE_SIZE}
-            type={icon?.type ?? 'custom'}
+            type={icon?.type ?? "custom"}
           />
         )}
       </View>
@@ -79,11 +79,12 @@ const ProfileHeader = ({
         <Text
           style={[styles.userName, userNameStyle]}
           numberOfLines={2}
-          ellipsizeMode="tail">
-          {user.isAnonymous
-            ? 'Guest'
+          ellipsizeMode="tail"
+        >
+          {user?.isAnonymous
+            ? "Guest"
             : profile.firstName
-            ? profile.firstName + ' ' + profile.lastName
+            ? profile.firstName + " " + profile.lastName
             : profile.email}
         </Text>
         {showEditIcon && (
@@ -101,22 +102,22 @@ export default React.memo(ProfileHeader);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // height: 200,
   },
   header: {
     marginBottom: 40,
   },
   iconContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: theme.colors.salmon,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: 10,
   },
   nameContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // justifyContent: 'center',
     // alignItems: 'center',
     // backgroundColor: 'grey',
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
     // backgroundColor: 'red',
   },
   userName: {
-    textAlign: 'center',
+    textAlign: "center",
     ...theme.styles.scale.h5,
   },
   profileImage: {

@@ -1,17 +1,17 @@
-import React from 'react';
-import {StyleSheet, Text, View, ViewStyle} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import theme from '../../styles/theme';
+import { Item } from "@/api/itemsApi";
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface ItemActivityProps {
   item: Item;
   style: ViewStyle;
 }
-const ItemActivity = ({item, style}: ItemActivityProps) => {
+const ItemActivity = ({ item, style }: ItemActivityProps) => {
   const styleList = [
     styles.container,
     style,
-    item!.status === 'online' ? styles.onlineBackgroundColor : {},
+    item!.status === "online" ? styles.onlineBackgroundColor : {},
   ];
   return (
     <View style={styleList}>
@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     height: 25,
     borderRadius: 11.5,
     backgroundColor: theme.colors.dark,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   activityStatusText: {
     color: theme.colors.white,

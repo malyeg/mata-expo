@@ -1,21 +1,21 @@
-import React, {FC} from 'react';
-import {FormProvider} from 'react-hook-form';
-import {KeyboardAvoidingView, TextStyle, View, ViewProps} from 'react-native';
+import React, { FC } from "react";
+import { FormProvider } from "react-hook-form";
+import { KeyboardAvoidingView, TextStyle, View, ViewProps } from "react-native";
 // import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import create from '../../styles/EStyleSheet';
-import {Status} from '../../types/DataTypes';
+import create from "@/styles/EStyleSheet";
+import { Status } from "@/types/DataTypes";
 
 interface FormProps extends ViewProps {
   methods: any;
   error?: Status;
   errorStyle?: TextStyle;
-  behavior?: 'padding' | 'height' | 'position' | undefined;
+  behavior?: "padding" | "height" | "position" | undefined;
   disableKeyboardAvoiding?: boolean;
   children: React.ReactNode;
 }
 
 const Form: FC<FormProps> = ({
-  behavior = 'padding',
+  behavior = "padding",
   // behavior = Platform.OS === 'ios' ? 'padding' : undefined,
   disableKeyboardAvoiding,
   ...props
@@ -24,7 +24,8 @@ const Form: FC<FormProps> = ({
     <KeyboardAvoidingView
       contentContainerStyle={[styles.container]}
       behavior={behavior}
-      {...props}>
+      {...props}
+    >
       <FormContent {...props} />
     </KeyboardAvoidingView>
   ) : (

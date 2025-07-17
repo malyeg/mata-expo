@@ -1,25 +1,25 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import categoriesApi from '../../api/categoriesApi';
-import itemsApi from '../../api/itemsApi';
-import listsApi, {ListItem} from '../../api/listsApi';
-import {screens} from '../../config/constants';
-import useNavigationHelper from '../../hooks/useNavigationHelper';
-import theme, {colors} from '../../styles/theme';
-import {Button, Icon, Image, Modal, Text} from '../core';
-import Card from '../core/Card';
+import categoriesApi from "@/api/categoriesApi";
+import itemsApi from "@/api/itemsApi";
+import listsApi, { ListItem } from "@/api/listsApi";
+import { screens } from "@/config/constants";
+import useNavigationHelper from "@/hooks/useNavigationHelper";
+import theme, { colors } from "@/styles/theme";
+import React, { useCallback, useMemo, useState } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Button, Icon, Image, Modal, Text } from "../core";
+import Card from "../core/Card";
 
 interface WishCardProps {
   listItem: ListItem;
   style?: StyleProp<ViewStyle>;
 }
 
-const WishCard = ({listItem}: WishCardProps) => {
-  const {navigation} = useNavigationHelper();
+const WishCard = ({ listItem }: WishCardProps) => {
+  const { navigation } = useNavigationHelper();
   const [isVisible, setVisible] = useState(false);
   const onCardPress = useCallback(() => {
     if (listItem.isAvailable !== false) {
-      navigation.navigate(screens.ITEM_DETAILS, {id: listItem.item.id});
+      navigation.navigate(screens.ITEM_DETAILS, { id: listItem.item.id });
     } else {
       setVisible(true);
     }
@@ -27,13 +27,15 @@ const WishCard = ({listItem}: WishCardProps) => {
   const item = listItem.item;
   const imageUrl = itemsApi.getImageUrl(listItem.item);
   const category = useMemo(
-    () => categoriesApi.getAll().find(c => c.id === item.category.id),
-    [item.category.id],
+    () => categoriesApi.getAll().find((c) => c.id === item.category.id),
+    [item.category.id]
   );
 
   const onShowPress = useCallback(() => {
     setVisible(false);
-    navigation.navigate(screens.ITEMS, {categoryId: listItem.item.category.id});
+    navigation.navigate(screens.ITEMS, {
+      categoryId: listItem.item.category.id,
+    });
   }, [listItem.item.category.id, navigation]);
 
   const deleteItem = useCallback(() => {
@@ -55,7 +57,8 @@ const WishCard = ({listItem}: WishCardProps) => {
             <Text
               numberOfLines={1}
               style={styles.nameText}
-              ellipsizeMode="tail">
+              ellipsizeMode="tail"
+            >
               {item.name}
             </Text>
           </View>
@@ -75,9 +78,10 @@ const WishCard = ({listItem}: WishCardProps) => {
       {listItem.isAvailable === false && (
         <Modal
           isVisible={isVisible}
-          title={'Not available'}
+          title={"Not available"}
           onClose={closeModal}
-          containerStyle={styles.modal}>
+          containerStyle={styles.modal}
+        >
           <View>
             <Text>Item is no longer available, show similar items?</Text>
             <View style={styles.modalButtonsContainer}>
@@ -112,9 +116,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   categoryText: {
     ...theme.styles.scale.body1,
@@ -131,18 +135,18 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
   },
   freeImage: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
   },
   swapIcon: {},
   categoryIcon: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 1,
     right: 10,
   },
 
   shimmerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 10,
     borderColor: theme.colors.lightGrey,
     borderWidth: 2,
@@ -155,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   notAvailable: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
     backgroundColor: colors.orange,
@@ -167,12 +171,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   modalButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginVertical: 10,
     // backgroundColor: 'grey',
   },
   modalButton: {
-    flexBasis: '45%',
+    flexBasis: "45%",
   },
 });

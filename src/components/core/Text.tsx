@@ -1,11 +1,11 @@
-import React from 'react';
-import {StyleSheet, Text} from 'react-native';
-import sharedStyles from '../../styles/SharedStyles';
-import theme, {
+import sharedStyles from "@/styles/SharedStyles";
+import {
   ETextProps,
   getScaleStyle,
   getScaleStyleFromProps,
-} from '../../styles/theme';
+} from "@/styles/theme";
+import React from "react";
+import { StyleSheet, Text } from "react-native";
 // type AppTextProps = TextProps & OnlyOne<ScaleProps>;
 
 const AppText = ({
@@ -13,7 +13,7 @@ const AppText = ({
   style,
   maxSize,
   ...props
-}: Omit<ETextProps, 'textStyle'>) => {
+}: Omit<ETextProps, "textStyle">) => {
   const styleList = [
     sharedStyles.text,
     getScaleStyleFromProps(props),
@@ -21,10 +21,10 @@ const AppText = ({
     style,
   ];
   const children =
-    !maxSize || typeof props.children !== 'string'
+    !maxSize || typeof props.children !== "string"
       ? props.children
       : props.children.length > maxSize
-      ? props.children.substring(0, maxSize) + '...'
+      ? props.children.substring(0, maxSize) + "..."
       : props.children;
   return (
     <Text {...props} style={styleList}>

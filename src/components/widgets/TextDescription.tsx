@@ -1,14 +1,14 @@
-import React, {useCallback, useState} from 'react';
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import React, { useCallback, useState } from "react";
 import {
   StyleProp,
   StyleSheet,
   TextProps,
   TextStyle,
   ViewStyle,
-} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Text} from '../core';
+} from "react-native";
+import { Text } from "../core";
 
 interface TextDescriptionProps extends TextProps {
   maxLines?: number;
@@ -21,7 +21,7 @@ const TextDescription = ({
   maxLines = 2,
   style,
 }: TextDescriptionProps) => {
-  const {t} = useLocale('components');
+  const { t } = useLocale("components");
   const [textShown, setTextShown] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const toggleNumberOfLines = () => {
@@ -29,10 +29,10 @@ const TextDescription = ({
   };
 
   const onTextLayout = useCallback(
-    e => {
+    (e) => {
       setShowMore(e.nativeEvent.lines.length >= maxLines);
     },
-    [maxLines],
+    [maxLines]
   );
 
   return (
@@ -40,17 +40,19 @@ const TextDescription = ({
       <Text
         style={[styles.text, style]}
         onTextLayout={onTextLayout}
-        numberOfLines={textShown ? undefined : maxLines}>
+        numberOfLines={textShown ? undefined : maxLines}
+      >
         {children}
       </Text>
 
       {showMore ? (
         <Text
           style={textShown ? styles.lessText : styles.moreText}
-          onPress={toggleNumberOfLines}>
+          onPress={toggleNumberOfLines}
+        >
           {textShown
-            ? t('textDescription.showLessTitle')
-            : t('textDescription.showMoreTitle')}
+            ? t("textDescription.showLessTitle")
+            : t("textDescription.showMoreTitle")}
         </Text>
       ) : null}
     </>
@@ -65,12 +67,12 @@ const styles = StyleSheet.create({
   },
   moreText: {
     color: theme.colors.grey,
-    textAlign: 'right',
+    textAlign: "right",
     marginBottom: 10,
   },
   lessText: {
     color: theme.colors.grey,
-    textAlign: 'right',
+    textAlign: "right",
     marginBottom: 10,
   },
 });

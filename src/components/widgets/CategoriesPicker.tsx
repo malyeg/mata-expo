@@ -1,24 +1,24 @@
+import useLocale from "@/hooks/useLocale";
+import useController from "@/hooks/userController";
+import theme from "@/styles/theme";
+import { Entity } from "@/types/DataTypes";
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 import {
   FlatListProps,
   Pressable,
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import useController from '../../hooks/userController';
-import theme from '../../styles/theme';
-import {Entity} from '../../types/DataTypes';
-import {Icon, Text} from '../core';
-import {Error} from '../form';
-import PickerModal from '../form/PickerModal';
+} from "react-native";
+import { Icon, Text } from "../core";
+import { Error } from "../form";
+import PickerModal from "../form/PickerModal";
 
 export interface CategoriesPickerProps<T extends Entity> {
   name: string;
@@ -49,7 +49,7 @@ export interface CategoriesPickerProps<T extends Entity> {
   }) => React.ReactElement | null;
   multiLevel?: boolean;
   hideLabel?: boolean;
-  keyboardShouldPersistTaps?: FlatListProps<Entity>['keyboardShouldPersistTaps'];
+  keyboardShouldPersistTaps?: FlatListProps<Entity>["keyboardShouldPersistTaps"];
 }
 
 const CategoriesPicker = forwardRef(
@@ -72,7 +72,7 @@ const CategoriesPicker = forwardRef(
       hideLabel,
       ...props
     }: CategoriesPickerProps<T>,
-    ref,
+    ref
   ) => {
     useImperativeHandle(ref, () => ({
       open() {
@@ -82,8 +82,8 @@ const CategoriesPicker = forwardRef(
         setModalVisible(false);
       },
     }));
-    const {t} = useLocale('common');
-    const {field, formState} = useController({
+    const { t } = useLocale("common");
+    const { field, formState } = useController({
       control,
       defaultValue,
       name,
@@ -98,7 +98,7 @@ const CategoriesPicker = forwardRef(
           onChange(item.id, true);
         }
       },
-      [field, onChange],
+      [field, onChange]
     );
 
     const openModal = useCallback(() => {
@@ -118,9 +118,9 @@ const CategoriesPicker = forwardRef(
     const selectedItem = useMemo(
       () =>
         items.find(
-          i => !!field.value && i?.id?.toString() === field.value.toString(),
+          (i) => !!field.value && i?.id?.toString() === field.value.toString()
         ),
-      [field.value, items],
+      [field.value, items]
     );
 
     return (
@@ -128,7 +128,7 @@ const CategoriesPicker = forwardRef(
         <View style={[styles.container, props.style]}>
           {!hideLabel && (
             <Text body3 style={styles.label}>
-              {field.value ? label ?? placeholder : ''}
+              {field.value ? label ?? placeholder : ""}
             </Text>
           )}
           <View
@@ -138,17 +138,19 @@ const CategoriesPicker = forwardRef(
               formState.errors[name]
                 ? styles.textInputBorderError
                 : styles.textInputBorder,
-            ]}>
+            ]}
+          >
             <Pressable onPress={openModal} style={styles.inputContainer}>
               <Text
                 style={[
                   styles.inputText,
                   selectedItem?.name ? {} : styles.placeholderText,
                 ]}
-                numberOfLines={1}>
+                numberOfLines={1}
+              >
                 {selectedItem?.name ??
                   placeholder ??
-                  t('picker.pickerPlaceholder')}
+                  t("picker.pickerPlaceholder")}
               </Text>
               {!disabled && (
                 <Icon
@@ -186,7 +188,7 @@ const CategoriesPicker = forwardRef(
         />
       </>
     );
-  },
+  }
 );
 
 const styles = StyleSheet.create({
@@ -195,17 +197,17 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     // flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     // backgroundColor: 'grey',
     // justifyContent: 'flex-start',
   },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 40,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     // backgroundColor: 'red',
   },
 

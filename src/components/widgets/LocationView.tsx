@@ -1,8 +1,8 @@
-import React from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {Location} from '../../api/locationApi';
-import constants from '../../config/constants';
+import { Location } from "@/api/locationApi";
+import constants from "@/config/constants";
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const summaryDelta = {
   latitudeDelta: 1,
@@ -13,7 +13,7 @@ interface LocationViewProps {
   location: Location;
   style: StyleProp<ViewStyle>;
 }
-const LocationView = ({location, style}: LocationViewProps) => {
+const LocationView = ({ location, style }: LocationViewProps) => {
   return (
     <View style={style}>
       <MapView
@@ -27,7 +27,8 @@ const LocationView = ({location, style}: LocationViewProps) => {
         region={{
           ...location.coordinate,
           ...summaryDelta,
-        }}>
+        }}
+      >
         <Marker coordinate={location.coordinate} />
       </MapView>
     </View>

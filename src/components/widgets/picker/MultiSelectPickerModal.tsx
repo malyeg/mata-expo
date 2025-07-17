@@ -1,38 +1,38 @@
-import React, {useEffect, useRef, useState} from 'react';
+import useLocale from "@/../hooks/useLocale";
+import theme from "@/../styles/theme";
+import { Entity, Nestable } from "@/../types/DataTypes";
+import { Button, Modal } from "@/core";
+import SearchInput from "@/form/SearchInput";
+import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
   FlatListProps,
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import {debounceTime, distinctUntilChanged, Subject} from 'rxjs';
-import useLocale from '../../../hooks/useLocale';
-import theme from '../../../styles/theme';
-import {Entity, Nestable} from '../../../types/DataTypes';
-import {Button, Modal} from '../../core';
-import SearchInput from '../../form/SearchInput';
-import NoDataFound from '../NoDataFound';
-import SelectablePickerItem from './SelectablePickerItem';
+} from "react-native";
+import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
+import NoDataFound from "../NoDataFound";
+import SelectablePickerItem from "./SelectablePickerItem";
 
 export interface MultiSelectPickerModalProps<T extends Entity & Nestable> {
   items: T[];
   isModalVisible: boolean;
   style?: ViewStyle;
   onCloseModal: () => void;
-  position?: 'bottom' | 'full';
+  position?: "bottom" | "full";
   showHeaderLeft?: boolean;
   headerTitle?: string;
   defaultValues?: string[];
   searchPlaceholder?: string;
   searchable?: boolean;
-  keyboardShouldPersistTaps?: FlatListProps<Entity>['keyboardShouldPersistTaps'];
+  keyboardShouldPersistTaps?: FlatListProps<Entity>["keyboardShouldPersistTaps"];
   onSearch?: (searchText: string) => void;
   onSelectItems: (items: T[]) => void;
 }
 const MultiSelectPickerModal = <T extends Entity>({
   items,
-  position = 'full',
+  position = "full",
   isModalVisible,
   showHeaderLeft = true,
   headerTitle,
@@ -44,19 +44,19 @@ const MultiSelectPickerModal = <T extends Entity>({
   onCloseModal,
   keyboardShouldPersistTaps,
 }: MultiSelectPickerModalProps<T>) => {
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
   const [filteredItems, setFilteredItems] = useState<T[]>([]);
   const [selectedItems, setSelectedItems] = useState<T[] | undefined>();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const searchSubjectRef = useRef(new Subject<string>());
 
   useEffect(() => {
     searchSubjectRef.current
       .asObservable()
       .pipe(distinctUntilChanged(), debounceTime(400))
-      .subscribe(val => {
-        if (!!val && val.trim() !== '') {
-          const newFilteredItems = items.filter(i => {
+      .subscribe((val) => {
+        if (!!val && val.trim() !== "") {
+          const newFilteredItems = items.filter((i) => {
             return i.name?.toLowerCase().includes(val.trim().toLowerCase());
           });
           setFilteredItems(newFilteredItems);
@@ -74,7 +74,9 @@ const MultiSelectPickerModal = <T extends Entity>({
 
   useEffect(() => {
     if (defaultValues) {
-      const newSelectedItems = items.filter(i => defaultValues.includes(i.id));
+      const newSelectedItems = items.filter((i) =>
+        defaultValues.includes(i.id)
+      );
       setSelectedItems(newSelectedItems);
     } else {
       setSelectedItems([]);
@@ -87,25 +89,25 @@ const MultiSelectPickerModal = <T extends Entity>({
   };
 
   const updateItems = (i: any, selected: boolean) => {
-    setSelectedItems(freshItems => {
+    setSelectedItems((freshItems) => {
       let newItems = freshItems ? [...freshItems] : [];
       if (selected) {
         newItems.push(i);
       } else {
-        newItems = newItems?.filter(n => n.id !== i.id);
+        newItems = newItems?.filter((n) => n.id !== i.id);
       }
       return newItems;
     });
   };
 
-  const renderItemHandler = ({item}: {item: T; index: number}) => {
+  const renderItemHandler = ({ item }: { item: T; index: number }) => {
     const onChange = (i: any, selected: boolean) => updateItems(i, selected);
     return (
       <SelectablePickerItem
         item={item}
         onChange={onChange}
         label={item.name ?? item.id}
-        selected={!!selectedItems?.find(i => i.id === item.id)}
+        selected={!!selectedItems?.find((i) => i.id === item.id)}
       />
     );
   };
@@ -138,24 +140,25 @@ const MultiSelectPickerModal = <T extends Entity>({
     <Modal
       style={styles.modal}
       isVisible={isModalVisible}
-      swipeDirection={['down']}
+      swipeDirection={["down"]}
       onClose={onCloseModal}
       title={headerTitle}
       showHeaderNav
       position="full"
-      propagateSwipe>
+      propagateSwipe
+    >
       {searchable && (
         <SearchInput
           style={styles.searchInput}
           value={searchText}
-          placeholder={searchPlaceholder ?? t('picker.searchPlaceholder')}
+          placeholder={searchPlaceholder ?? t("picker.searchPlaceholder")}
           onChangeText={searchHandler}
         />
       )}
       {!searchText && (
         <SelectablePickerItem
           style={styles.selectAll}
-          item={{id: '-1', name: 'all'}}
+          item={{ id: "-1", name: "all" }}
           label="Select All"
           onChange={onSelectAllChange}
           labelStyle={styles.allLabel}
@@ -190,10 +193,10 @@ const styles = StyleSheet.create({
     // justifyContent: 'flex-end',
   },
   itemContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
     // justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: "center",
     height: 61,
   },
   bottomModal: {
@@ -205,20 +208,20 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 50,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalNav: {
     left: 0,
-    position: 'absolute',
+    position: "absolute",
     marginHorizontal: -20,
   },
   modalTitle: {
     ...theme.styles.scale.h6,
     fontWeight: theme.fontWeight.semiBold,
     color: theme.colors.salmon,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 20,
   },
   modalContainer: {
@@ -247,7 +250,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.colors.lightGrey,
   },
   allLabel: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 

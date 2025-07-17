@@ -1,14 +1,14 @@
-import React, {useCallback} from 'react';
+import theme from "@/styles/theme";
+import React, { useCallback } from "react";
 import {
+  Platform,
   Pressable,
   PressableProps,
   PressableStateCallbackType,
   StyleProp,
-  ViewStyle,
-  Platform,
   StyleSheet,
-} from 'react-native';
-import theme from '../../styles/theme';
+  ViewStyle,
+} from "react-native";
 
 export interface PressableOpacityProps extends PressableProps {
   /**
@@ -25,7 +25,7 @@ export interface PressableOpacityProps extends PressableProps {
   activeOpacity?: number;
 }
 export type StyleType = (
-  state: PressableStateCallbackType,
+  state: PressableStateCallbackType
 ) => StyleProp<ViewStyle>;
 const PressableOpacity = ({
   children,
@@ -48,26 +48,27 @@ const PressableOpacity = ({
         }
       }
     },
-    [activeOpacity, disabled, disabledOpacity],
+    [activeOpacity, disabled, disabledOpacity]
   );
 
   const _style = useCallback<StyleType>(
-    ({pressed}: PressableStateCallbackType) => [
+    ({ pressed }: PressableStateCallbackType) => [
       style as ViewStyle,
-      {opacity: Platform.OS === 'ios' ? getOpacity(pressed) : 1},
+      { opacity: Platform.OS === "ios" ? getOpacity(pressed) : 1 },
       disabled ? styles.disabled : undefined,
       // {opacity: 1},
     ],
-    [disabled, getOpacity, style],
+    [disabled, getOpacity, style]
   );
 
-  const rippleConfig = {color: theme.colors.white};
+  const rippleConfig = { color: theme.colors.white };
   return (
     <Pressable
       {...props}
       style={_style}
       android_ripple={rippleConfig}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       {children}
     </Pressable>
   );

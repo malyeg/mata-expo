@@ -1,15 +1,15 @@
-import {DrawerNavigationHelpers} from '@react-navigation/drawer/lib/typescript/src/types';
-import {useNavigation} from '@react-navigation/native';
-import {format} from 'date-fns';
-import React, {useCallback} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import {ImageStyle} from 'react-native-fast-image';
-import {Deal} from '../../api/dealsApi';
-import itemsApi from '../../api/itemsApi';
-import {patterns, screens} from '../../config/constants';
-import theme from '../../styles/theme';
-import {Image, Text} from '../core';
-import Card from '../core/Card';
+import { Deal } from "@/api/dealsApi";
+import itemsApi from "@/api/itemsApi";
+import { patterns, screens } from "@/config/constants";
+import theme from "@/styles/theme";
+import { DrawerNavigationHelpers } from "@react-navigation/drawer/lib/typescript/src/types";
+import { useNavigation } from "@react-navigation/native";
+import { format } from "date-fns";
+import React, { useCallback } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { ImageStyle } from "react-native-fast-image";
+import { Image, Text } from "../core";
+import Card from "../core/Card";
 
 interface DealCardProps {
   deal: Deal;
@@ -19,13 +19,13 @@ interface DealCardProps {
 }
 
 const imageSize = 50;
-const ItemDealCard = ({deal, style, imageStyle, onPress}: DealCardProps) => {
+const ItemDealCard = ({ deal, style, imageStyle, onPress }: DealCardProps) => {
   const navigation = useNavigation<DrawerNavigationHelpers>();
   const onCardPress = useCallback(() => {
     if (onPress) {
       onPress();
     } else {
-      navigation.navigate(screens.DEAL_DETAILS, {id: deal.id});
+      navigation.navigate(screens.DEAL_DETAILS, { id: deal.id });
     }
   }, [deal.id, navigation, onPress]);
   // const imageUrl = itemsApi.getImageUrl(deal.item)!;
@@ -37,12 +37,13 @@ const ItemDealCard = ({deal, style, imageStyle, onPress}: DealCardProps) => {
     <Card
       style={[styles.container, style]}
       icon={
-        deal.item.swapOption.type === 'free'
-          ? {name: 'free', type: 'custom', size: 40}
+        deal.item.swapOption.type === "free"
+          ? { name: "free", type: "custom", size: 40 }
           : undefined
       }
-      onPress={onCardPress}>
-      {deal.item.swapOption.type !== 'free' && (
+      onPress={onCardPress}
+    >
+      {deal.item.swapOption.type !== "free" && (
         <View style={styles.imageContainer}>
           <Image uri={swapImageUrl!} style={[styles.image, imageStyle]} />
         </View>
@@ -69,9 +70,9 @@ export default React.memo(ItemDealCard);
 const styles = StyleSheet.create({
   container: {},
   imageContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: imageSize,

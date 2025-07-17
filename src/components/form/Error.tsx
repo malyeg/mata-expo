@@ -1,10 +1,10 @@
-import React, {FC} from 'react';
-import {FieldError as FieldErrorBase} from '../../types/DataTypes';
-import {StyleSheet, TextStyle, View, ViewProps} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import Text from '../core/Text';
-import {Icon} from '../core';
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { FieldError as FieldErrorBase } from "@/types/DataTypes";
+import React, { FC } from "react";
+import { StyleSheet, TextStyle, View, ViewProps } from "react-native";
+import { Icon } from "../core";
+import Text from "../core/Text";
 
 interface FieldErrorProps extends ViewProps {
   name?: string;
@@ -12,8 +12,8 @@ interface FieldErrorProps extends ViewProps {
   errorStyle?: TextStyle;
   type?: FieldErrorBase;
 }
-const Error: FC<FieldErrorProps> = ({name, error, errorStyle, ...props}) => {
-  const {t} = useLocale('error');
+const Error: FC<FieldErrorProps> = ({ name, error, errorStyle, ...props }) => {
+  const { t } = useLocale("error");
   return error ? (
     <View {...props} style={[styles.container, props.style]}>
       <Icon
@@ -23,8 +23,9 @@ const Error: FC<FieldErrorProps> = ({name, error, errorStyle, ...props}) => {
       />
       <Text
         body3
-        testID={name ? name + '_error' : undefined}
-        style={[styles.text, errorStyle]}>
+        testID={name ? name + "_error" : undefined}
+        style={[styles.text, errorStyle]}
+      >
         {error.code ? t(error.code, error.params) : error.message}
       </Text>
     </View>
@@ -35,8 +36,8 @@ export default React.memo(Error);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     minHeight: 25,
   },
   text: {

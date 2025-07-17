@@ -1,4 +1,12 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import dealsApi, { Deal } from "@/api/dealsApi";
+import { screens } from "@/config/constants";
+import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
+import useNotifications from "@/hooks/useNotifications";
+import useRootNavigation from "@/hooks/useRootNavigation";
+import theme from "@/styles/theme";
+import { Filter, Operation, QueryBuilder } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
   Platform,
@@ -6,27 +14,18 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
+} from "react-native";
+import LinearGradient from "react-native-linear-gradient";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import dealsApi, {Deal} from '../../api/dealsApi';
-import {screens} from '../../config/constants';
-import useAuth from '../../hooks/useAuth';
-import useLocale from '../../hooks/useLocale';
-import useNotifications from '../../hooks/useNotifications';
-import useRootNavigation from '../../hooks/useRootNavigation';
-import theme from '../../styles/theme';
-import {Filter, Operation, QueryBuilder} from '../../types/DataTypes';
-import PressableOpacity from '../core/PressableOpacity';
-import GuestModal from '../modals/GuestModal';
-import AddIcon from './Lottie/AddIcon';
-import TabBarItem from './TabBarItem';
+} from "react-native-reanimated";
+import GuestModal from "../modals/GuestModal";
+import AddIcon from "./Lottie/AddIcon";
+import TabBarItem from "./TabBarItem";
 
-export const ADD_ITEM_SCREEN = 'AddItemScreen';
+export const ADD_ITEM_SCREEN = "AddItemScreen";
 interface TabBarProps {
   // position: 'top' | 'bottom';
   style?: StyleProp<ViewStyle>;
@@ -38,7 +37,7 @@ const tabBarScreens: string[] = [
   screens.INCOMING_DEALS,
   screens.OUTGOING_DEALS,
 ];
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const MARGIN = 0;
 const TAB_BAR_WIDTH = SCREEN_WIDTH - 2 * MARGIN;
 const TAB_WIDTH = TAB_BAR_WIDTH / 4;
@@ -46,7 +45,7 @@ const TAB_HEIGHT = 60;
 const ADD_ITEM_WIDTH = 50;
 
 type TabBarItem = {
-  name: 'home' | 'myItems' | 'notifications' | 'deals';
+  name: "home" | "myItems" | "notifications" | "deals";
   labelKey: string;
   iconOn: string;
   iconOff: string;
@@ -54,43 +53,43 @@ type TabBarItem = {
 };
 const tabBarItems: TabBarItem[] = [
   {
-    name: 'home',
-    labelKey: 'tabBar.homeTitle',
-    iconOn: 'home',
-    iconOff: 'home-outline',
+    name: "home",
+    labelKey: "tabBar.homeTitle",
+    iconOn: "home",
+    iconOff: "home-outline",
     screen: screens.HOME,
   },
   {
-    name: 'myItems',
-    labelKey: 'tabBar.myItemsTitle',
-    iconOn: 'view-list',
-    iconOff: 'view-list-outline',
+    name: "myItems",
+    labelKey: "tabBar.myItemsTitle",
+    iconOn: "view-list",
+    iconOff: "view-list-outline",
     screen: screens.MY_ITEMS,
   },
   {
-    name: 'notifications',
-    labelKey: 'tabBar.notificationsTitle',
-    iconOn: 'bell',
-    iconOff: 'bell-outline',
+    name: "notifications",
+    labelKey: "tabBar.notificationsTitle",
+    iconOn: "bell",
+    iconOff: "bell-outline",
     screen: screens.NOTIFICATIONS,
   },
   {
-    name: 'deals',
-    labelKey: 'tabBar.dealsTitle',
-    iconOn: 'handshake',
-    iconOff: 'handshake',
+    name: "deals",
+    labelKey: "tabBar.dealsTitle",
+    iconOn: "handshake",
+    iconOff: "handshake",
     screen: screens.DEALS_TABS,
   },
 ];
 
-const TabBar = ({style}: TabBarProps) => {
-  const {t} = useLocale('common');
-  const {user} = useAuth();
-  const {notificationsCount} = useNotifications();
+const TabBar = ({ style }: TabBarProps) => {
+  const { t } = useLocale("common");
+  const { user } = useAuth();
+  const { notificationsCount } = useNotifications();
   const [dealsBadgeCount, setDealsBadgeCount] = useState(0);
   const [index, setIndex] = useState(0);
   const [showGuestDialogVisible, setShowGuestDialogVisible] = useState(false);
-  const {route, navigation} = useRootNavigation();
+  const { route, navigation } = useRootNavigation();
   const translateX = useSharedValue(0);
   const iconSize = useSharedValue(24);
 
@@ -141,9 +140,9 @@ const TabBar = ({style}: TabBarProps) => {
 
     const query = new QueryBuilder<Deal>().filters(filters).build();
     return dealsApi.onQuerySnapshot(
-      snapshot => {
+      (snapshot) => {
         let newMessagesCount = 0;
-        snapshot.data.forEach(deal => {
+        snapshot.data.forEach((deal) => {
           const dealMessagesCount = deal.newMessages?.[user.id]?.length;
           if (dealMessagesCount) {
             newMessagesCount += dealMessagesCount;
@@ -152,7 +151,7 @@ const TabBar = ({style}: TabBarProps) => {
         setDealsBadgeCount(newMessagesCount);
       },
       () => {},
-      query,
+      query
     );
   }, [user.id]);
 
@@ -187,11 +186,11 @@ const TabBar = ({style}: TabBarProps) => {
         route?.name === screens.INCOMING_DEALS ||
         route?.name === screens.OUTGOING_DEALS;
       const isFocused =
-        item.name === 'deals' ? dealsFocused : route?.name === item.screen;
+        item.name === "deals" ? dealsFocused : route?.name === item.screen;
       const badge =
-        item.name === 'deals'
+        item.name === "deals"
           ? dealsBadgeCount
-          : item.name === 'notifications'
+          : item.name === "notifications"
           ? notificationsCount
           : undefined;
       const onTabBarPress = () => {
@@ -207,26 +206,27 @@ const TabBar = ({style}: TabBarProps) => {
           key={item.name}
           label={t(item.labelKey)}
           icon={route?.name === item.screen ? item.iconOn : item.iconOff}
-          to={{screen: item.screen}}
+          to={{ screen: item.screen }}
           isFocused={isFocused}
           badge={badge}
           onPress={onTabBarPress}
           style={[styles.item]}
-          iconStyle={item.name === 'deals' ? styles.dealsIcon : undefined}
+          iconStyle={item.name === "deals" ? styles.dealsIcon : undefined}
         />
       );
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dealsBadgeCount, notificationsCount, route?.name],
+    [dealsBadgeCount, notificationsCount, route?.name]
   );
 
   return !route || tabBarScreens.includes(route.name) ? (
     <View
       style={[
         styles.container,
-        Platform.OS === 'ios' ? styles.ios : undefined,
+        Platform.OS === "ios" ? styles.ios : undefined,
         style,
-      ]}>
+      ]}
+    >
       <View style={styles.itemsContainer}>
         <View style={styles.addItemContainer}>
           <AddIcon onPress={addItemPressHandler} style={styles.addItem} />
@@ -234,7 +234,7 @@ const TabBar = ({style}: TabBarProps) => {
 
         <Animated.View style={[styles.slidingContainer, stylez]}>
           <LinearGradient
-            colors={['#ececec', '#ffffff']}
+            colors={["#ececec", "#ffffff"]}
             style={[
               styles.slidingView,
               index === 0 ? styles.slidingViewEdgeLeft : undefined,
@@ -258,15 +258,15 @@ export default React.memo(TabBar);
 const styles = StyleSheet.create({
   container: {
     height: TAB_HEIGHT,
-    width: '100%',
+    width: "100%",
     bottom: 0,
     backgroundColor: theme.colors.white,
   },
   itemsContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
 
@@ -276,12 +276,12 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderBottomWidth: 0,
         shadowColor: theme.colors.dark,
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 1,
       },
       android: {
-        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowColor: "rgba(0, 0, 0, 0.5)",
         shadowOpacity: 1,
         elevation: 3,
         // paddingBottom: 10,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     }),
   },
   addItemContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: SCREEN_WIDTH / 2 - ADD_ITEM_WIDTH / 2,
     bottom: TAB_HEIGHT / 2,
     elevation: 5,
@@ -300,15 +300,15 @@ const styles = StyleSheet.create({
     height: ADD_ITEM_WIDTH,
     width: ADD_ITEM_WIDTH,
     borderRadius: ADD_ITEM_WIDTH / 2,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   addItemIcon: {
     color: theme.colors.white,
   },
   dealsIcon: {
-    transform: [{rotate: '40deg'}],
+    transform: [{ rotate: "40deg" }],
   },
   item: {
     width: TAB_WIDTH,
@@ -323,7 +323,7 @@ const styles = StyleSheet.create({
   slidingView: {
     width: TAB_WIDTH,
     height: TAB_HEIGHT,
-    backgroundColor: 'grey',
+    backgroundColor: "grey",
 
     ...Platform.select({
       android: {

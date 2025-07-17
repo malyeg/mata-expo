@@ -1,7 +1,7 @@
-import React from 'react';
-import {Pressable, PressableProps, ViewStyle} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import SwapIcon from './SwapIcon';
+import { Item } from "@/api/itemsApi";
+import React from "react";
+import { Pressable, PressableProps, ViewStyle } from "react-native";
+import SwapIcon from "./SwapIcon";
 
 interface SwapbuttonProps extends PressableProps {
   item: Item;

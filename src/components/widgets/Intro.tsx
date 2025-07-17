@@ -1,30 +1,30 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {Pagination} from 'react-native-snap-carousel';
-import profilesApi from '../../api/profileApi';
-import Images from '../../assets/images/intro';
-import theme from '../../styles/theme';
-import Analytics from '../../utils/Analytics';
-import {Modal, Text} from '../core';
-import Chevron from '../icons/Chevron';
-import IntroSlide from './IntroSlide';
+import profilesApi from "@/api/profileApi";
+import Images from "@/assets/images/intro";
+import theme from "@/styles/theme";
+import Analytics from "@/utils/Analytics";
+import React, { useCallback, useEffect, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Pagination } from "react-native-snap-carousel";
+import { Modal, Text } from "../core";
+import Chevron from "../icons/Chevron";
+import IntroSlide from "./IntroSlide";
 
 interface IntroProps {
   onSkip: () => void;
 }
-const Intro = ({onSkip}: IntroProps) => {
+const Intro = ({ onSkip }: IntroProps) => {
   const [isModalVisible, setModalVisible] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
-    Analytics.logEvent('tutorial_begin');
+    Analytics.logEvent("tutorial_begin");
   }, []);
 
   const onSkipClick = useCallback(() => {
     setModalVisible(false);
     profilesApi.setFirstLoad(false);
     onSkip();
-    Analytics.logEvent('tutorial_skip');
+    Analytics.logEvent("tutorial_skip");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -32,13 +32,13 @@ const Intro = ({onSkip}: IntroProps) => {
     setModalVisible(false);
     profilesApi.setFirstLoad(false);
     onSkip();
-    Analytics.logEvent('tutorial_complete');
+    Analytics.logEvent("tutorial_complete");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onNext = useCallback(() => {
     if (activeSlide < 5) {
-      setActiveSlide(as => as + 1);
+      setActiveSlide((as) => as + 1);
     }
     console.log(activeSlide);
   }, [activeSlide]);
@@ -47,7 +47,8 @@ const Intro = ({onSkip}: IntroProps) => {
     <Modal
       isVisible={isModalVisible}
       position="full"
-      containerStyle={styles.modal}>
+      containerStyle={styles.modal}
+    >
       <IntroSlide index={activeSlide} />
       <View style={styles.navContainer}>
         {activeSlide < 4 && <Chevron direction="left" onPress={onNext} />}
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   paginationContainer: {
-    flexDirection: 'row-reverse',
+    flexDirection: "row-reverse",
   },
   paginationDot: {
     width: 10,
@@ -99,9 +100,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.green,
   },
   navContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
   navButton: {
     // flexBasis: '48%',

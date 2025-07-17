@@ -1,13 +1,13 @@
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useState,
-} from 'react';
-import {StyleSheet, View} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Button, Modal, Text} from '../core';
+} from "react";
+import { StyleSheet, View } from "react-native";
+import { Button, Modal, Text } from "../core";
 
 export interface SheetProps {
   show?: (options: SheetOptions) => void;
@@ -16,7 +16,7 @@ export interface SheetProps {
 export interface SheetOptions {
   header: string;
   body: string;
-  type?: 'alert' | 'warning' | 'dialog';
+  type?: "alert" | "warning" | "dialog";
   cancelCallback?: () => void;
   confirmCallback?: () => void;
   confirmTitle?: string;
@@ -29,8 +29,8 @@ export interface SheetOptions {
   hideCloseIcon?: boolean;
   hideCancel?: boolean;
 }
-const Sheet = ({...props}: SheetProps, ref: any) => {
-  const {t} = useLocale('widgets');
+const Sheet = ({ ...props }: SheetProps, ref: any) => {
+  const { t } = useLocale("widgets");
   const [isVisible, setVisible] = useState(false);
   const [sheetOptions, setSheetOptions] = useState<SheetOptions>();
 
@@ -67,34 +67,35 @@ const Sheet = ({...props}: SheetProps, ref: any) => {
     <Modal
       isVisible={isVisible}
       onClose={closeSheet}
-      position={'bottom'}
+      position={"bottom"}
       onBackdropPress={
         sheetOptions.closeOnBackdropPress ? closeSheet : undefined
       }
       closeIcon={
-        sheetOptions?.type === 'alert' ? {name: 'close', size: 25} : undefined
+        sheetOptions?.type === "alert" ? { name: "close", size: 25 } : undefined
       }
       hideCloseIcon={sheetOptions.hideCloseIcon}
       headerIcon={sheetOptions?.headerIcon}
-      title={sheetOptions?.header}>
+      title={sheetOptions?.header}
+    >
       <View>
         <Text style={styles.confirmBody}>{sheetOptions?.body}</Text>
         {sheetOptions?.children}
       </View>
 
       <View style={styles.modalButtonContainer}>
-        {sheetOptions?.type !== 'alert' && (
+        {sheetOptions?.type !== "alert" && (
           <>
             {!sheetOptions?.hideCancel && (
               <Button
-                title={sheetOptions?.cancelTitle ?? t('sheet.cancelBtnText')}
+                title={sheetOptions?.cancelTitle ?? t("sheet.cancelBtnText")}
                 style={[styles.modalButton]}
                 themeType="white"
                 onPress={cancelHandler}
               />
             )}
             <Button
-              title={sheetOptions?.confirmTitle ?? t('sheet.confirmBtnText')}
+              title={sheetOptions?.confirmTitle ?? t("sheet.confirmBtnText")}
               style={[styles.modalButton, styles.confirmButton]}
               // textStyle={styles.confirmText}
               themeType="primary"
@@ -111,10 +112,10 @@ export default React.memo(forwardRef(Sheet));
 
 const styles = StyleSheet.create({
   headerIconContainer: {
-    position: 'absolute',
+    position: "absolute",
   },
   modalButtonContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 30,
     paddingBottom: 10,
     // marginVertical: 40,

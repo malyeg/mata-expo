@@ -1,16 +1,16 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Dimensions, StyleSheet, View} from 'react-native';
-import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
-import Carousel from 'react-native-snap-carousel';
-import {Item} from '../../api/itemsApi';
-import constants from '../../config/constants';
-import useLocation from '../../hooks/useLocation';
-import theme from '../../styles/theme';
-import MapItem from './MapItem';
-import MapItemCard, {MAP_CARD_HEIGHT, MAP_CARD_WIDTH} from './MapItemCard';
+import { Item } from "@/api/itemsApi";
+import constants from "@/config/constants";
+import useLocation from "@/hooks/useLocation";
+import theme from "@/styles/theme";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Dimensions, StyleSheet, View } from "react-native";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import Carousel from "react-native-snap-carousel";
+import MapItem from "./MapItem";
+import MapItemCard, { MAP_CARD_HEIGHT, MAP_CARD_WIDTH } from "./MapItemCard";
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+const SCREEN_WIDTH = Dimensions.get("window").width;
 const EDGE_PADDING = {
   top: 50,
   right: 50,
@@ -24,15 +24,15 @@ interface ItemsMapViewProps {
   showLoadMore?: boolean;
   onSelectItem?: (item: Item) => void;
 }
-const ItemsMapView = ({items, onSelectItem}: ItemsMapViewProps) => {
+const ItemsMapView = ({ items, onSelectItem }: ItemsMapViewProps) => {
   const mapRef = useRef<MapView | null>(null);
-  const {location} = useLocation();
+  const { location } = useLocation();
   const [selectedItem, setSelectedItem] = useState<Item>(items[0]);
   const firstLoadRef = useRef(true);
 
   useEffect(() => {
     const region = selectedItem?.location?.coordinate;
-    console.log('animateToCoordinate;');
+    console.log("animateToCoordinate;");
     mapRef.current?.animateCamera({
       altitude: region?.latitude!,
       // center:
@@ -54,13 +54,13 @@ const ItemsMapView = ({items, onSelectItem}: ItemsMapViewProps) => {
     setSelectedItem(items[index]);
   };
 
-  const renderCard = (itemInfo: {item: Item; index: number}) => (
+  const renderCard = (itemInfo: { item: Item; index: number }) => (
     <MapItemCard item={itemInfo.item} onPress={onSelectItem} />
   );
   return (
     <View style={styles.container}>
       <MapView
-        ref={ref => {
+        ref={(ref) => {
           mapRef.current = ref as MapView;
         }}
         provider={PROVIDER_GOOGLE}
@@ -79,7 +79,7 @@ const ItemsMapView = ({items, onSelectItem}: ItemsMapViewProps) => {
         }}
         // onRegionChangeComplete={onRegionChangeComplete}
       >
-        {items.map(item => (
+        {items.map((item) => (
           <MapItem
             style={
               item?.id.toString() === selectedItem?.id?.toString()
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   itemsContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
   },
   map: {
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   itemSeparator: {
     width: 10,
   },
   bubble: {
     backgroundColor: theme.colors.white,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     padding: 10,
     borderRadius: 5,
     // width: 200,
@@ -155,23 +155,23 @@ const styles = StyleSheet.create({
     zIndex: 100,
   },
   arrow: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     borderTopColor: theme.colors.white,
     borderWidth: 16,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: -32,
   },
   arrowBorder: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     borderTopColor: theme.colors.white,
     borderWidth: 16,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: -0.5,
   },
   tipName: {
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   showMoreBtn: {
     marginHorizontal: theme.defaults.SCREEN_PADDING,
@@ -180,16 +180,16 @@ const styles = StyleSheet.create({
     top: SCREEN_HEIGHT / 2 - 20,
     color: theme.colors.salmon,
     fontSize: 50,
-    backgroundColor: 'rgba(00, 00, 00, 0.2)',
+    backgroundColor: "rgba(00, 00, 00, 0.2)",
     zIndex: 1,
   },
   rightChevron: {
-    position: 'absolute',
+    position: "absolute",
     top: SCREEN_HEIGHT / 2 - 20,
     right: 0,
   },
   leftChevron: {
-    position: 'absolute',
+    position: "absolute",
     top: SCREEN_HEIGHT / 2 - 20,
     left: 0,
   },

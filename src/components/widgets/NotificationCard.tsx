@@ -1,13 +1,12 @@
-import {format} from 'date-fns';
-import React from 'react';
-import {StyleProp, ViewStyle} from 'react-native';
-import {StyleSheet, View} from 'react-native';
-import notificationsApi, {Notification} from '../../api/notificationsApi';
-import {patterns} from '../../config/constants';
-import useNavigationHelper from '../../hooks/useNavigationHelper';
-import theme from '../../styles/theme';
-import {Text} from '../core';
-import Card from '../core/Card';
+import notificationsApi, { Notification } from "@/api/notificationsApi";
+import { patterns } from "@/config/constants";
+import useNavigationHelper from "@/hooks/useNavigationHelper";
+import theme from "@/styles/theme";
+import { format } from "date-fns";
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Text } from "../core";
+import Card from "../core/Card";
 
 interface NotificationCardProps {
   notification: Notification;
@@ -15,17 +14,17 @@ interface NotificationCardProps {
 }
 const icons = {
   push: {
-    name: 'bell-outline',
+    name: "bell-outline",
   },
   email: {
-    name: 'email-outline',
+    name: "email-outline",
   },
   chat: {
-    name: 'chat-outline',
+    name: "chat-outline",
   },
 };
-const NotificationCard = ({notification, style}: NotificationCardProps) => {
-  const {linkTo} = useNavigationHelper();
+const NotificationCard = ({ notification, style }: NotificationCardProps) => {
+  const { linkTo } = useNavigationHelper();
   const onPress = () => {
     notificationsApi.updateDelivery(notification?.id);
     if (notification.data?.url) {
@@ -69,7 +68,7 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.semiBold,
   },
   body: {
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     marginRight: 25,
     ...theme.styles.scale.body2,
   },

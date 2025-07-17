@@ -1,6 +1,14 @@
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
-import React, {useCallback, useEffect, useState} from 'react';
+import { ApiResponse } from "@/api/Api";
+import dealsApi, { Deal } from "@/api/dealsApi";
+import { Item } from "@/api/itemsApi";
+import { screens } from "@/config/constants";
+import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Operation, QueryBuilder } from "@/types/DataTypes";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import React, { useEffect, useState } from "react";
 import {
   Platform,
   Pressable,
@@ -8,47 +16,39 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ApiResponse} from '../../api/Api';
-import dealsApi, {Deal} from '../../api/dealsApi';
-import {Item} from '../../api/itemsApi';
-import {screens} from '../../config/constants';
-import useAuth from '../../hooks/useAuth';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Operation, QueryBuilder} from '../../types/DataTypes';
-import {Icon, Modal, Text} from '../core';
-import DataList from './DataList';
-import ItemDealCard from './ItemDealCard';
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Icon, Modal, Text } from "../core";
+import DataList from "./DataList";
+import ItemDealCard from "./ItemDealCard";
 
 interface ItemDealsTabProps {
   item: Item;
   style?: StyleProp<ViewStyle>;
 }
-const ItemDealsTab = ({item, style}: ItemDealsTabProps) => {
+const ItemDealsTab = ({ item, style }: ItemDealsTabProps) => {
   const [isVisible, setVisible] = useState(false);
   const navigation = useNavigation<StackNavigationHelpers>();
   const [deals, setDeals] = useState<ApiResponse<Deal> | undefined>();
   const insets = useSafeAreaInsets();
-  const {user} = useAuth();
-  const {t} = useLocale('widgets');
+  const { user } = useAuth();
+  const { t } = useLocale("widgets");
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const query = new QueryBuilder<Deal>()
           .filters([
-            {field: 'item.id', value: item.id},
+            { field: "item.id", value: item.id },
             {
-              field: 'status',
+              field: "status",
               operation: Operation.IN,
-              value: ['new', 'accepted'],
+              value: ["new", "accepted"],
             },
           ])
           .build();
         const dealsResponse = await dealsApi.getAll(query);
-        console.log('dealsResponse');
+        console.log("dealsResponse");
         if (!!dealsResponse && dealsResponse.items.length > 0) {
           setDeals(dealsResponse);
         }
@@ -60,7 +60,7 @@ const ItemDealsTab = ({item, style}: ItemDealsTabProps) => {
     loadData();
   }, [item, user.id]);
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     const onPress = () => {
       setVisible(false);
       navigation.navigate(screens.DEAL_DETAILS, {
@@ -84,8 +84,9 @@ const ItemDealsTab = ({item, style}: ItemDealsTabProps) => {
       <View
         style={
           (styles.container,
-          {bottom: insets.bottom * -1, paddingBottom: insets.bottom})
-        }>
+          { bottom: insets.bottom * -1, paddingBottom: insets.bottom })
+        }
+      >
         <Pressable onPress={openModal} style={[styles.tabContainer, style]}>
           <View style={styles.dealsCountContainer}>
             <Text style={styles.dealsCountText}>{deals.items.length}</Text>
@@ -100,12 +101,13 @@ const ItemDealsTab = ({item, style}: ItemDealsTabProps) => {
         </Pressable>
       </View>
       <Modal
-        position={deals.items.length > 4 ? 'full' : 'bottom'}
+        position={deals.items.length > 4 ? "full" : "bottom"}
         isVisible={isVisible}
         containerStyle={styles.modal}
         showHeaderNav={true}
-        title={t('itemDealsTab.modalTitle')}
-        onClose={closeModal}>
+        title={t("itemDealsTab.modalTitle")}
+        onClose={closeModal}
+      >
         <DataList
           data={deals}
           renderItem={renderItem}
@@ -121,9 +123,9 @@ export default React.memo(ItemDealsTab);
 const styles = StyleSheet.create({
   container: {
     // flex: 1,
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
     height: 75,
     backgroundColor: theme.colors.white,
     // paddingBottom: 80,
@@ -132,9 +134,9 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
 
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
       ios: {
         // shadowRadius: 1,
         shadowColor: theme.colors.dark,
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 1,
         borderColor: theme.colors.lightGrey,
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   chevronIcon: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
   },
   modal: {
@@ -165,9 +167,9 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 20,
   },
   modalBody: {},
@@ -176,18 +178,18 @@ const styles = StyleSheet.create({
   },
   cardImage: {},
   viewMoreContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 10,
   },
   tabText: {
     color: theme.colors.salmon,
   },
   dealsCountContainer: {
-    position: 'absolute',
+    position: "absolute",
     left: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: theme.colors.salmon,
     width: 30,
     height: 30,

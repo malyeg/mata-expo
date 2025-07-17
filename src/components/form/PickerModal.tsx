@@ -1,21 +1,21 @@
-import React, {useCallback, useEffect, useMemo, useRef} from 'react';
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Entity, Nestable } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   FlatList,
   FlatListProps,
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import {useImmerReducer} from 'use-immer';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Entity, Nestable} from '../../types/DataTypes';
-import {Modal} from '../core';
-import SearchInput from '../form/SearchInput';
-import NoDataFound from '../widgets/NoDataFound';
-import PathList from '../widgets/PathList';
-import pickerReducer, {PickerState} from '../widgets/picker/pickerReducer';
-import PickerItem from './PickerItem';
+} from "react-native";
+import { useImmerReducer } from "use-immer";
+import { Modal } from "../core";
+import SearchInput from "../form/SearchInput";
+import NoDataFound from "../widgets/NoDataFound";
+import PathList from "../widgets/PathList";
+import pickerReducer, { PickerState } from "../widgets/picker/pickerReducer";
+import PickerItem from "./PickerItem";
 
 export interface PickerModalProps<T extends Entity & Nestable> {
   items: T[];
@@ -23,14 +23,14 @@ export interface PickerModalProps<T extends Entity & Nestable> {
   style?: ViewStyle;
   onItemChange: (item: Entity) => void;
   onCloseModal: () => void;
-  position?: 'bottom' | 'full';
+  position?: "bottom" | "full";
   showHeaderLeft?: boolean;
   headerTitle?: string;
   defaultValue?: string;
   searchPlaceholder?: string;
   searchable?: boolean;
   multiLevel?: boolean;
-  keyboardShouldPersistTaps?: FlatListProps<Entity>['keyboardShouldPersistTaps'];
+  keyboardShouldPersistTaps?: FlatListProps<Entity>["keyboardShouldPersistTaps"];
   renderItem?: (info: {
     item: T;
     index: number;
@@ -54,21 +54,21 @@ const PickerModal = <T extends Entity>({
 }: PickerModalProps<T>) => {
   const isFirstRun = useRef(true);
 
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
   const foundItem = useMemo(
     () =>
       defaultValue
-        ? items.find(item => {
+        ? items.find((item) => {
             return item.id.toString() === defaultValue?.toString();
           })
         : undefined,
-    [defaultValue, items],
+    [defaultValue, items]
   );
 
   const initialState: PickerState = {
     items,
     listItems: multiLevel
-      ? items.filter(i => (i as unknown as Nestable).level === 0)
+      ? items.filter((i) => (i as unknown as Nestable).level === 0)
       : [...items],
     defaultItem: foundItem,
     isModalVisible: isModalVisible,
@@ -77,7 +77,7 @@ const PickerModal = <T extends Entity>({
   };
 
   const [state, dispatch] = useImmerReducer(pickerReducer, initialState);
-  const {listItems, path, searchValue} = state;
+  const { listItems, path, searchValue } = state;
 
   useEffect(() => {
     // init();
@@ -88,7 +88,7 @@ const PickerModal = <T extends Entity>({
     }
 
     dispatch({
-      type: 'LOAD_ITEMS',
+      type: "LOAD_ITEMS",
       items,
       defaultValue,
     });
@@ -99,11 +99,11 @@ const PickerModal = <T extends Entity>({
   const searchHandler = useCallback(
     (value: string) => {
       dispatch({
-        type: 'SEARCH_ITEMS',
+        type: "SEARCH_ITEMS",
         search: value,
       });
     },
-    [dispatch],
+    [dispatch]
   );
 
   const onItemSelect = useCallback(
@@ -120,15 +120,15 @@ const PickerModal = <T extends Entity>({
         }
       } else {
         dispatch({
-          type: 'SELECT_ITEM',
+          type: "SELECT_ITEM",
           item: i,
         });
       }
     },
-    [dispatch, multiLevel, onCloseModal, onItemChange, renderItem],
+    [dispatch, multiLevel, onCloseModal, onItemChange, renderItem]
   );
 
-  const renderItemHandler = ({item, index}: {item: T; index: number}) => {
+  const renderItemHandler = ({ item, index }: { item: T; index: number }) => {
     if (renderItem) {
       return renderItem({
         item,
@@ -152,7 +152,7 @@ const PickerModal = <T extends Entity>({
 
   const listEmptyComponent = useCallback(
     () => <NoDataFound style={styles.noData} />,
-    [],
+    []
   );
   const separatorComponent = () => <View style={styles.separator} />;
   const getItemLayout = useCallback(
@@ -161,7 +161,7 @@ const PickerModal = <T extends Entity>({
       offset: 60 * index,
       index,
     }),
-    [],
+    []
   );
 
   const onBackHandler = useCallback(() => {
@@ -169,7 +169,7 @@ const PickerModal = <T extends Entity>({
       onCloseModal();
     } else {
       dispatch({
-        type: 'BACK',
+        type: "BACK",
       });
     }
   }, [dispatch, onCloseModal, path]);
@@ -184,17 +184,18 @@ const PickerModal = <T extends Entity>({
     <Modal
       style={styles.modal}
       isVisible={isModalVisible}
-      swipeDirection={['down']}
+      swipeDirection={["down"]}
       showHeaderNav
       title={headerTitle}
       position="full"
       onClose={onBackHandler}
-      propagateSwipe>
+      propagateSwipe
+    >
       {searchable && (
         <SearchInput
           style={styles.searchInput}
           value={searchValue}
-          placeholder={searchPlaceholder ?? t('picker.searchPlaceholder')}
+          placeholder={searchPlaceholder ?? t("picker.searchPlaceholder")}
           onChangeText={searchHandler}
         />
       )}
@@ -240,20 +241,20 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 50,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalNav: {
     left: 0,
-    position: 'absolute',
+    position: "absolute",
     marginHorizontal: -20,
   },
   modalTitle: {
     ...theme.styles.scale.h6,
     fontWeight: theme.fontWeight.semiBold,
     color: theme.colors.salmon,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 20,
   },
   modalContainer: {

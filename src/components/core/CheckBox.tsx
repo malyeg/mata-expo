@@ -1,17 +1,17 @@
-import React, {FC, useCallback} from 'react';
+import theme from "@/styles/theme";
+import React, { FC, useCallback } from "react";
 import {
   Pressable,
   StyleProp,
   StyleSheet,
   TextStyle,
   ViewStyle,
-} from 'react-native';
-import theme from '../../styles/theme';
-import Text from '../core/Text';
-import Icon from '../core/Icon';
+} from "react-native";
+import Icon from "../core/Icon";
+import Text from "../core/Text";
 interface CheckBoxProps {
   size?: number;
-  boxType?: 'square' | 'circle';
+  boxType?: "square" | "circle";
   value?: boolean | undefined;
   label?: string;
   onChange?: (v: boolean) => void;
@@ -21,7 +21,7 @@ interface CheckBoxProps {
 }
 const CheckBox: FC<CheckBoxProps> = ({
   size = 22,
-  boxType = 'square',
+  boxType = "square",
   label,
   value = false,
   onChange,
@@ -30,11 +30,11 @@ const CheckBox: FC<CheckBoxProps> = ({
   style,
 }) => {
   const selectedIcon =
-    boxType === 'square' ? 'checkbox-marked' : 'checkbox-marked-circle';
+    boxType === "square" ? "checkbox-marked" : "checkbox-marked-circle";
   const emptyIcon =
-    boxType === 'square'
-      ? 'checkbox-blank-outline'
-      : 'checkbox-blank-circle-outline';
+    boxType === "square"
+      ? "checkbox-blank-outline"
+      : "checkbox-blank-circle-outline";
 
   const onToggle = useCallback(() => {
     !!onChange && onChange(!value);
@@ -44,7 +44,8 @@ const CheckBox: FC<CheckBoxProps> = ({
     <Pressable
       hitSlop={hitSlop}
       onPress={onToggle}
-      style={[styles.container, styles.checkBoxContainer, style]}>
+      style={[styles.container, styles.checkBoxContainer, style]}
+    >
       <Icon
         name={value ? selectedIcon : emptyIcon}
         size={size}
@@ -64,8 +65,8 @@ const styles = StyleSheet.create({
     // marginBottom: 10,
   },
   checkBoxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   unselected: {
     color: theme.colors.grey,

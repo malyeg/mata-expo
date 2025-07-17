@@ -1,4 +1,5 @@
-import React from 'react';
+import theme from "@/styles/theme";
+import React from "react";
 import {
   StyleProp,
   StyleSheet,
@@ -6,13 +7,12 @@ import {
   TextStyle,
   View,
   ViewStyle,
-} from 'react-native';
-import theme from '../../styles/theme';
-import Icon from '../core/Icon';
-import PressableOpacity from '../core/PressableOpacity';
+} from "react-native";
+import Icon from "../core/Icon";
+import PressableOpacity from "../core/PressableOpacity";
 
 export interface TabBarItemProps {
-  to: {screen: string; params?: any};
+  to: { screen: string; params?: any };
   label?: string;
   icon?: string;
   iconStyle?: StyleProp<TextStyle>;
@@ -20,7 +20,7 @@ export interface TabBarItemProps {
   style?: StyleProp<ViewStyle>;
   badgeStyle?: StyleProp<ViewStyle>;
   isFocused?: boolean;
-  onPress?: (to: TabBarItemProps['to']) => void;
+  onPress?: (to: TabBarItemProps["to"]) => void;
 }
 const TabBarItem = ({
   to,
@@ -43,12 +43,13 @@ const TabBarItem = ({
   return (
     <PressableOpacity
       accessibilityRole="button"
-      accessibilityState={isFocused ? {selected: true} : {}}
+      accessibilityState={isFocused ? { selected: true } : {}}
       onPress={onPressHandler}
-      style={[styles.container, props.style as ViewStyle]}>
+      style={[styles.container, props.style as ViewStyle]}
+    >
       {!!badge && (
         <View style={[styles.badge, badgeStyle]}>
-          <Text style={styles.badgeText}>{badge >= 1000 ? 'N' : badge}</Text>
+          <Text style={styles.badgeText}>{badge >= 1000 ? "N" : badge}</Text>
         </View>
       )}
       {!!icon && (
@@ -72,8 +73,8 @@ export default React.memo(TabBarItem);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   label: {
     color: theme.colors.dark,
@@ -83,22 +84,22 @@ const styles = StyleSheet.create({
     color: theme.colors.dark,
   },
   icon: {
-    fontWeight: '500',
+    fontWeight: "500",
   },
   iconFocused: {
-    fontWeight: '500',
+    fontWeight: "500",
   },
   badge: {
-    position: 'absolute',
+    position: "absolute",
     top: -5,
     right: 15,
     width: 20,
     height: 20,
     backgroundColor: theme.colors.salmon,
     borderRadius: 10,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
   badgeText: {
     ...theme.styles.scale.body4,

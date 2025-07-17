@@ -1,39 +1,45 @@
-import React, {useCallback, useState} from 'react';
-import {Dimensions, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import React, { useCallback, useState } from "react";
+import {
+  Dimensions,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import CarouselBase, {
   CarouselProps as CarouselBaseProps,
   CarouselProperties,
   Pagination,
-} from 'react-native-snap-carousel';
+} from "react-native-snap-carousel";
 
-import ImageViewer from 'react-native-image-zoom-viewer';
-import {ImageSource} from '../../api/itemsApi';
-import theme from '../../styles/theme';
-import {Icon, Image, Modal} from '../core';
-import Card from '../core/Card';
-import {ImageProps} from '../core/Image';
+import { ImageSource } from "@/api/itemsApi";
+import theme from "@/styles/theme";
+import ImageViewer from "react-native-image-zoom-viewer";
+import { Icon, Image, Modal } from "../core";
+import Card from "../core/Card";
+import { ImageProps } from "../core/Image";
 
 interface CarouselProps
-  extends Omit<CarouselBaseProps<ImageSource>, 'renderItem' | 'data'> {
+  extends Omit<CarouselBaseProps<ImageSource>, "renderItem" | "data"> {
   images: ImageSource[];
-  layout?: CarouselProperties<ImageSource>['layout'];
-  renderItem?: CarouselBaseProps<ImageSource>['renderItem'];
+  layout?: CarouselProperties<ImageSource>["layout"];
+  renderItem?: CarouselBaseProps<ImageSource>["renderItem"];
   style?: StyleProp<ViewStyle>;
-  resizeMode?: ImageProps['resizeMode'];
+  resizeMode?: ImageProps["resizeMode"];
   viewImageInFullScreen?: boolean;
   onError?: (error?: string) => void;
 }
 
-const windowWidth = Dimensions.get('window').width;
+const windowWidth = Dimensions.get("window").width;
 const itemWidth = windowWidth - theme.defaults.SCREEN_PADDING * 4;
 // const itemWidth = 100;
 const itemHeight = itemWidth;
 
 const Carousel = ({
   images,
-  layout = 'default',
+  layout = "default",
   style,
-  resizeMode = 'contain',
+  resizeMode = "contain",
   onError,
   renderItem,
 }: CarouselProps) => {
@@ -42,7 +48,7 @@ const Carousel = ({
   const [fullScreen, setFullScreen] = useState(false);
 
   const renderItemHandler: any = useCallback(
-    (itemInfo: {item: ImageSource; index: number}) => {
+    (itemInfo: { item: ImageSource; index: number }) => {
       if (renderItem) {
         return renderItem(itemInfo);
       } else {
@@ -66,7 +72,7 @@ const Carousel = ({
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [resizeMode],
+    [resizeMode]
   );
   // const renderModalItemHandler: any = useCallback(
   //   (itemInfo: {item: ImageSource; index: number}) => (
@@ -93,7 +99,7 @@ const Carousel = ({
       <Card style={[styles.card, style]}>
         {images.length === 1 ? (
           <Image
-            source={{uri: images[0].downloadURL}}
+            source={{ uri: images[0].downloadURL }}
             resizeMode={resizeMode}
             onError={onError}
             onPress={onModalSnapToItem}
@@ -142,12 +148,13 @@ const Carousel = ({
           position="full"
           containerStyle={styles.modal}
           showHeaderNav
-          propagateSwipe={true}>
+          propagateSwipe={true}
+        >
           <View style={styles.carouselContainer}>
             <ImageViewer
               backgroundColor="white"
               style={styles.zoomableView}
-              imageUrls={images.map(i => ({url: i.downloadURL!}))}
+              imageUrls={images.map((i) => ({ url: i.downloadURL! }))}
             />
             {/* <CarouselBase
               layout="default"
@@ -182,13 +189,13 @@ export default React.memo(Carousel);
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'column',
+    flexDirection: "column",
     // padding: 50,
   },
   container: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
     borderColor: theme.colors.lightGrey,
     borderWidth: 2,
@@ -198,15 +205,15 @@ const styles = StyleSheet.create({
 
   carouselContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // backgroundColor: 'grey',
   },
   slideWrapper: {},
   image: {
-    overflow: 'hidden',
+    overflow: "hidden",
     flex: 1,
-    width: '100%',
+    width: "100%",
     // height: 100,
     // marginBottom: 20,
     // zIndex: 1,
@@ -237,12 +244,12 @@ const styles = StyleSheet.create({
   },
   modal: {
     // marginBottom: 30,
-    justifyContent: 'center',
-    alignContent: 'center',
+    justifyContent: "center",
+    alignContent: "center",
     paddingHorizontal: 0,
   },
   fullscreenIcon: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 1,
     left: 1,
     color: theme.colors.salmon,
@@ -257,16 +264,16 @@ const styles = StyleSheet.create({
     // backgroundColor: 'grey',
   },
   starIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     fontSize: 20,
   },
   zoomableView: {
     flex: 1,
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 });

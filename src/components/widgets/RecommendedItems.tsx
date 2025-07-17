@@ -1,16 +1,16 @@
-import React, {useEffect, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import {ApiResponse} from '../../api/Api';
-import itemsApi, {Item, ItemStatus} from '../../api/itemsApi';
-import {Location} from '../../api/locationApi';
-import useAuth from '../../hooks/useAuth';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Operation, QueryBuilder} from '../../types/DataTypes';
-import {Text} from '../core';
-import DataList from './DataList';
-import NoDataFound from './NoDataFound';
-import RecommendedCard from './RecommendedCard';
+import { ApiResponse } from "@/api/Api";
+import itemsApi, { Item, ItemStatus } from "@/api/itemsApi";
+import { Location } from "@/api/locationApi";
+import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Operation, QueryBuilder } from "@/types/DataTypes";
+import React, { useEffect, useState } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Text } from "../core";
+import DataList from "./DataList";
+import NoDataFound from "./NoDataFound";
+import RecommendedCard from "./RecommendedCard";
 
 const CARD_BORDER = 2;
 const CARD_HEIGHT = 200;
@@ -22,11 +22,15 @@ interface RecommendedItemsProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const RecommendedItems = ({location, title, style}: RecommendedItemsProps) => {
-  const {user, profile} = useAuth();
+const RecommendedItems = ({
+  location,
+  title,
+  style,
+}: RecommendedItemsProps) => {
+  const { user, profile } = useAuth();
   const [itemsResponse, setItemsResponse] = useState<ApiResponse<Item>>();
 
-  const {t} = useLocale('widgets');
+  const { t } = useLocale("widgets");
 
   useEffect(() => {
     const targetCategories = profile?.targetCategories;
@@ -34,45 +38,45 @@ const RecommendedItems = ({location, title, style}: RecommendedItemsProps) => {
       return;
     }
     const locationFilter = location.state
-      ? {field: 'location.state.id', value: location?.state.id}
-      : {field: 'location.city.id', value: location?.city?.id};
+      ? { field: "location.state.id", value: location?.state.id }
+      : { field: "location.city.id", value: location?.city?.id };
     const query = new QueryBuilder<Item>()
       .filters([
         locationFilter,
-        {field: 'status', value: 'online' as ItemStatus},
+        { field: "status", value: "online" as ItemStatus },
         {
-          field: 'category.id',
+          field: "category.id",
           operation: Operation.IN,
           value: targetCategories,
         },
       ])
-      .orderBy('timestamp', 'desc')
+      .orderBy("timestamp", "desc")
       .limit(20)
       .build();
     const unsubscribe = itemsApi.onQuerySnapshot(
-      snapshot => {
+      (snapshot) => {
         if (snapshot.data) {
           setItemsResponse({
             items: snapshot.data.filter(
-              item => item.userId !== user.id && item.archived !== true,
+              (item) => item.userId !== user.id && item.archived !== true
             ), // workaround to firestore query limitation with timestamp order
           });
         }
       },
-      error => {
+      (error) => {
         console.log(error);
       },
-      query,
+      query
     );
 
     return unsubscribe;
   }, [location?.city, location?.state, profile?.targetCategories, user.id]);
 
   const listEmptyComponent = (
-    <NoDataFound body={'no items found in ' + location.state?.name} icon="" />
+    <NoDataFound body={"no items found in " + location.state?.name} icon="" />
   );
 
-  const renderItem = ({item}) => (
+  const renderItem = ({ item }) => (
     <RecommendedCard showSwapIcon item={item as Item} />
   );
   const onEndReached = (info: any, length: number) => {
@@ -86,7 +90,7 @@ const RecommendedItems = ({location, title, style}: RecommendedItemsProps) => {
     // return false ? (
     <View style={[styles.container, style]}>
       <View style={styles.header}>
-        <Text style={styles.title}>{title ?? t('recommendedItems.title')}</Text>
+        <Text style={styles.title}>{title ?? t("recommendedItems.title")}</Text>
       </View>
       <DataList
         loaderStyle={styles.dataListHeight}
@@ -108,14 +112,14 @@ export default React.memo(RecommendedItems);
 const styles = StyleSheet.create({
   container: {},
   header: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    flexDirection: "row",
     marginBottom: 10,
   },
   dataListHeight: {
     height: ITEM_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     ...theme.styles.scale.h6,
@@ -137,9 +141,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
     marginBottom: 6,
   },
   eyeIcon: {
@@ -153,20 +157,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardCategory: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    justifyContent: "center",
+    alignItems: "flex-start",
     flex: 1,
-    width: '100%',
+    width: "100%",
     borderTopColor: theme.colors.lightGrey,
     borderTopWidth: 2,
   },
   listActivityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // backgroundColor: 'grey',
   },
   anotherAreaLink: {
-    textDecorationLine: 'underline',
+    textDecorationLine: "underline",
   },
 });

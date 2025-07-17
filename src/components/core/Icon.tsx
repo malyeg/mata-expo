@@ -1,7 +1,7 @@
+import { SvgIcons } from "@/assets/svgs";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleProp, StyleSheet, TextStyle } from "react-native";
-import MaterialIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { SvgIcons } from "@/assets/svgs";
 
 export type IconType = "materialCommunity" | "custom";
 export interface IconProps {
@@ -24,10 +24,12 @@ const Icon = ({
   const SvgIcon = type === "custom" ? SvgIcons[name] : undefined;
 
   const iconExists =
-    !!MaterialIcon.glyphMap[name as keyof typeof MaterialIcon.glyphMap];
+    !!MaterialCommunityIcons.glyphMap[
+      name as keyof typeof MaterialCommunityIcons.glyphMap
+    ];
 
   return type === "materialCommunity" && iconExists ? (
-    <MaterialIcon
+    <MaterialCommunityIcons
       name={name}
       style={[styles.icon, style]}
       color={color}

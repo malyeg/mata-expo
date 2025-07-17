@@ -1,14 +1,19 @@
-import React, {useState} from 'react';
-import {RefreshControl, ScrollView, ScrollViewProps, View} from 'react-native';
-import create from '../../styles/EStyleSheet';
-import theme from '../../styles/theme';
+import create from "@/styles/EStyleSheet";
+import theme from "@/styles/theme";
+import React, { useState } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  ScrollViewProps,
+  View,
+} from "react-native";
 
 export interface ScreenProps extends ScrollViewProps {
   scrollable?: boolean;
   refreshable?: boolean;
   onRefresh?: () => void;
   bounces?: boolean;
-  keyboardShouldPersistTaps?: ScrollViewProps['keyboardShouldPersistTaps'];
+  keyboardShouldPersistTaps?: ScrollViewProps["keyboardShouldPersistTaps"];
   children: React.ReactNode;
 }
 
@@ -18,7 +23,7 @@ const Screen = ({
   refreshable = false,
   onRefresh,
   bounces = true,
-  keyboardShouldPersistTaps = 'never',
+  keyboardShouldPersistTaps = "never",
   children,
   ...props
 }: ScreenProps) => {
@@ -45,7 +50,8 @@ const Screen = ({
               onRefresh={onRefreshHandler}
             />
           ) : undefined
-        }>
+        }
+      >
         {children}
       </ScrollView>
     </>

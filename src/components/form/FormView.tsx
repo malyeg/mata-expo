@@ -1,16 +1,16 @@
-import React, {FC} from 'react';
-import {KeyboardAvoidingView, View, ViewProps} from 'react-native';
+import React, { FC } from "react";
+import { KeyboardAvoidingView, View, ViewProps } from "react-native";
 // import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import create from '../../styles/EStyleSheet';
+import create from "@/styles/EStyleSheet";
 
 interface FormViewProps extends ViewProps {
-  behavior?: 'padding' | 'height' | 'position' | undefined;
+  behavior?: "padding" | "height" | "position" | undefined;
   disableKeyboardAvoiding?: boolean;
   children: React.ReactNode;
 }
 
 const FormView: FC<FormViewProps> = ({
-  behavior = 'padding',
+  behavior = "padding",
   // behavior = Platform.OS === 'ios' ? 'padding' : undefined,
   disableKeyboardAvoiding,
   ...props
@@ -19,7 +19,8 @@ const FormView: FC<FormViewProps> = ({
     <KeyboardAvoidingView
       contentContainerStyle={[styles.container]}
       behavior={behavior}
-      {...props}>
+      {...props}
+    >
       <FormContent {...props} />
     </KeyboardAvoidingView>
   ) : (

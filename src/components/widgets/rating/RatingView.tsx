@@ -1,19 +1,19 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {StarItem} from '../../../api/ratingApi';
-import theme from '../../../styles/theme';
-import Star from './Star';
+import { StarItem } from "@/../api/ratingApi";
+import theme from "@/../styles/theme";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import Star from "./Star";
 
 export interface RatingViewProps {
   stars: StarItem[];
   onStarPress?: (index: number) => void;
   disabled?: boolean;
 }
-const RatingView = ({onStarPress, stars, disabled}: RatingViewProps) => {
+const RatingView = ({ onStarPress, stars, disabled }: RatingViewProps) => {
   return (
     <View style={styles.ratingContainer}>
       {stars &&
-        stars.map(i => (
+        stars.map((i) => (
           <Star
             key={i.index}
             selected={i.selected}
@@ -34,23 +34,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
   },
   header: {
     ...theme.styles.scale.h5,
     color: theme.colors.salmon,
     marginBottom: 5,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   body: {
     // ...theme.styles.scale.h6,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
     // paddingVertical: 20,
     // paddingBottom: 30,
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     marginBottom: 10,
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   error: {
     // borderColor: theme.colors.salmon,

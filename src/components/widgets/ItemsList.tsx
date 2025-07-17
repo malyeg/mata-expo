@@ -1,4 +1,6 @@
-import React, {useCallback} from 'react';
+import { Item } from "@/api/itemsApi";
+import theme from "@/styles/theme";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,25 +8,23 @@ import {
   RefreshControl,
   StyleSheet,
   View,
-} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import theme from '../../styles/theme';
-import ItemCard, {ITEM_CARD_HEIGHT} from './ItemCard';
+} from "react-native";
+import ItemCard, { ITEM_CARD_HEIGHT } from "./ItemCard";
 
 interface ItemsListProps
-  extends Omit<FlatListProps<Item>, 'data' | 'renderItem'> {
+  extends Omit<FlatListProps<Item>, "data" | "renderItem"> {
   items: Item[];
   onLoadMore?: () => Promise<void>;
   onRefresh?: () => void;
   hasMore?: boolean;
   moreLoading?: boolean;
   refreshing?: boolean;
-  sourceList: 'searchItems' | 'filterItems' | 'nearbyItems' | 'mapItems';
+  sourceList: "searchItems" | "filterItems" | "nearbyItems" | "mapItems";
   horizontal?: boolean;
   itemSize?: number;
-  ListEmptyComponent?: FlatListProps<Item>['ListEmptyComponent'];
-  cardType?: 'default' | 'map';
-  onScroll?: FlatListProps<Item>['onScroll'];
+  ListEmptyComponent?: FlatListProps<Item>["ListEmptyComponent"];
+  cardType?: "default" | "map";
+  onScroll?: FlatListProps<Item>["onScroll"];
 }
 const SEPARATOR_HEIGHT = 2;
 const ITEM_HEIGHT = ITEM_CARD_HEIGHT + SEPARATOR_HEIGHT;
@@ -46,7 +46,7 @@ const ItemsList = ({
   ...props
 }: ItemsListProps) => {
   const renderItem = useCallback(
-    ({item}: {item: Item; index: number}) => {
+    ({ item }: { item: Item; index: number }) => {
       return (
         <ItemCard
           showSwapIcon
@@ -56,7 +56,7 @@ const ItemsList = ({
         />
       );
     },
-    [sourceList],
+    [sourceList]
   );
   const listFooter = () => {
     return moreLoading ? (
@@ -119,10 +119,10 @@ const ItemsList = ({
 
 const styles = StyleSheet.create({
   card: {
-    flexBasis: '48%',
+    flexBasis: "48%",
   },
   columnWrapper: {
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   contentContainer: {
     // flex: 1,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   changeButtonFilter: {
     marginVertical: 20,
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
 });
 

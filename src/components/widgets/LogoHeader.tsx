@@ -1,9 +1,9 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import theme from '../../styles/theme';
-import {Icon} from '../core';
-import Logo from '../core/Logo';
+import theme from "@/styles/theme";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Icon } from "../core";
+import Logo from "../core/Logo";
 
 const LogoHeader = () => {
   const navigation = useNavigation();
@@ -29,15 +29,15 @@ export default React.memo(LogoHeader);
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: theme.defaults.SCREEN_PADDING,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logo: {
     height: 60,
   },
   menuIcon: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
   },
 });

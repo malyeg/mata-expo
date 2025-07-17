@@ -1,7 +1,7 @@
-import React from 'react';
-import {StyleProp, StyleSheet, Switch, View, ViewStyle} from 'react-native';
-import {Text} from '.';
-import theme from '../../styles/theme';
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleProp, StyleSheet, Switch, View, ViewStyle } from "react-native";
+import { Text } from ".";
 
 interface ToggleProps {
   onChange: (v: boolean) => void;
@@ -9,7 +9,7 @@ interface ToggleProps {
   label?: string;
   style?: StyleProp<ViewStyle>;
 }
-const Toggle = ({value, label, onChange, style}: ToggleProps) => {
+const Toggle = ({ value, label, onChange, style }: ToggleProps) => {
   return (
     <View style={[styles.container, style]}>
       <Switch
@@ -31,7 +31,7 @@ export default Toggle;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginVertical: 10,
   },
 });

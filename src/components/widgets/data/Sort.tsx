@@ -1,26 +1,26 @@
-import React, {useCallback, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import theme from '../../../styles/theme';
-import {SortDirection} from '../../../types/DataTypes';
-import {Text} from '../../core';
-import Icon from '../../core/Icon';
+import theme from "@/../styles/theme";
+import { SortDirection } from "@/../types/DataTypes";
+import { Text } from "@/core";
+import Icon from "@/core/Icon";
+import React, { useCallback, useState } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 
 interface SortIconProps {
   onChange: (value: SortDirection) => void;
   style?: StyleProp<ViewStyle>;
 }
 
-const Sort = ({onChange, style}: SortIconProps) => {
+const Sort = ({ onChange, style }: SortIconProps) => {
   const [state, setState] = useState<SortDirection>();
   const onChangeState = useCallback(() => {
-    setState(s => {
+    setState((s) => {
       let newState: SortDirection;
-      if (s === 'asc') {
-        newState = 'desc';
-      } else if (s === 'desc') {
+      if (s === "asc") {
+        newState = "desc";
+      } else if (s === "desc") {
         newState = undefined;
       } else {
-        newState = 'asc';
+        newState = "asc";
       }
       if (onChange) {
         onChange(newState);
@@ -29,11 +29,11 @@ const Sort = ({onChange, style}: SortIconProps) => {
     });
   }, [onChange]);
   const iconName =
-    state === 'asc'
-      ? 'sort-ascending'
-      : state === 'desc'
-      ? 'sort-descending'
-      : 'sort';
+    state === "asc"
+      ? "sort-ascending"
+      : state === "desc"
+      ? "sort-descending"
+      : "sort";
   return (
     <View style={[styles.container, style]}>
       <Text>Sort</Text>
@@ -51,8 +51,8 @@ export default React.memo(Sort);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

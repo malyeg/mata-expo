@@ -1,36 +1,35 @@
+import useLocale from "@/../hooks/useLocale";
+import useController from "@/../hooks/userController";
+import theme from "@/../styles/theme";
+import { Entity } from "@/../types/DataTypes";
+import { LoggerFactory } from "@/../utils/logger";
+import { Icon, Text } from "@/core";
+import Error from "@/form/Error";
 import React, {
   forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
-  useMemo,
-} from 'react';
+} from "react";
 import {
   FlatListProps,
   Pressable,
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import {useImmerReducer} from 'use-immer';
-import useLocale from '../../../hooks/useLocale';
-import useController from '../../../hooks/userController';
-import theme from '../../../styles/theme';
-import {Entity} from '../../../types/DataTypes';
-import {LoggerFactory} from '../../../utils/logger';
-import {Icon, Text} from '../../core';
-import Error from '../../form/Error';
+} from "react-native";
+import { useImmerReducer } from "use-immer";
 import MultiSelectPickerModal, {
   MultiSelectPickerModalProps,
-} from './MultiSelectPickerModal';
+} from "./MultiSelectPickerModal";
 import MultiSelectPickerReducer, {
   MultiSelectPickerState,
-} from './MutliSelectPickerReducer';
+} from "./MutliSelectPickerReducer";
 
 export interface MultiSelectPickerProps<T extends Entity> {
   name: string;
   items: T[];
-  position?: MultiSelectPickerModalProps<T>['position'];
+  position?: MultiSelectPickerModalProps<T>["position"];
   placeholder?: string;
   modalTitle?: string;
   label?: string;
@@ -54,10 +53,10 @@ export interface MultiSelectPickerProps<T extends Entity> {
   }) => React.ReactElement | null;
   multiLevel?: boolean;
   hideLabel?: boolean;
-  keyboardShouldPersistTaps?: FlatListProps<Entity>['keyboardShouldPersistTaps'];
+  keyboardShouldPersistTaps?: FlatListProps<Entity>["keyboardShouldPersistTaps"];
 }
 
-const logger = LoggerFactory.getLogger('MultiSelectPicker');
+const logger = LoggerFactory.getLogger("MultiSelectPicker");
 const MultiSelectPicker = forwardRef(
   <T extends Entity>(
     {
@@ -76,11 +75,11 @@ const MultiSelectPicker = forwardRef(
       hideLabel,
       ...props
     }: MultiSelectPickerProps<T>,
-    ref,
+    ref
   ) => {
-    const {t} = useLocale('common');
+    const { t } = useLocale("common");
 
-    const {field, formState} = useController({
+    const { field, formState } = useController({
       control,
       defaultValue: defaultValue ?? [],
       name,
@@ -90,24 +89,24 @@ const MultiSelectPicker = forwardRef(
       items,
       listItems: [...items],
       defaultItems: defaultValue
-        ? items.filter(item => defaultValue?.includes(item.id.toString()))
+        ? items.filter((item) => defaultValue?.includes(item.id.toString()))
         : undefined,
       isModalVisible: false,
     } as MultiSelectPickerState);
-    const {selectedItems, isModalVisible} = state;
+    const { selectedItems, isModalVisible } = state;
 
     useImperativeHandle(ref, () => ({
       open() {
-        dispatch({type: 'SET_MODAL', isVisible: true});
+        dispatch({ type: "SET_MODAL", isVisible: true });
       },
       close() {
-        dispatch({type: 'SET_MODAL', isVisible: true});
+        dispatch({ type: "SET_MODAL", isVisible: true });
       },
     }));
 
     useEffect(() => {
       dispatch({
-        type: 'LOAD_ITEMS',
+        type: "LOAD_ITEMS",
         items,
         defaultValue,
       });
@@ -115,10 +114,10 @@ const MultiSelectPicker = forwardRef(
 
     useEffect(() => {
       const updatedItems = items.filter(
-        i => !!field.value && field.value.includes(i?.id?.toString()),
+        (i) => !!field.value && field.value.includes(i?.id?.toString())
       );
       dispatch({
-        type: 'SELECT_ITEMS',
+        type: "SELECT_ITEMS",
         items: updatedItems,
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -126,23 +125,23 @@ const MultiSelectPicker = forwardRef(
 
     const onSearch = (searchText: string) => {
       dispatch({
-        type: 'SEARCH_ITEMS',
+        type: "SEARCH_ITEMS",
         searchText,
       });
     };
 
     const onItemChange = useCallback((items: Entity[]) => {
-      field.onChange(items.map(i => i.id));
+      field.onChange(items.map((i) => i.id));
       closeModal();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const openModal = useCallback(() => {
-      !disabled && dispatch({type: 'SET_MODAL', isVisible: true});
+      !disabled && dispatch({ type: "SET_MODAL", isVisible: true });
     }, [disabled, dispatch]);
 
     const closeModal = useCallback(() => {
-      dispatch({type: 'SET_MODAL', isVisible: false});
+      dispatch({ type: "SET_MODAL", isVisible: false });
     }, [dispatch]);
 
     const onResetHandler = useCallback(() => {
@@ -156,7 +155,7 @@ const MultiSelectPicker = forwardRef(
             <Text body3 style={styles.label}>
               {field.value && field.value?.length > 0
                 ? label ?? placeholder
-                : ''}
+                : ""}
             </Text>
           )}
           <View
@@ -166,17 +165,19 @@ const MultiSelectPicker = forwardRef(
               formState.errors[name]
                 ? styles.textInputBorderError
                 : styles.textInputBorder,
-            ]}>
+            ]}
+          >
             <Pressable onPress={openModal} style={styles.inputContainer}>
               <Text
                 style={[
                   styles.inputText,
                   selectedItems?.length! > 0 ? {} : styles.placeholderText,
                 ]}
-                numberOfLines={1}>
+                numberOfLines={1}
+              >
                 {selectedItems && selectedItems.length > 0
-                  ? selectedItems?.map(s => s.name).join(', ')
-                  : placeholder ?? t('picker.pickerPlaceholder')}
+                  ? selectedItems?.map((s) => s.name).join(", ")
+                  : placeholder ?? t("picker.pickerPlaceholder")}
               </Text>
               {!disabled && (
                 <Icon
@@ -204,7 +205,7 @@ const MultiSelectPicker = forwardRef(
           {...props}
           headerTitle={modalTitle ?? placeholder}
           items={items as Entity[]}
-          defaultValues={selectedItems?.map(i => i.id)}
+          defaultValues={selectedItems?.map((i) => i.id)}
           isModalVisible={isModalVisible ?? false}
           onCloseModal={closeModal}
           renderItem={renderItem}
@@ -215,7 +216,7 @@ const MultiSelectPicker = forwardRef(
         />
       </>
     );
-  },
+  }
 );
 
 const styles = StyleSheet.create({
@@ -224,17 +225,17 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     // flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     // backgroundColor: 'grey',
     // justifyContent: 'flex-start',
   },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 40,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     // backgroundColor: 'red',
   },
 

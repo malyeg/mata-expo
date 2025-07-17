@@ -1,4 +1,4 @@
-import {Entity, Nestable} from '../../../types/DataTypes';
+import { Entity, Nestable } from "@/../types/DataTypes";
 
 export type PickerItem = Entity & Nestable;
 export type MultiSelectPickerState<T extends PickerItem = PickerItem> = {
@@ -11,26 +11,26 @@ export type MultiSelectPickerState<T extends PickerItem = PickerItem> = {
 };
 
 interface LoadItemsAction<T extends PickerItem> {
-  type: 'LOAD_ITEMS';
+  type: "LOAD_ITEMS";
   items: T[];
   defaultValue?: string[];
 }
 
 interface SelectItemsAction<T extends PickerItem> {
-  type: 'SELECT_ITEMS';
+  type: "SELECT_ITEMS";
   items: T[];
 }
 
 interface SearchItemsAction {
-  type: 'SEARCH_ITEMS';
+  type: "SEARCH_ITEMS";
   search: string;
 }
 interface ResetItemsAction<T extends PickerItem> {
-  type: 'RESET_ITEMS';
+  type: "RESET_ITEMS";
   items: T[];
 }
 interface SetModalVisibleAction {
-  type: 'SET_MODAL';
+  type: "SET_MODAL";
   isVisible: boolean;
 }
 
@@ -43,7 +43,7 @@ type PickerAction<T extends PickerItem> =
 
 const onLoadItems = (
   state: MultiSelectPickerState,
-  action: LoadItemsAction<PickerItem>,
+  action: LoadItemsAction<PickerItem>
 ) => {
   state.defaultItems = undefined;
   state.selectedItems = undefined;
@@ -51,7 +51,7 @@ const onLoadItems = (
   state.searchValue = undefined;
 
   if (action.defaultValue) {
-    const foundItems = state.items.filter(item => {
+    const foundItems = state.items.filter((item) => {
       return action.defaultValue?.includes(item.id.toString());
     });
     // eslint-disable-next-line no-extra-boolean-cast
@@ -71,8 +71,8 @@ const onSearch = (state: MultiSelectPickerState, action: SearchItemsAction) => {
     return state;
   }
   let filteredItems;
-  if (!!searchValue && searchValue.trim() !== '') {
-    filteredItems = state.items.filter(item => {
+  if (!!searchValue && searchValue.trim() !== "") {
+    filteredItems = state.items.filter((item) => {
       return item.name?.toLowerCase().includes(searchValue.toLowerCase());
     });
   } else {
@@ -85,20 +85,20 @@ const onSearch = (state: MultiSelectPickerState, action: SearchItemsAction) => {
 };
 
 export default function MultiSelectPickerReducer<
-  T extends PickerItem = PickerItem,
+  T extends PickerItem = PickerItem
 >(state: MultiSelectPickerState, action: PickerAction<T>) {
   switch (action.type) {
-    case 'LOAD_ITEMS':
+    case "LOAD_ITEMS":
       return onLoadItems(state, action);
-    case 'SEARCH_ITEMS':
+    case "SEARCH_ITEMS":
       return onSearch(state, action);
-    case 'SELECT_ITEMS':
+    case "SELECT_ITEMS":
       state.selectedItems = action.items ?? [];
       return state;
-    case 'RESET_ITEMS':
+    case "RESET_ITEMS":
       state.listItems = [...action.items];
       return state;
-    case 'SET_MODAL':
+    case "SET_MODAL":
       state.isModalVisible = action.isVisible;
       return state;
     default:

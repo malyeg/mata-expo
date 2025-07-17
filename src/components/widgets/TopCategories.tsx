@@ -1,24 +1,23 @@
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
-import React, {useCallback} from 'react';
-import {FlatList, Platform, StyleSheet, View, ViewProps} from 'react-native';
-import categoriesApi from '../../api/categoriesApi';
-import {screens} from '../../config/constants';
-import useLocation from '../../hooks/useLocation';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
-import PressableOpacity from '../core/PressableOpacity';
+import useLocation from "@/hooks/useLocation";
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { FlatList, Platform, StyleSheet, View, ViewProps } from "react-native";
+import categoriesApi from "../../api/categoriesApi";
+import { screens } from "../../config/constants";
+import theme from "../../styles/theme";
+import { Icon, Text } from "../core";
+import PressableOpacity from "../core/PressableOpacity";
 
 interface TopCategoriesProps extends ViewProps {}
 const categories = categoriesApi
   .getAll()
-  .filter(category => category.level === 0);
+  .filter((category) => category.level === 0);
 
-const TopCategories = ({style}: TopCategoriesProps) => {
-  const navigation = useNavigation<StackNavigationHelpers>();
-  const {location} = useLocation();
+const TopCategories = ({ style }: TopCategoriesProps) => {
+  const navigation = useNavigation<any>();
+  const { location } = useLocation();
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     const onPress = () => {
       navigation.navigate(screens.ITEMS, {
         category: item,
@@ -29,14 +28,16 @@ const TopCategories = ({style}: TopCategoriesProps) => {
       <PressableOpacity
         onPress={onPress}
         key={item.id}
-        style={styles.categoryContainer}>
+        style={styles.categoryContainer}
+      >
         <View
           style={[
             styles.category,
-            {backgroundColor: item.icon?.bgColor ?? theme.colors.grey},
-          ]}>
+            { backgroundColor: item.icon?.bgColor ?? theme.colors.grey },
+          ]}
+        >
           <Icon
-            name={item.icon?.name ?? 'other'}
+            name={item.icon?.name ?? "other"}
             // color="white"
             size={35}
             type={item.icon?.type}
@@ -68,13 +69,13 @@ export default React.memo(TopCategories);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // justifyContent: 'center',
     // alignItems: 'center',
     // backgroundColor: 'grey',
   },
   categoryContainer: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   category: {
     // backgroundColor: 'grey',
@@ -82,20 +83,20 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
     // marginHorizontal: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     ...Platform.select({
       ios: {
         borderColor: theme.colors.lightGrey,
         borderWidth: 2,
         borderBottomWidth: 0,
         shadowColor: theme.colors.dark,
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 1,
       },
       android: {
-        shadowColor: 'rgba(0, 0, 0, 0.5)',
+        shadowColor: "rgba(0, 0, 0, 0.5)",
         shadowOpacity: 1,
         elevation: 3,
       },
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     paddingTop: 7,
     width: 80,
     // flexWrap: 'wrap',
-    textAlign: 'center',
+    textAlign: "center",
   },
   separator: {
     width: 35,

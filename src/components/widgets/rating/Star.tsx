@@ -1,7 +1,7 @@
-import React, {useCallback} from 'react';
-import {Pressable, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import theme from '../../../styles/theme';
-import {Icon} from '../../core';
+import theme from "@/../styles/theme";
+import { Icon } from "@/core";
+import React, { useCallback } from "react";
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
 
 interface StarProps {
   index: number;
@@ -10,7 +10,7 @@ interface StarProps {
   style?: StyleProp<ViewStyle>;
   size?: number;
 }
-const Star = ({selected, onPress, index, style, size = 40}: StarProps) => {
+const Star = ({ selected, onPress, index, style, size = 40 }: StarProps) => {
   const onSelect = useCallback(() => {
     if (onPress) {
       onPress(index);
@@ -19,7 +19,7 @@ const Star = ({selected, onPress, index, style, size = 40}: StarProps) => {
   return (
     <Pressable onPress={onSelect} style={[styles.container, style]}>
       <Icon
-        name={selected ? 'star' : 'star-outline'}
+        name={selected ? "star" : "star-outline"}
         size={size}
         color={selected ? theme.colors.salmon : theme.colors.grey}
         style={styles.icon}

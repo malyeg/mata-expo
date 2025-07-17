@@ -1,25 +1,26 @@
-import React from 'react';
-import {StyleProp, StyleSheet, TextStyle} from 'react-native';
-import {Deal} from '../../api/dealsApi';
-import sharedStyles from '../../styles/SharedStyles';
-import theme from '../../styles/theme';
-import {Text} from '../core';
+import { Deal } from "@/api/dealsApi";
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
+import { Text } from "../core";
 
 interface DealStatusProps {
   deal: Deal;
   style?: StyleProp<TextStyle>;
 }
-const DealStatus = ({deal, style}: DealStatusProps) => {
+const DealStatus = ({ deal, style }: DealStatusProps) => {
   return (
     <Text
       style={[
         styles.statusText,
-        deal.status === 'accepted' ? sharedStyles.greenBtn : {},
-        deal.status === 'new' ? {backgroundColor: theme.colors.orange} : {},
-        deal.status === 'closed' ? {backgroundColor: theme.colors.dark} : {},
+        deal.status === "accepted" ? sharedStyles.greenBtn : {},
+        deal.status === "new" ? { backgroundColor: theme.colors.orange } : {},
+        deal.status === "closed" ? { backgroundColor: theme.colors.dark } : {},
         style,
-      ]}>
-      {deal.status === 'accepted' ? 'Started' : deal.status}
+      ]}
+    >
+      {deal.status === "accepted" ? "Started" : deal.status}
     </Text>
   );
 };
@@ -33,9 +34,9 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     padding: 5,
     borderRadius: 5,
-    overflow: 'hidden',
+    overflow: "hidden",
     zIndex: 1,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   greenBtn: {
     backgroundColor: theme.colors.green,

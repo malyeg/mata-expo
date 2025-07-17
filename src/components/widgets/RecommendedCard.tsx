@@ -1,14 +1,20 @@
-import {useNavigation} from '@react-navigation/core';
-import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
-import React, {useCallback} from 'react';
-import {Dimensions, Pressable, StyleSheet, View, ViewProps} from 'react-native';
-import itemsApi, {Item} from '../../api/itemsApi';
-import {screens} from '../../config/constants';
-import theme from '../../styles/theme';
-import Analytics from '../../utils/Analytics';
-import {Image, Text} from '../core';
-import Icon from '../core/Icon';
-import SwapIcon from './SwapIcon';
+import itemsApi, { Item } from "@/api/itemsApi";
+import { screens } from "@/config/constants";
+import theme from "@/styles/theme";
+import Analytics from "@/utils/Analytics";
+import { useNavigation } from "@react-navigation/core";
+import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import React, { useCallback } from "react";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  View,
+  ViewProps,
+} from "react-native";
+import { Image, Text } from "../core";
+import Icon from "../core/Icon";
+import SwapIcon from "./SwapIcon";
 
 interface ItemCardProps extends ViewProps {
   item: Item;
@@ -17,9 +23,9 @@ interface ItemCardProps extends ViewProps {
   showSwapIcon?: boolean;
 }
 
-const windowWidth = Dimensions.get('window').width * 0.8;
+const windowWidth = Dimensions.get("window").width * 0.8;
 
-const RecommendedCard = ({item, style}: ItemCardProps) => {
+const RecommendedCard = ({ item, style }: ItemCardProps) => {
   const navigation = useNavigation<StackNavigationHelpers>();
 
   const openItemDetails = useCallback(() => {
@@ -27,7 +33,7 @@ const RecommendedCard = ({item, style}: ItemCardProps) => {
     navigation.navigate(screens.ITEM_DETAILS, {
       id: item.id,
     });
-    Analytics.logSelectItem(item, 'recommendedItems');
+    Analytics.logSelectItem(item, "recommendedItems");
   }, [item, navigation]);
 
   const imageUrl = itemsApi.getImageUrl(item);
@@ -35,7 +41,7 @@ const RecommendedCard = ({item, style}: ItemCardProps) => {
   return (
     <Pressable style={[styles.card, style]} onPress={openItemDetails}>
       <Image uri={imageUrl!} style={styles.image} />
-      {item?.swapOption?.type === 'free' && (
+      {item?.swapOption?.type === "free" && (
         <Icon
           name="free"
           size={35}
@@ -53,7 +59,8 @@ const RecommendedCard = ({item, style}: ItemCardProps) => {
           <Text
             numberOfLines={1}
             style={styles.descriptionText}
-            ellipsizeMode="tail">
+            ellipsizeMode="tail"
+          >
             {item.description}
           </Text>
         </View>
@@ -75,7 +82,7 @@ export default React.memo(RecommendedCard);
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 10,
     borderColor: theme.colors.lightGrey,
     borderWidth: 2,
@@ -90,9 +97,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
     padding: 10,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   categoryText: {
     ...theme.styles.scale.body1,
@@ -109,18 +116,18 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
   },
   freeImage: {
-    position: 'absolute',
+    position: "absolute",
     right: 10,
   },
   swapIcon: {},
   categoryIcon: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 10,
     right: 10,
   },
 
   shimmerContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 10,
     borderColor: theme.colors.lightGrey,
     borderWidth: 2,

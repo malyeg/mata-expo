@@ -1,29 +1,36 @@
-import React, {useState} from 'react';
-import {Pressable, StyleProp, StyleSheet, TextStyle, View} from 'react-native';
-import {Icon, Text} from '.';
-import sharedStyles from '../../styles/SharedStyles';
-import theme from '../../styles/theme';
-import {BaseViewProps} from '../../types/ReactTypes';
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
+import { BaseViewProps } from "@/types/ReactTypes";
+import React, { useState } from "react";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  View,
+} from "react-native";
+import { Icon, Text } from ".";
 
 interface AccordionProps extends BaseViewProps {
   title: string;
   titleStyle?: StyleProp<TextStyle>;
   onPress?: () => void;
 }
-const Accordion = ({title, style, titleStyle, children}: AccordionProps) => {
+const Accordion = ({ title, style, titleStyle, children }: AccordionProps) => {
   const [isOpen, setOpen] = useState(false);
   const onPress = () => {
-    setOpen(v => !v);
+    setOpen((v) => !v);
     !!onPress && onPress();
   };
   return (
     <Pressable
       style={[sharedStyles.shadowBox, styles.container, style]}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <View style={styles.titleContainer}>
         <Text style={[styles.titleText, titleStyle]}>{title}</Text>
         <Icon
-          name={isOpen ? 'chevron-up' : 'chevron-down'}
+          name={isOpen ? "chevron-up" : "chevron-down"}
           style={styles.chevron}
         />
       </View>
@@ -42,16 +49,16 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   titleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   titleText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   chevron: {
     color: theme.colors.salmon,
-    marginLeft: 'auto',
+    marginLeft: "auto",
     fontSize: 30,
   },
 });

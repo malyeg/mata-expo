@@ -1,14 +1,13 @@
-import React from 'react';
+import theme from "@/styles/theme";
+import React from "react";
 import {
   StyleProp,
   StyleSheet,
-  Text,
   TextStyle,
   View,
   ViewStyle,
-} from 'react-native';
-import theme from '../../styles/theme';
-import {Icon} from '../core';
+} from "react-native";
+import { Icon } from "../core";
 
 // const swapIconSize = 20;
 // const swapIconPadding = 5;
@@ -18,7 +17,7 @@ interface SwapIconProps {
   style?: StyleProp<ViewStyle>;
   iconStyle?: StyleProp<TextStyle>;
 }
-const SwapIcon = ({size = 20, style, iconStyle}: SwapIconProps) => {
+const SwapIcon = ({ size = 20, style, iconStyle }: SwapIconProps) => {
   return (
     <View
       style={[
@@ -28,7 +27,8 @@ const SwapIcon = ({size = 20, style, iconStyle}: SwapIconProps) => {
           borderRadius: size / 2 + size / 3,
         },
         style,
-      ]}>
+      ]}
+    >
       <Icon
         name="swap"
         type="custom"

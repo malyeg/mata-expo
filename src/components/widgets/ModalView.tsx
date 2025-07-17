@@ -1,4 +1,5 @@
-import React, {FC, useCallback, useEffect} from 'react';
+import theme from "@/styles/theme";
+import React, { FC, useCallback } from "react";
 import {
   Pressable,
   StatusBar,
@@ -6,10 +7,9 @@ import {
   Text,
   View,
   ViewProps,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import theme from '../../styles/theme';
-import {Icon} from '../core';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Icon } from "../core";
 
 interface ModalViewProps extends ViewProps {
   title?: string;
@@ -24,7 +24,7 @@ const ModalView: FC<ModalViewProps> = ({
   onClose,
 }) => {
   const onBack = useCallback(() => {
-    console.log('onmodal bacck');
+    console.log("onmodal bacck");
     if (onClose) {
       onClose();
     }
@@ -32,7 +32,8 @@ const ModalView: FC<ModalViewProps> = ({
   return (
     <SafeAreaView
       style={[styles.container, style]}
-      edges={['right', 'top', 'left']}>
+      edges={["right", "top", "left"]}
+    >
       <StatusBar
         translucent
         backgroundColor="transparent"
@@ -69,15 +70,15 @@ const styles = StyleSheet.create({
   },
 
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   modalTitleContainer: {
     // alignSelf: 'flex-end',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingRight: 35,
   },
   modalTitle: {

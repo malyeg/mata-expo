@@ -1,17 +1,17 @@
-import React, {useRef, useState} from 'react';
-import {Pressable, StyleSheet, View, ViewProps} from 'react-native';
-import MapView, {MapEvent, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, { useRef, useState } from "react";
+import { Pressable, StyleSheet, View, ViewProps } from "react-native";
+import MapView, { MapEvent, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import Modal from 'react-native-modal';
-import {useImmer} from 'use-immer';
-import locationApi, {Coordinate, Location} from '../../api/locationApi';
-import constants from '../../config/constants';
-import useAuth from '../../hooks/useAuth';
-import useLocale from '../../hooks/useLocale';
-import useController from '../../hooks/userController';
-import {Button, Modal} from '../core';
-import {Error, KeyboardView} from '../form';
-import LocationSearch from './LocationSearch';
+import locationApi, { Coordinate, Location } from "@/api/locationApi";
+import constants from "@/config/constants";
+import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
+import useController from "@/hooks/userController";
+import { useImmer } from "use-immer";
+import { Button, Modal } from "../core";
+import { Error, KeyboardView } from "../form";
+import LocationSearch from "./LocationSearch";
 
 const summaryDelta = {
   latitudeDelta: 1,
@@ -27,12 +27,12 @@ interface LocationSelectorProps extends ViewProps {
   name?: string;
   defaultValue?: Location;
   onChange?: (location: Location) => void;
-  onModalChange?: (status: 'opened' | 'closed') => void;
+  onModalChange?: (status: "opened" | "closed") => void;
   initialRegion?: Coordinate;
-  summaryLocationDelta?: {latitudeDelta: number; longitudeDelta: number};
+  summaryLocationDelta?: { latitudeDelta: number; longitudeDelta: number };
 }
 const LocationSelector = ({
-  name = 'location',
+  name = "location",
   onChange,
   style,
   defaultValue,
@@ -41,15 +41,15 @@ const LocationSelector = ({
   control,
   summaryLocationDelta,
 }: LocationSelectorProps) => {
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [location, setLocation] = useImmer<Location>(defaultValue!);
   const mapSummaryRef = useRef<any>();
   const mapDetailsRef = useRef<any>();
-  const {profile} = useAuth();
-  const {bottom} = useSafeAreaInsets();
+  const { profile } = useAuth();
+  const { bottom } = useSafeAreaInsets();
 
-  const {field, formState} = useController({
+  const { field, formState } = useController({
     control,
     name,
     defaultValue,
@@ -58,36 +58,36 @@ const LocationSelector = ({
   const openModal = () => {
     setModalVisible(true);
     if (onModalChange) {
-      onModalChange('opened');
+      onModalChange("opened");
     }
   };
   const closeModal = () => {
     setModalVisible(false);
     if (onModalChange) {
-      onModalChange('closed');
+      onModalChange("closed");
     }
   };
   const onConfirm = async () => {
     let loc = await locationApi.getLocationFrom(location.coordinate);
     if (!loc) {
-      loc = {...location};
+      loc = { ...location };
     }
     field.value = loc;
     field.onChange(loc);
-    updateMap(loc.coordinate, 'summary');
+    updateMap(loc.coordinate, "summary");
     if (onChange) {
       onChange(loc);
     }
     setModalVisible(false);
     if (onModalChange) {
-      onModalChange('closed');
+      onModalChange("closed");
     }
   };
   const onSelectMarker = (
     event: MapEvent<{
       placeId?: string;
       name?: string;
-    }>,
+    }>
   ) => {
     onSelectLocation(event);
   };
@@ -96,12 +96,12 @@ const LocationSelector = ({
     event: MapEvent<{
       placeId?: string;
       name?: string;
-    }>,
+    }>
   ) => {
     const loc = await locationApi.getLocationFrom(event.nativeEvent.coordinate);
     if (loc) {
       setLocation(loc);
-      updateMap(loc.coordinate, 'details');
+      updateMap(loc.coordinate, "details");
     }
     // TODO handle null loc
   };
@@ -111,15 +111,15 @@ const LocationSelector = ({
       longitude: loc.coordinate.longitude,
       ...summaryDelta,
     };
-    updateMap(newCords, 'details');
+    updateMap(newCords, "details");
     setLocation(loc);
   };
-  const updateMap = (coords: Coordinate, type: 'summary' | 'details') => {
-    const ref = type === 'details' ? mapDetailsRef : mapSummaryRef;
+  const updateMap = (coords: Coordinate, type: "summary" | "details") => {
+    const ref = type === "details" ? mapDetailsRef : mapSummaryRef;
 
-    const delta = type === 'details' ? detailsDelta : summaryDelta;
-    ref.current.fitToSuppliedMarkers({...coords, ...delta});
-    ref.current.animateToRegion({...coords, ...delta}, 1000);
+    const delta = type === "details" ? detailsDelta : summaryDelta;
+    ref.current.fitToSuppliedMarkers({ ...coords, ...delta });
+    ref.current.animateToRegion({ ...coords, ...delta }, 1000);
   };
 
   return (
@@ -149,9 +149,10 @@ const LocationSelector = ({
           }
           initialRegion={
             initialRegion
-              ? {...constants.maps.DEFAULT_LOCATION, ...initialRegion}
+              ? { ...constants.maps.DEFAULT_LOCATION, ...initialRegion }
               : constants.maps.DEFAULT_LOCATION
-          }>
+          }
+        >
           {!!location?.coordinate && (
             <Marker coordinate={location.coordinate} />
           )}
@@ -160,13 +161,14 @@ const LocationSelector = ({
       {formState.errors[name] && <Error error={formState.errors[name]} />}
       <Modal
         position="full"
-        title={t('location.title')}
+        title={t("location.title")}
         isVisible={isModalVisible}
         onClose={closeModal}
         bodyStyle={styles.modalContainer}
         showHeaderNav
-        containerStyle={{paddingBottom: 0}}
-        propagateSwipe>
+        containerStyle={{ paddingBottom: 0 }}
+        propagateSwipe
+      >
         <LocationSearch
           style={styles.search}
           initialLocation={location}
@@ -196,12 +198,13 @@ const LocationSelector = ({
                   ...initialRegion,
                   ...summaryLocationDelta,
                 }
-              : {...constants.maps.DEFAULT_LOCATION, ...summaryLocationDelta}
+              : { ...constants.maps.DEFAULT_LOCATION, ...summaryLocationDelta }
           }
           // zoomControlEnabled={true}
           zoomTapEnabled={true}
           onPress={onSelectLocation}
-          onPoiClick={onSelectMarker}>
+          onPoiClick={onSelectMarker}
+        >
           {!!location?.coordinate && (
             <Marker
               coordinate={location.coordinate}
@@ -215,7 +218,8 @@ const LocationSelector = ({
             {
               marginBottom: bottom,
             },
-          ]}>
+          ]}
+        >
           <Button title="confirm" onPress={onConfirm} />
         </KeyboardView>
       </Modal>
@@ -242,12 +246,12 @@ const styles = StyleSheet.create({
   modal: {
     margin: 0,
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   confirmButtonContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
+    width: "100%",
     zIndex: 3000,
     paddingHorizontal: 20,
   },

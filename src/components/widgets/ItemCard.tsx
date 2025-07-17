@@ -1,13 +1,13 @@
-import {useNavigation} from '@react-navigation/core';
-import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
-import React, {useCallback} from 'react';
-import {Pressable, StyleSheet, View, ViewProps} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import {screens} from '../../config/constants';
-import theme from '../../styles/theme';
-import Analytics from '../../utils/Analytics';
-import {Icon, Image, Text} from '../core';
-import SwapIcon from './SwapIcon';
+import { Item } from "@/api/itemsApi";
+import { screens } from "@/config/constants";
+import theme from "@/styles/theme";
+import Analytics from "@/utils/Analytics";
+import { useNavigation } from "@react-navigation/core";
+import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import React, { useCallback } from "react";
+import { Pressable, StyleSheet, View, ViewProps } from "react-native";
+import { Icon, Image, Text } from "../core";
+import SwapIcon from "./SwapIcon";
 
 const CARD_BORDER = 2;
 const CARD_HEIGHT = 200;
@@ -46,7 +46,7 @@ const ItemCard = ({
   const imageUrl = item.defaultImageURL ?? item?.images[0]?.downloadURL;
 
   const categoryName =
-    item.category?.name.toLowerCase() === 'other' &&
+    item.category?.name.toLowerCase() === "other" &&
     item.category?.path?.length &&
     item.category?.path?.length > 1
       ? item.category?.path[item.category?.path?.length - 2]
@@ -55,7 +55,7 @@ const ItemCard = ({
   return (
     <Pressable style={[styles.card, style]} onPress={openItemDetails}>
       <View style={styles.cardHeader}>
-        {item?.swapOption?.type === 'free' && (
+        {item?.swapOption?.type === "free" && (
           <Icon
             size={30}
             color={theme.colors.salmon}
@@ -69,8 +69,9 @@ const ItemCard = ({
           <View
             style={[
               styles.activityStatusContainer,
-              item.status === 'online' ? styles.onlineBackgroundColor : {},
-            ]}>
+              item.status === "online" ? styles.onlineBackgroundColor : {},
+            ]}
+          >
             <Text style={[styles.activityStatusText]}>{item.status}</Text>
           </View>
         )}
@@ -103,9 +104,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.white,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     marginBottom: 2,
     height: 30,
   },
@@ -115,13 +116,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 11.5,
     borderBottomLeftRadius: 11.5,
     backgroundColor: theme.colors.dark,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   activityStatusText: {
     color: theme.colors.white,
     ...theme.styles.scale.body3,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   onlineBackgroundColor: {
     backgroundColor: theme.colors.green,
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   cardCategory: {
-    justifyContent: 'center',
+    justifyContent: "center",
     borderTopColor: theme.colors.lightGrey,
     borderTopWidth: 2,
     paddingVertical: 3,
@@ -147,9 +148,9 @@ const styles = StyleSheet.create({
     paddingBottom: 3,
   },
   freeImage: {
-    marginRight: 'auto',
+    marginRight: "auto",
     width: 35,
     height: 35,
-    transform: [{rotate: '-10deg'}],
+    transform: [{ rotate: "-10deg" }],
   },
 });

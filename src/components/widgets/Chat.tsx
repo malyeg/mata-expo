@@ -1,23 +1,23 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
+import dealsApi, { Deal } from "@/api/dealsApi";
+import messagesApi, { Message } from "@/api/messagesApi";
+import { useFirestoreSnapshot } from "@/hooks/db/useFirestoreSnapshot";
+import useAuth from "@/hooks/useAuth";
+import useChat from "@/hooks/useChat";
+import theme from "@/styles/theme";
+import { QueryBuilder } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useState } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import {
   Bubble,
+  Message as CMessage,
   Composer,
   GiftedChat,
   IMessage,
   InputToolbar,
-  Message as CMessage,
   Send,
   SystemMessage,
-} from 'react-native-gifted-chat';
-import dealsApi, {Deal} from '../../api/dealsApi';
-import messagesApi, {Message} from '../../api/messagesApi';
-import {useFirestoreSnapshot} from '../../hooks/db/useFirestoreSnapshot';
-import useAuth from '../../hooks/useAuth';
-import useChat from '../../hooks/useChat';
-import theme from '../../styles/theme';
-import {QueryBuilder} from '../../types/DataTypes';
-import {Icon} from '../core';
+} from "react-native-gifted-chat";
+import { Icon } from "../core";
 
 interface ChatProps {
   deal: Deal;
@@ -26,15 +26,15 @@ interface ChatProps {
   alwaysShowSend?: boolean;
 }
 
-const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
-  const {data} = useFirestoreSnapshot<Message>({
+const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
+  const { data } = useFirestoreSnapshot<Message>({
     collectionName: messagesApi.collectionName,
     query: QueryBuilder.from({
-      filters: [{field: 'dealId', value: deal.id}],
-      orderBy: [{field: 'timestamp', direction: 'desc'}],
+      filters: [{ field: "dealId", value: deal.id }],
+      orderBy: [{ field: "timestamp", direction: "desc" }],
     }),
   });
-  const {profile, user} = useAuth();
+  const { profile, user } = useAuth();
   const {
     addMessage,
     toMessage,
@@ -53,18 +53,18 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
 
       if (deal.newMessages && deal.newMessages[profile.id]) {
         const dealNewMessages = deal.newMessages![profile.id];
-        const unSynced = data.filter(i => dealNewMessages.includes(i.id));
+        const unSynced = data.filter((i) => dealNewMessages.includes(i.id));
         if (unSynced && unSynced.length > 0) {
-          const toRemove = data.map(d => d.id);
+          const toRemove = data.map((d) => d.id);
           dealsApi.updateDealMessagesRecieved(deal.id, toRemove);
         }
       }
 
       const freshChatMessages = data
-        ?.filter(m => {
+        ?.filter((m) => {
           const isFilteredSystemMessage =
             m.system &&
-            m.messageType === 'DEAL_CREATED_PROCEED_INSTRUCTIONS' &&
+            m.messageType === "DEAL_CREATED_PROCEED_INSTRUCTIONS" &&
             user.id === m?.user?.id;
           return !isFilteredSystemMessage;
         })
@@ -76,12 +76,12 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
   }, [data]);
 
   const renderSend = useCallback(
-    props => (
+    (props) => (
       <Send {...props} containerStyle={styles.sendContainer}>
         <Icon name="send-circle" color={theme.colors.salmon} size={35} />
       </Send>
     ),
-    [],
+    []
   );
 
   const onSend = useCallback(
@@ -91,18 +91,18 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
       const message = toMessage(lastMessage, deal);
       await addMessage(message, deal);
     },
-    [addMessage, deal, toMessage],
+    [addMessage, deal, toMessage]
   );
 
   const renderBubble = useCallback(
-    props => (
+    (props) => (
       <Bubble
         {...props}
-        textStyle={{right: styles.rightText, left: styles.leftText}}
-        wrapperStyle={{right: styles.rightBubble, left: styles.leftBubble}}
+        textStyle={{ right: styles.rightText, left: styles.leftText }}
+        wrapperStyle={{ right: styles.rightBubble, left: styles.leftBubble }}
       />
     ),
-    [],
+    []
   );
 
   const renderSystemMessage = (props: any) => {
@@ -116,7 +116,7 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
   };
 
   const renderComposer = useCallback(
-    props =>
+    (props) =>
       disableComposer ? (
         <></>
       ) : (
@@ -126,7 +126,7 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
           multiline={true}
         />
       ),
-    [disableComposer],
+    [disableComposer]
   );
 
   // const chatMessages: IMessage[] | undefined = useMemo(
@@ -154,19 +154,19 @@ const Chat = ({deal, disableComposer, style, alwaysShowSend}: ChatProps) => {
       {data && (
         <GiftedChat
           messagesContainerStyle={styles.messagesContainer}
-          timeTextStyle={{right: styles.rightText, left: styles.leftText}}
+          timeTextStyle={{ right: styles.rightText, left: styles.leftText }}
           renderBubble={renderBubble}
           renderSend={renderSend}
           renderMessage={renderMessage}
           messages={chatMessages}
-          renderInputToolbar={props =>
+          renderInputToolbar={(props) =>
             !disableComposer ? (
               <InputToolbar
                 {...props}
                 containerStyle={styles.toolbar}
                 //@ts-ignore
                 textInputProps={{
-                  returnKeyType: 'send',
+                  returnKeyType: "send",
                   // onSubmitEditing: (event: any) => {
                   //   // props.onSend({text: event.nativeEvent.text.trim()}, true);
                   // },
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sendContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   messagesContainer: {},
   rightBubble: {
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     color: theme.colors.dark,
   },
   day: {
-    color: 'red',
+    color: "red",
   },
   textInput: {
     color: theme.colors.dark,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     // borderWidth: 1,
     // bod
-    overflow: 'hidden',
+    overflow: "hidden",
     fontWeight: theme.fontWeight.bold,
   },
 });

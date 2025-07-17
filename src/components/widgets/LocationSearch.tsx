@@ -1,21 +1,21 @@
-import React, {FC, useEffect, useRef} from 'react';
-import {Platform, StyleSheet, TextStyle, View, ViewProps} from 'react-native';
-import Config from 'react-native-config';
+import locationApi, { Location } from "@/api/locationApi";
+import theme from "@/styles/theme";
+import React, { FC, useEffect, useRef } from "react";
+import { Platform, StyleSheet, TextStyle, View, ViewProps } from "react-native";
+import Config from "react-native-config";
 import {
   GooglePlaceData,
   GooglePlaceDetail,
   GooglePlacesAutocomplete,
-} from 'react-native-google-places-autocomplete';
-import locationApi, {Location} from '../../api/locationApi';
-import theme from '../../styles/theme';
-import {Icon} from '../core';
+} from "react-native-google-places-autocomplete";
+import { Icon } from "../core";
 
 const defaultQuery: {
   components: string;
   language?: string;
 } = {
-  language: 'en',
-  components: 'country:nz', // TODO set country from profile if exists
+  language: "en",
+  components: "country:nz", // TODO set country from profile if exists
 };
 interface LocationSearchProps extends ViewProps {
   initialLocation?: Location;
@@ -44,7 +44,7 @@ const LocationSearch: FC<LocationSearchProps> = ({
 
   const setLocation = async (
     data: GooglePlaceData,
-    detail: GooglePlaceDetail | null,
+    detail: GooglePlaceDetail | null
   ) => {
     if (detail) {
       const newLoc = await locationApi.buildLocationFromPlace(detail);
@@ -61,12 +61,12 @@ const LocationSearch: FC<LocationSearchProps> = ({
         onChange(location);
       }
     } else {
-      console.log('location permission denied');
+      console.log("location permission denied");
     }
   };
 
   const clear = () => {
-    ref.current?.setAddressText('');
+    ref.current?.setAddressText("");
   };
 
   const IconsComponent = () => (
@@ -93,8 +93,8 @@ const LocationSearch: FC<LocationSearchProps> = ({
       <GooglePlacesAutocomplete
         ref={ref}
         styles={{
-          container: {...styles.inputContainer, ...(style as {})},
-          textInput: {...styles.textInput, ...(textStyle as {})},
+          container: { ...styles.inputContainer, ...(style as {}) },
+          textInput: { ...styles.textInput, ...(textStyle as {}) },
           listView: styles.listView,
         }}
         placeholder="Search"
@@ -102,11 +102,11 @@ const LocationSearch: FC<LocationSearchProps> = ({
         onPress={setLocation}
         query={{
           key:
-            Platform.OS === 'ios'
+            Platform.OS === "ios"
               ? Config.GOOGLE_MAPS_IOS_API_KEY
               : Config.GOOGLE_MAPS_ANDROID_API_KEY,
           components:
-            'country:' + query?.countryCode?.toLowerCase() ??
+            "country:" + query?.countryCode?.toLowerCase() ??
             defaultQuery.components,
           language: query?.language ?? defaultQuery.language,
         }}
@@ -114,7 +114,7 @@ const LocationSearch: FC<LocationSearchProps> = ({
         renderRightButton={IconsComponent}
         // listViewDisplayed={listViewDisplayed ? 'auto' : false}
         textInputProps={{
-          clearButtonMode: 'never',
+          clearButtonMode: "never",
         }}
       />
     </View>
@@ -125,12 +125,12 @@ export default React.memo(LocationSearch);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   inputContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     flex: 0,
   },
   listView: {
@@ -141,9 +141,9 @@ const styles = StyleSheet.create({
   },
   iconsContainer: {
     zIndex: 2000,
-    flexDirection: 'row',
-    position: 'absolute',
-    alignSelf: 'center',
+    flexDirection: "row",
+    position: "absolute",
+    alignSelf: "center",
     // backgroundColor: 'grey',
     right: 5,
   },

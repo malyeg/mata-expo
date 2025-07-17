@@ -1,8 +1,8 @@
-import React from 'react';
-import {StyleSheet, View, ViewProps} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleSheet, View, ViewProps } from "react-native";
+import { Icon, Text } from "../core";
 
 interface NoDataFoundProps extends ViewProps {
   horizontal?: boolean;
@@ -14,14 +14,14 @@ interface NoDataFoundProps extends ViewProps {
 const NoDataFound = ({
   title,
   body,
-  icon = 'magnify',
+  icon = "magnify",
   style,
   children,
 }: NoDataFoundProps) => {
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
   return (
     <View style={[styles.container, style]}>
-      {icon !== '' && (
+      {icon !== "" && (
         <Icon
           style={styles.icon}
           name={icon}
@@ -29,14 +29,14 @@ const NoDataFound = ({
           size={70}
         />
       )}
-      {title !== '' && (
+      {title !== "" && (
         <Text h5 style={styles.title}>
-          {title ?? t('noData.title')}
+          {title ?? t("noData.title")}
         </Text>
       )}
       {children ?? (
         <Text h6 style={styles.subTitle} numberOfLines={2}>
-          {body ?? t('noData.subTitle')}
+          {body ?? t("noData.subTitle")}
         </Text>
       )}
     </View>
@@ -47,15 +47,15 @@ export default React.memo(NoDataFound);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     color: theme.colors.green,
   },
   subTitle: {
-    alignItems: 'center',
-    textAlign: 'center',
+    alignItems: "center",
+    textAlign: "center",
   },
   icon: {},
 });

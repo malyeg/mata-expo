@@ -1,15 +1,15 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import {
   Menu,
-  MenuOptions,
   MenuOption,
+  MenuOptions,
   MenuTrigger,
-} from 'react-native-popup-menu';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
-import {IconProps} from '../core/Icon';
-import HeaderNav from './HeaderNav';
+} from "react-native-popup-menu";
+import { Icon, Text } from "../core";
+import { IconProps } from "../core/Icon";
+import HeaderNav from "./HeaderNav";
 
 export interface MenuItem {
   label: string;
@@ -26,14 +26,14 @@ interface HeaderProps {
   };
   children?: React.ReactNode;
 }
-const Header = ({title, options, route, menu, ...props}: HeaderProps) => {
+const Header = ({ title, options, route, menu, ...props }: HeaderProps) => {
   return (
     <>
       <View style={styles.container}>
         <HeaderNav style={styles.nav} route={route} {...props} />
         <Text style={styles.title} h5 numberOfLines={1}>
           {title ??
-            (route?.params as {title: string})?.title ??
+            (route?.params as { title: string })?.title ??
             options?.headerTitle ??
             route.name}
         </Text>
@@ -53,7 +53,8 @@ const Header = ({title, options, route, menu, ...props}: HeaderProps) => {
                   <MenuOption
                     key={index}
                     onSelect={item.onPress}
-                    style={styles.menuItem}>
+                    style={styles.menuItem}
+                  >
                     {!!item.icon && (
                       <Icon
                         {...item.icon}
@@ -77,9 +78,9 @@ export default React.memo(Header);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     // height: 20,
     paddingVertical: 10,
     paddingHorizontal: 40,
@@ -90,20 +91,20 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.semiBold,
   },
   nav: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
   },
   rightContainer: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
   },
   menuContainer: {
-    position: 'absolute',
+    position: "absolute",
     // top: 0,
     right: 0,
-    flexDirection: 'row-reverse',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row-reverse",
+    justifyContent: "center",
+    alignItems: "center",
     // width: 200,
     // height: 200,
     // backgroundColor: 'red',
@@ -113,11 +114,11 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   menuItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingLeft: 15,
     paddingVertical: 10,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
   },
   menuItemText: {
     marginLeft: 20,

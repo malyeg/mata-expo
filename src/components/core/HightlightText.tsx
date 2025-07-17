@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { StyleProp, StyleSheet, Text, TextStyle } from 'react-native';
-import sharedStyles from '../../styles/SharedStyles';
+import sharedStyles from "@/styles/SharedStyles";
+import React, { ReactNode } from "react";
+import { StyleProp, StyleSheet, Text, TextStyle } from "react-native";
 
 interface HightlightTextProps {
   text: string;
@@ -18,9 +18,9 @@ const HightlightText = ({
   ignoreCase,
   children,
 }: HightlightTextProps) => {
-  let flags = 'gm';
+  let flags = "gm";
   if (ignoreCase) {
-    flags = flags + 'i';
+    flags = flags + "i";
   }
   const regex = new RegExp(`(${textToHightlight})`, flags);
   const parts = text.split(regex);
@@ -45,6 +45,6 @@ export default HightlightText;
 
 const styles = StyleSheet.create({
   highlightedText: {
-    fontWeight: '900',
+    fontWeight: "900",
   },
 });

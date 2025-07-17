@@ -1,4 +1,7 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import { ApiResponse } from "@/api/Api";
+import theme from "@/styles/theme";
+import { Entity } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -6,17 +9,14 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
-import {useImmerReducer} from 'use-immer';
-import {ApiResponse} from '../../api/Api';
-import theme from '../../styles/theme';
-import {Entity} from '../../types/DataTypes';
-import dataListReducer, {DataListInitState} from './dataListReducer';
-import ListLoader from './ListLoader';
-import NoDataFound from './NoDataFound';
+} from "react-native";
+import { useImmerReducer } from "use-immer";
+import dataListReducer, { DataListInitState } from "./dataListReducer";
+import ListLoader from "./ListLoader";
+import NoDataFound from "./NoDataFound";
 
 export interface DataListProps<T>
-  extends Omit<FlatListProps<T>, 'data' | 'onEndReached'> {
+  extends Omit<FlatListProps<T>, "data" | "onEndReached"> {
   data:
     | ApiResponse<T>
     | ((lastDoc?: any) => Promise<ApiResponse<T> | undefined>);
@@ -57,14 +57,14 @@ function DataList<T extends Entity>({
     lastDoc: undefined,
   };
   const [state, dispatch] = useImmerReducer(dataListReducer, initialState);
-  const {loading, reloading, items, lastDoc, hasMore} = state;
+  const { loading, reloading, items, lastDoc, hasMore } = state;
 
   useEffect(() => {
     const initData = async () => {
       if (data instanceof Function) {
         const response = await data();
         dispatch({
-          type: 'SET_ITEMS',
+          type: "SET_ITEMS",
           items: response?.items,
           lastDoc:
             response?.items?.length === response?.query?.limit
@@ -73,7 +73,7 @@ function DataList<T extends Entity>({
         });
       } else {
         dispatch({
-          type: 'SET_ITEMS',
+          type: "SET_ITEMS",
           items: data.items,
           lastDoc: data.lastDoc,
         });
@@ -91,7 +91,7 @@ function DataList<T extends Entity>({
         index,
       };
     },
-    [itemSize],
+    [itemSize]
   );
 
   const keyExtractorHandler = useCallback((item: T) => {
@@ -99,14 +99,14 @@ function DataList<T extends Entity>({
   }, []);
 
   const loadMoreHandler = useMemo(
-    () => async (info: {distanceFromEnd: number}) => {
+    () => async (info: { distanceFromEnd: number }) => {
       if (!pageable && onEndReached) {
         onEndReached(info, items?.length);
         return;
       }
       if (pageable && !reloading && !!lastDoc) {
         dispatch({
-          type: 'SET_RELOADING',
+          type: "SET_RELOADING",
           reloading: true,
         });
         const response: ApiResponse<T> = await (data as Function)(lastDoc);
@@ -118,18 +118,18 @@ function DataList<T extends Entity>({
             response.items?.length === response?.query?.limit;
 
           dispatch({
-            type: 'LOAD_MORE_ITEMS',
+            type: "LOAD_MORE_ITEMS",
             items: response.items,
             lastDoc: hasMoreData ? response.lastDoc : undefined,
           });
         } else {
           dispatch({
-            type: 'FINISH_LOADING',
+            type: "FINISH_LOADING",
           });
         }
       }
     },
-    [dispatch, items, data, lastDoc, onEndReached, pageable, reloading],
+    [dispatch, items, data, lastDoc, onEndReached, pageable, reloading]
   );
 
   const ListFooter = useCallback(() => {
@@ -138,7 +138,8 @@ function DataList<T extends Entity>({
         style={[
           styles.listFooter,
           horizontal ? styles.horizontalFooter : undefined,
-        ]}>
+        ]}
+      >
         <ActivityIndicator color={theme.colors.salmon} size="large" />
       </View>
     ) : null;
@@ -155,7 +156,7 @@ function DataList<T extends Entity>({
 
   const separatorHandler = useCallback(
     () => <View style={horizontal ? styles.hSeparator : styles.vSeparator} />,
-    [horizontal],
+    [horizontal]
   );
 
   return !loading ? (
@@ -165,7 +166,8 @@ function DataList<T extends Entity>({
           styles.container,
           horizontal ? styles.horizontal : styles.vertical,
           containerStyle,
-        ]}>
+        ]}
+      >
         {HeaderComponent}
         <FlatList
           {...props}
@@ -211,8 +213,8 @@ const styles = StyleSheet.create({
   },
   listActivityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   noData: {
     flex: 1,
@@ -220,8 +222,8 @@ const styles = StyleSheet.create({
   listFooter: {},
   horizontalFooter: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   vSeparator: {
     flex: 1,

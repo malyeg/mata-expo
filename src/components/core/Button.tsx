@@ -1,36 +1,36 @@
-import React, {useCallback} from 'react';
+import sharedStyles from "@/styles/SharedStyles";
+import theme, { ColorProps } from "@/styles/theme";
+import React, { useCallback } from "react";
 import {
   GestureResponderEvent,
   StyleProp,
   StyleSheet,
   TextStyle,
   ViewStyle,
-} from 'react-native';
-import sharedStyles from '../../styles/SharedStyles';
-import theme, {ColorProps} from '../../styles/theme';
-import Icon, {IconProps} from './Icon';
-import PressableOpacity, {PressableOpacityProps} from './PressableOpacity';
-import Text from './Text';
+} from "react-native";
+import Icon, { IconProps } from "./Icon";
+import PressableOpacity, { PressableOpacityProps } from "./PressableOpacity";
+import Text from "./Text";
 
 // interface AppButtonProps extends ButtonProps {}
 
 export interface ButtonProps extends ColorProps, PressableOpacityProps {
   title: string;
   icon?: IconProps;
-  themeType?: 'primary' | 'secondary' | 'dark' | 'white';
-  metaData?: {[key: string]: unknown};
+  themeType?: "primary" | "secondary" | "dark" | "white";
+  metaData?: { [key: string]: unknown };
   textStyle?: StyleProp<TextStyle>;
   iconStyle?: StyleProp<TextStyle>;
-  type?: 'button' | 'link';
+  type?: "button" | "link";
 }
 
 const AppButton = ({
   disabled,
-  themeType = 'primary',
+  themeType = "primary",
   textStyle,
   iconStyle,
   icon,
-  type = 'button',
+  type = "button",
   onPress,
   ...props
 }: ButtonProps) => {
@@ -42,12 +42,12 @@ const AppButton = ({
         onPress(event);
       }
     },
-    [disabled, onPress],
+    [disabled, onPress]
   );
 
   const themeStyle = styles[themeType] ?? {};
   const themeTextStyle =
-    themeType === 'white' ? styles.darkText : styles.whiteText;
+    themeType === "white" ? styles.darkText : styles.whiteText;
 
   const styleList = [
     styles.container,
@@ -62,9 +62,10 @@ const AppButton = ({
       {...props}
       onPress={onPressHandler}
       disabled={disabled}
-      style={type === 'link' ? props.style : styleList}>
+      style={type === "link" ? props.style : styleList}
+    >
       {icon && <Icon style={[styles.icon, iconStyle]} {...icon} />}
-      <Text button style={type === 'link' ? styleLinkText : styleTextList}>
+      <Text button style={type === "link" ? styleLinkText : styleTextList}>
         {title}
       </Text>
     </PressableOpacity>
@@ -73,12 +74,12 @@ const AppButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: theme.colors.salmon,
     // width: '100%',
     borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 66,
   },
   text: {
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
   },
   icon: {
-    position: 'absolute',
+    position: "absolute",
     left: 30,
   },
 });

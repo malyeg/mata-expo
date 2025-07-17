@@ -1,18 +1,16 @@
-import React from 'react';
-import {StyleProp, ViewStyle} from 'react-native';
-import {StyleSheet, View} from 'react-native';
-import useNavigationHelper from '../../hooks/useNavigationHelper';
-import {EDIT_PROFILE_SCREEN_NAME} from '../../screens/EditProfileScreen';
-import theme from '../../styles/theme';
-import {Button, Icon, Text} from '../core';
+import theme from "@/styles/theme";
+import { useRouter } from "expo-router";
+import React from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Button, Icon, Text } from "../core";
 
 interface UpdateProfileCardProps {
   style?: StyleProp<ViewStyle>;
 }
-const UpdateProfileCard = ({style}: UpdateProfileCardProps) => {
-  const {navigation} = useNavigationHelper();
+const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
+  const router = useRouter();
   const openEditProfileScreen = () => {
-    navigation.navigate(EDIT_PROFILE_SCREEN_NAME);
+    router.push("/edit-profile");
   };
   return (
     <View style={[styles.container, style]}>
@@ -20,7 +18,7 @@ const UpdateProfileCard = ({style}: UpdateProfileCardProps) => {
         name="alert-circle"
         style={styles.alertIcon}
         color={theme.colors.pictonBlue}
-        bgColor={'red'}
+        bgColor={"red"}
       />
       <View style={styles.updateTextContainer}>
         <Text style={styles.updateText}>
@@ -43,12 +41,12 @@ export default React.memo(UpdateProfileCard);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderRadius: 7,
     borderWidth: 1,
     height: 45,
-    alignContent: 'space-between',
-    alignItems: 'center',
+    alignContent: "space-between",
+    alignItems: "center",
 
     borderColor: theme.colors.pictonBlue,
     backgroundColor: theme.colors.lightPictonBlue,

@@ -1,4 +1,4 @@
-import {Entity, Nestable} from '../../../types/DataTypes';
+import { Entity, Nestable } from "@/../types/DataTypes";
 
 export type PickerItem = Entity & Nestable;
 export type PickerState<T extends PickerItem = PickerItem> = {
@@ -14,26 +14,26 @@ export type PickerState<T extends PickerItem = PickerItem> = {
 };
 
 interface LoadItemsAction<T extends PickerItem> {
-  type: 'LOAD_ITEMS';
+  type: "LOAD_ITEMS";
   items: T[];
   defaultValue?: string;
 }
 interface BackAction {
-  type: 'BACK';
+  type: "BACK";
 }
 
 interface SelectItemAction<T extends PickerItem> {
-  type: 'SELECT_ITEM';
+  type: "SELECT_ITEM";
   item: T;
   closeModal: boolean;
 }
 
 interface SearchItemsAction {
-  type: 'SEARCH_ITEMS';
+  type: "SEARCH_ITEMS";
   search: string;
 }
 interface ResetItemsAction<T extends PickerItem> {
-  type: 'RESET_ITEMS';
+  type: "RESET_ITEMS";
   items: T[];
 }
 
@@ -56,23 +56,23 @@ type PickerAction<T extends PickerItem> =
   | ResetItemsAction<T>;
 
 const getRootItems = (items: PickerItem[]) => {
-  return items.filter(i => i.level === 0);
+  return items.filter((i) => i.level === 0);
 };
 
 const onLoadItems = (
   state: PickerState,
-  action: LoadItemsAction<PickerItem>,
+  action: LoadItemsAction<PickerItem>
 ) => {
   state.defaultItem = undefined;
   state.selectedItem = undefined;
   state.items = action.items;
   state.listItems = state.multiLevel
-    ? action.items.filter(i => (i as unknown as Nestable).level === 0)
+    ? action.items.filter((i) => (i as unknown as Nestable).level === 0)
     : [...action.items];
   state.searchValue = undefined;
 
   if (action.defaultValue) {
-    const foundItem = state.items.find(item => {
+    const foundItem = state.items.find((item) => {
       return item.id.toString() === action.defaultValue?.toString();
     });
     // eslint-disable-next-line no-extra-boolean-cast
@@ -92,7 +92,7 @@ const onBack = <T extends PickerItem>(state: PickerState<T>) => {
     state.path.pop();
     const lastItem = state.path[state.path.length - 1];
     if (lastItem) {
-      state.listItems = state.items.filter(i => i.parent === lastItem.id);
+      state.listItems = state.items.filter((i) => i.parent === lastItem.id);
     }
   } else if (state.path.length === 1) {
     state.path = [];
@@ -109,8 +109,8 @@ const onSearch = (state: PickerState, action: SearchItemsAction) => {
   }
   const pathItem = state.path[state.path.length - 1];
   let filteredItems;
-  if (!!searchValue && searchValue.trim() !== '') {
-    filteredItems = state.items.filter(item => {
+  if (!!searchValue && searchValue.trim() !== "") {
+    filteredItems = state.items.filter((item) => {
       if (!state.multiLevel) {
         return item.name?.toLowerCase().includes(searchValue.toLowerCase());
       } else if (pathItem) {
@@ -127,7 +127,7 @@ const onSearch = (state: PickerState, action: SearchItemsAction) => {
     });
   } else {
     if (state.multiLevel) {
-      filteredItems = state.items.filter(item => {
+      filteredItems = state.items.filter((item) => {
         return pathItem ? pathItem.id === item.parent : item.level === 0;
       });
     } else {
@@ -142,14 +142,14 @@ const onSearch = (state: PickerState, action: SearchItemsAction) => {
 
 const onSelectItem = (
   state: PickerState,
-  action: SelectItemAction<PickerItem>,
+  action: SelectItemAction<PickerItem>
 ) => {
   state.selectedItem = action.item;
   const selectedItem = action.item as unknown as Nestable;
   state.searchValue = undefined;
   if (state.multiLevel && selectedItem.level !== -1) {
     const childItems = state.items.filter(
-      i => (i as unknown as Nestable).parent === action.item.id,
+      (i) => (i as unknown as Nestable).parent === action.item.id
     );
     if (childItems) {
       state.listItems = childItems;
@@ -165,18 +165,18 @@ const onSelectItem = (
 
 function pickerReducer<T extends PickerItem = PickerItem>(
   state: PickerState,
-  action: PickerAction<T>,
+  action: PickerAction<T>
 ) {
   switch (action.type) {
-    case 'LOAD_ITEMS':
+    case "LOAD_ITEMS":
       return onLoadItems(state, action);
-    case 'BACK':
+    case "BACK":
       return onBack(state);
-    case 'SEARCH_ITEMS':
+    case "SEARCH_ITEMS":
       return onSearch(state, action);
-    case 'SELECT_ITEM':
+    case "SELECT_ITEM":
       return onSelectItem(state, action);
-    case 'RESET_ITEMS':
+    case "RESET_ITEMS":
       state.listItems = [...action.items];
       return state;
     default:

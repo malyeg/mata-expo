@@ -1,4 +1,5 @@
-import React, {ReactNode} from 'react';
+import theme from "@/styles/theme";
+import React, { ReactNode } from "react";
 import {
   Platform,
   Pressable,
@@ -7,9 +8,8 @@ import {
   View,
   ViewProps,
   ViewStyle,
-} from 'react-native';
-import theme from '../../styles/theme';
-import Icon, {IconProps} from './Icon';
+} from "react-native";
+import Icon, { IconProps } from "./Icon";
 
 interface CardProps extends ViewProps {
   icon?: IconProps;
@@ -18,11 +18,12 @@ interface CardProps extends ViewProps {
   contentStyle?: StyleProp<ViewStyle>;
   hideChevron?: boolean;
 }
-const Card = ({style, icon, onPress, ...props}: CardProps) => {
+const Card = ({ style, icon, onPress, ...props }: CardProps) => {
   return onPress !== undefined ? (
     <Pressable
       style={[styles.container, style, icon ? styles.hasIcon : {}]}
-      onPress={onPress}>
+      onPress={onPress}
+    >
       <CardBody icon={icon} onPress={onPress} {...props} />
     </Pressable>
   ) : (
@@ -32,7 +33,7 @@ const Card = ({style, icon, onPress, ...props}: CardProps) => {
   );
 };
 
-const CardBody = ({hideChevron, icon, children, onPress}: CardProps) => {
+const CardBody = ({ hideChevron, icon, children, onPress }: CardProps) => {
   return (
     <>
       {!!icon && (
@@ -61,8 +62,8 @@ export default React.memo(Card);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderRadius: 10,
     paddingHorizontal: 5,
     paddingVertical: 5,
@@ -72,13 +73,13 @@ const styles = StyleSheet.create({
     ...Platform.select({
       ios: {
         shadowColor: theme.colors.grey,
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
       },
       android: {
         shadowColor: theme.colors.grey,
-        shadowOffset: {width: 1, height: 1},
+        shadowOffset: { width: 1, height: 1 },
         shadowOpacity: 0.3,
         elevation: 3,
       },
@@ -90,7 +91,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   chevron: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
   },
   hasIcon: {
     // marginRight: 'auto',

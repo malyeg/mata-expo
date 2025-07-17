@@ -1,12 +1,12 @@
-import React, {useCallback, useMemo} from 'react';
-import {StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import itemsApi, {Item, ItemStatus} from '../../api/itemsApi';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Document, Operation, QueryBuilder} from '../../types/DataTypes';
-import {Text} from '../core';
-import DataList from './DataList';
-import ItemCard from './ItemCard';
+import itemsApi, { Item, ItemStatus } from "@/api/itemsApi";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Document, Operation, QueryBuilder } from "@/types/DataTypes";
+import React, { useMemo } from "react";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { Text } from "../core";
+import DataList from "./DataList";
+import ItemCard from "./ItemCard";
 
 const CARD_BORDER = 2;
 const CARD_HEIGHT = 200;
@@ -16,21 +16,21 @@ interface ItemListProps {
   item: Item;
   style?: StyleProp<ViewStyle>;
 }
-const OwnerItems = ({item, style}: ItemListProps) => {
-  const {t} = useLocale('itemDetailsScreen');
+const OwnerItems = ({ item, style }: ItemListProps) => {
+  const { t } = useLocale("itemDetailsScreen");
   const listHeaderComponent = useMemo(
-    () => <Text style={styles.ownerHeaderText}>{t('ownerItemsTitle')}</Text>,
+    () => <Text style={styles.ownerHeaderText}>{t("ownerItemsTitle")}</Text>,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    []
   );
 
   const loadData = useMemo(
     () => async (doc?: Document<Item>) => {
       try {
         const filters = [
-          {field: 'userId', value: item.userId},
-          {field: 'id', value: item?.id, operation: Operation.NOT_EQUAL},
-          {field: 'status', value: 'online' as ItemStatus},
+          { field: "userId", value: item.userId },
+          { field: "id", value: item?.id, operation: Operation.NOT_EQUAL },
+          { field: "status", value: "online" as ItemStatus },
         ];
         const query = new QueryBuilder<Item>()
           .filters(filters)
@@ -42,13 +42,13 @@ const OwnerItems = ({item, style}: ItemListProps) => {
 
         return response;
       } catch (error) {
-        console.error('error', error);
+        console.error("error", error);
       }
     },
-    [item],
+    [item]
   );
 
-  const renderItem = ({item}) => <ItemCard item={item} showSwapIcon />;
+  const renderItem = ({ item }) => <ItemCard item={item} showSwapIcon />;
 
   return (
     <View style={[styles.container, style]}>
@@ -75,14 +75,14 @@ export default React.memo(OwnerItems);
 const styles = StyleSheet.create({
   container: {},
   header: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    justifyContent: "space-between",
+    flexDirection: "row",
     marginBottom: 10,
   },
   dataListHeight: {
     height: ITEM_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     ...theme.styles.scale.h6,
@@ -104,9 +104,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
     marginBottom: 6,
   },
   eyeIcon: {
@@ -120,17 +120,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardCategory: {
-    justifyContent: 'center',
-    alignItems: 'flex-start',
+    justifyContent: "center",
+    alignItems: "flex-start",
     flex: 1,
-    width: '100%',
+    width: "100%",
     borderTopColor: theme.colors.lightGrey,
     borderTopWidth: 2,
   },
   listActivityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // backgroundColor: 'grey',
   },
   ownerHeaderText: {

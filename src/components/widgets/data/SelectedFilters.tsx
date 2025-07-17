@@ -1,24 +1,23 @@
-import React from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
-import {conditionList} from '../../../api/itemsApi';
-import theme from '../../../styles/theme';
-import {Icon, Text} from '../../core';
-import {ItemsFilterForm} from './ItemsFilter';
+import theme from "@/../styles/theme";
+import { Icon, Text } from "@/core";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { ItemsFilterForm } from "./ItemsFilter";
 
 interface FilterLabelProps {
   filters: ItemsFilterForm;
   onDelete?: (filters: ItemsFilterForm) => void;
 }
-const SelectedFilters = ({filters, onDelete}: FilterLabelProps) => {
+const SelectedFilters = ({ filters, onDelete }: FilterLabelProps) => {
   // const swapTypes = filters.swapTypes
   //   ? swapList.find(s => filters.swapTypes?.includes(s.id))?.name
   //   : undefined;
 
   const deleteItem = (field: keyof ItemsFilterForm) => {
     if (onDelete) {
-      const updatedFilters = {...filters};
+      const updatedFilters = { ...filters };
       delete updatedFilters[field];
-      if (field === 'swapTypes') {
+      if (field === "swapTypes") {
         delete updatedFilters.swapCategory;
       }
       onDelete(updatedFilters);
@@ -29,8 +28,8 @@ const SelectedFilters = ({filters, onDelete}: FilterLabelProps) => {
       {filters.states && filters.states.length > 0 && (
         <FilterComponent
           field="states"
-          value={filters.states.map(s => s.id).join(',')}
-          label={filters.states.map(s => s.name).join(', ')}
+          value={filters.states.map((s) => s.id).join(",")}
+          label={filters.states.map((s) => s.name).join(", ")}
           onDelete={deleteItem}
         />
       )}
@@ -44,8 +43,8 @@ const SelectedFilters = ({filters, onDelete}: FilterLabelProps) => {
       {filters.conditionTypes && filters.conditionTypes.length > 0 && (
         <FilterComponent
           field="conditionTypes"
-          value={filters.conditionTypes.map(s => s.id).join(',')}
-          label={filters.conditionTypes.map(s => s.name).join(', ')}
+          value={filters.conditionTypes.map((s) => s.id).join(",")}
+          label={filters.conditionTypes.map((s) => s.name).join(", ")}
           onDelete={deleteItem}
         />
       )}
@@ -60,8 +59,8 @@ const SelectedFilters = ({filters, onDelete}: FilterLabelProps) => {
       {filters.swapTypes && filters.swapTypes.length > 0 && (
         <FilterComponent
           field="swapTypes"
-          value={filters.swapTypes.map(s => s.id).join(',')}
-          label={filters.swapTypes.map(s => s.name).join(', ')}
+          value={filters.swapTypes.map((s) => s.id).join(",")}
+          label={filters.swapTypes.map((s) => s.name).join(", ")}
           onDelete={deleteItem}
         />
       )}
@@ -108,15 +107,15 @@ export default React.memo(SelectedFilters);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row-reverse',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row-reverse",
+    justifyContent: "flex-start",
+    alignItems: "center",
     marginBottom: 10,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: theme.colors.white,
     marginLeft: 5,
     paddingVertical: 5,

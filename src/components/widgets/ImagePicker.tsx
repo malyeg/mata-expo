@@ -1,17 +1,17 @@
-import storage from '@react-native-firebase/storage';
-import React, {FC, useEffect, useState} from 'react';
-import {ActivityIndicator, StyleSheet, View, ViewProps} from 'react-native';
-import * as ImagePickerBase from 'react-native-image-picker';
-import ImageResizer from 'react-native-image-resizer';
-import itemsApi, {ImageMetadata, ImageSource} from '../../api/itemsApi';
-import useAuth from '../../hooks/useAuth';
-import useLocale from '../../hooks/useLocale';
-import useMountedRef from '../../hooks/useMountRef';
-import useController from '../../hooks/userController';
-import theme from '../../styles/theme';
-import {Icon, Image, Modal, Separator} from '../core';
-import ListItem from '../core/ListItem';
-import PressableOpacity from '../core/PressableOpacity';
+import itemsApi, { ImageMetadata, ImageSource } from "@/api/itemsApi";
+import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
+import useMountedRef from "@/hooks/useMountRef";
+import useController from "@/hooks/userController";
+import theme from "@/styles/theme";
+import storage from "@react-native-firebase/storage";
+import React, { FC, useEffect, useState } from "react";
+import { ActivityIndicator, StyleSheet, View, ViewProps } from "react-native";
+import * as ImagePickerBase from "react-native-image-picker";
+import ImageResizer from "react-native-image-resizer";
+import { Icon, Image, Modal, Separator } from "../core";
+import ListItem from "../core/ListItem";
+import PressableOpacity from "../core/PressableOpacity";
 
 export interface ItemImageProps extends ViewProps {
   name: string;
@@ -28,7 +28,7 @@ export interface ItemImageProps extends ViewProps {
   onPress?: () => boolean | void;
   onUpload?: (
     imageSource: ImageSource,
-    status: 'started' | 'finished',
+    status: "started" | "finished"
   ) => boolean | void;
   onError?: (error?: any) => void;
   isDefault?: boolean;
@@ -36,7 +36,7 @@ export interface ItemImageProps extends ViewProps {
 }
 
 const options: ImagePickerBase.ImageLibraryOptions = {
-  mediaType: 'photo',
+  mediaType: "photo",
   maxHeight: 1000,
   maxWidth: 1000,
 };
@@ -62,18 +62,18 @@ const ImagePicker: FC<ItemImageProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const {user} = useAuth();
+  const { user } = useAuth();
   const mounted = useMountedRef();
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
-  const {field} = useController({
+  const { field } = useController({
     control,
     defaultValue,
     name,
   });
   useEffect(() => {
     let uri = source?.uri ?? source?.downloadURL;
-    const newSource = {...source, uri};
+    const newSource = { ...source, uri };
     if (mounted.current && !!newSource) {
       // setImageSource(newSource);
       field.onChange(newSource);
@@ -109,39 +109,39 @@ const ImagePicker: FC<ItemImageProps> = ({
     const resizedImage = await resizeImage(imageSource);
 
     if (!resizedImage) {
-      console.log('resizedImage empty', resizedImage);
+      console.log("resizedImage empty", resizedImage);
       return;
     }
     if (onUpload) {
-      onUpload(resizedImage!, 'started');
+      onUpload(resizedImage!, "started");
     }
     const task = itemsApi.upload(user.id, resizedImage!);
     let bytesTransferred = 0;
     task.on(
       storage.TaskEvent.STATE_CHANGED,
-      snapshot => {
+      (snapshot) => {
         if (bytesTransferred !== snapshot.bytesTransferred) {
-          console.debug('bytesTransferred', snapshot.bytesTransferred);
+          console.debug("bytesTransferred", snapshot.bytesTransferred);
           bytesTransferred = snapshot.bytesTransferred;
         }
       },
-      error => {
+      (error) => {
         console.log(error);
         if (onError) {
           onError(error);
         }
         setUploading(false);
         if (onUpload) {
-          onUpload(imageSource, 'finished');
+          onUpload(imageSource, "finished");
         }
       },
       async () => {
         let newImageSource: ImageSource | null = null;
         try {
           let downloadURL = await task.snapshot?.ref.getDownloadURL();
-          if (downloadURL?.includes('?')) {
+          if (downloadURL?.includes("?")) {
             downloadURL =
-              downloadURL.substr(0, downloadURL.indexOf('?')) + '?alt=media';
+              downloadURL.substr(0, downloadURL.indexOf("?")) + "?alt=media";
           }
           newImageSource = {
             ...resizedImage,
@@ -164,10 +164,10 @@ const ImagePicker: FC<ItemImageProps> = ({
         } finally {
           setUploading(false);
           if (onUpload) {
-            onUpload(newImageSource ?? imageSource, 'finished');
+            onUpload(newImageSource ?? imageSource, "finished");
           }
         }
-      },
+      }
     );
   };
 
@@ -177,20 +177,20 @@ const ImagePicker: FC<ItemImageProps> = ({
         image.uri!,
         600,
         600,
-        'JPEG',
+        "JPEG",
         100,
         0,
         undefined,
         false,
-        {mode: 'contain', onlyScaleDown: true},
+        { mode: "contain", onlyScaleDown: true }
       );
       if (maxSize && onMaxSize && response.size > maxSize) {
         onMaxSize(maxSize, response.size);
         const error = new Error(`max size (${maxSize}) reached`);
-        (error as any).code = 'storage/imageMaxSize';
+        (error as any).code = "storage/imageMaxSize";
         throw error;
       }
-      return {...image, ...response} as ImageSource;
+      return { ...image, ...response } as ImageSource;
     } catch (error) {
       onError && onError(error);
       throw error;
@@ -203,15 +203,15 @@ const ImagePicker: FC<ItemImageProps> = ({
       return;
     } else if (response.errorCode) {
       console.log(
-        'ImagePicker Error: ',
+        "ImagePicker Error: ",
         response.errorCode,
-        response.errorMessage,
+        response.errorMessage
       );
     }
     if (response.assets && response.assets.length > 0) {
       setUploading(true);
       upload(response.assets[0]).catch(() => {
-        console.log('upload catch');
+        console.log("upload catch");
         setUploading(false);
       });
     }
@@ -243,14 +243,14 @@ const ImagePicker: FC<ItemImageProps> = ({
   };
 
   const openCamera = async () => {
-    console.log('openCamera');
+    console.log("openCamera");
     const results = await ImagePickerBase.launchCamera(
       {
-        mediaType: 'photo',
+        mediaType: "photo",
       },
-      uploadCallback,
+      uploadCallback
     );
-    console.log('openCamera', results);
+    console.log("openCamera", results);
     if (results.assets && results.assets.length > 0) {
       upload(results.assets[0]);
     }
@@ -261,7 +261,8 @@ const ImagePicker: FC<ItemImageProps> = ({
       <PressableOpacity
         activeOpacity={disabled ? 1 : undefined}
         onPress={showOptions}
-        style={[styles.container, props.style]}>
+        style={[styles.container, props.style]}
+      >
         {!!field.value && !field.value?.isTemplate ? (
           <Image source={field.value} style={styles.image} />
         ) : (
@@ -285,11 +286,12 @@ const ImagePicker: FC<ItemImageProps> = ({
         position="bottom"
         onClose={closeModal}
         isVisible={isModalVisible}
-        title={t('imagePicker.imageAction')}>
+        title={t("imagePicker.imageAction")}
+      >
         <View style={styles.modalContainer}>
           {deletable && (
             <ListItem
-              text={t('imagePicker.deleteText')}
+              text={t("imagePicker.deleteText")}
               icon="trash-can-outline"
               iconColor={theme.colors.salmon}
               onPress={deleteImage}
@@ -297,7 +299,7 @@ const ImagePicker: FC<ItemImageProps> = ({
           )}
           <Separator />
           <ListItem
-            text={t('imagePicker.markAsDefaultText')}
+            text={t("imagePicker.markAsDefaultText")}
             style={styles.modalItem}
             icon="check-circle"
             iconColor={theme.colors.green}
@@ -310,17 +312,18 @@ const ImagePicker: FC<ItemImageProps> = ({
         onBackdropPress={() => null}
         onClose={closeOptionsModal}
         isVisible={optionsModalVisible}
-        title={t('imagePicker.optionsModal.title')}>
+        title={t("imagePicker.optionsModal.title")}
+      >
         <View style={styles.modalContainer}>
           <ListItem
-            text={t('imagePicker.optionsModal.galleryText')}
+            text={t("imagePicker.optionsModal.galleryText")}
             icon="camera-image"
             iconColor={theme.colors.salmon}
             onPress={openGallery}
           />
           <Separator />
           <ListItem
-            text={t('imagePicker.optionsModal.cameraText')}
+            text={t("imagePicker.optionsModal.cameraText")}
             icon="camera"
             iconColor={theme.colors.salmon}
             onPress={openCamera}
@@ -335,13 +338,13 @@ const styles = StyleSheet.create({
   container: {
     height: 100,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 6,
     borderColor: theme.colors.grey,
     borderWidth: 0.5,
     backgroundColor: theme.colors.lightGrey,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     flex: 1,
@@ -353,11 +356,11 @@ const styles = StyleSheet.create({
   },
 
   uploading: {
-    position: 'absolute',
+    position: "absolute",
     height: 100,
     width: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     // backgroundColor: 'rgba(0, 0, 0, 0.2)',
     flex: 1,
   },
@@ -379,30 +382,30 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 50,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalNav: {
     left: 0,
-    position: 'absolute',
+    position: "absolute",
     marginHorizontal: -20,
   },
   modalTitle: {
     ...theme.styles.scale.h6,
     fontWeight: theme.fontWeight.semiBold,
     color: theme.colors.salmon,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 20,
   },
   modalItem: {
     // backgroundColor: 'grey',
   },
   starIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 10,
     fontSize: 20,
   },

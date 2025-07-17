@@ -1,15 +1,15 @@
-import React from 'react';
-import {StyleSheet, View, ViewProps} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
+import { Item } from "@/api/itemsApi";
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleSheet, View, ViewProps } from "react-native";
+import { Icon, Text } from "../core";
 
 interface SwapIconProps extends ViewProps {
   item?: Item;
   onPress?: () => void;
   iconSize?: number;
 }
-const SwapIcon = ({item, iconSize = 20, style}: SwapIconProps) => {
+const SwapIcon = ({ item, iconSize = 20, style }: SwapIconProps) => {
   return (
     <View style={[styles.container, style]}>
       <Icon
@@ -31,9 +31,9 @@ export default React.memo(SwapIcon);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
     borderRadius: 12,
     height: 25,
     paddingHorizontal: 7,

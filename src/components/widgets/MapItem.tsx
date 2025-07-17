@@ -1,19 +1,19 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {Marker} from 'react-native-maps';
-import {Item} from '../../api/itemsApi';
-import theme from '../../styles/theme';
-import {BaseViewProps} from '../../types/ReactTypes';
-import {Text} from '../core';
+import { Item } from "@/api/itemsApi";
+import theme from "@/styles/theme";
+import { BaseViewProps } from "@/types/ReactTypes";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { Marker } from "react-native-maps";
+import { Text } from "../core";
 
 interface MapItemProps extends BaseViewProps {
   item: Item;
   onSelectMarker?: (item: Item) => void;
   selected?: boolean;
 }
-const MapItem = ({item, onSelectMarker, selected, style}: MapItemProps) => {
+const MapItem = ({ item, onSelectMarker, selected, style }: MapItemProps) => {
   const onPressMarker = () => {
-    console.log('marker');
+    console.log("marker");
     !!onSelectMarker && onSelectMarker(item);
   };
 
@@ -24,7 +24,8 @@ const MapItem = ({item, onSelectMarker, selected, style}: MapItemProps) => {
       tracksViewChanges={true}
       style={style}
       onPress={onPressMarker}
-      coordinate={item.location?.coordinate!}>
+      coordinate={item.location?.coordinate!}
+    >
       <View style={styles.outerView}>
         {selected ? (
           <View style={[styles.innerView, styles.innerViewSelected]}>
@@ -50,14 +51,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 1,
     borderColor: theme.colors.lightGrey,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   innerView: {
     width: 20,
     height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
   },
   innerViewSelected: {
@@ -78,32 +79,32 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   bubble: {
     backgroundColor: theme.colors.white,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     padding: 10,
     borderRadius: 5,
     // width: 200,
   },
   arrow: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     borderTopColor: theme.colors.white,
     borderWidth: 16,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: -32,
   },
   arrowBorder: {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
+    backgroundColor: "transparent",
+    borderColor: "transparent",
     borderTopColor: theme.colors.white,
     borderWidth: 16,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: -0.5,
   },
   tipName: {
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
 });

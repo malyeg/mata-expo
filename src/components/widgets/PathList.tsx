@@ -1,4 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
+import { Nestable } from "@/types/DataTypes";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   FlatListProps,
@@ -6,22 +9,19 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import sharedStyles from '../../styles/SharedStyles';
-import theme from '../../styles/theme';
-import {Nestable} from '../../types/DataTypes';
-import HightlightText from '../core/HightlightText';
-import Chevron from '../icons/Chevron';
+} from "react-native";
+import HightlightText from "../core/HightlightText";
+import Chevron from "../icons/Chevron";
 
 interface PathListProps<T extends Nestable>
-  extends Omit<FlatListProps<T>, 'renderItem'> {
+  extends Omit<FlatListProps<T>, "renderItem"> {
   data: T[];
   searchText: string;
   keyboardShouldPersistTaps?: boolean;
   onSelect?: (category: T) => void;
 }
 
-const SEPARATOR = ' » ';
+const SEPARATOR = " » ";
 const PathList = <T extends Nestable>({
   searchText,
   data,
@@ -34,16 +34,16 @@ const PathList = <T extends Nestable>({
   useEffect(() => {
     if (!!data && !!searchText) {
       const newItems = data.filter(
-        s =>
+        (s) =>
           !!s.path?.length &&
           s.path?.length > 2 &&
-          s?.path[2].toLowerCase().includes(searchText.toLowerCase()),
+          s?.path[2].toLowerCase().includes(searchText.toLowerCase())
       );
       const newParentItems = data.filter(
-        s =>
+        (s) =>
           !!s.path?.length &&
           s.path?.length === 1 &&
-          s?.path[0].toLowerCase().includes(searchText.toLowerCase()),
+          s?.path[0].toLowerCase().includes(searchText.toLowerCase())
       );
       console.log(newItems?.length, searchText);
       setFilterdItems([...newItems, ...newParentItems]);
@@ -51,11 +51,12 @@ const PathList = <T extends Nestable>({
     }
   }, [data, searchText]);
 
-  const renderItem = ({item}: {item: T}) => {
+  const renderItem = ({ item }: { item: T }) => {
     return (
       <Pressable
         onPress={onSelect ? () => onSelect(item) : undefined}
-        style={styles.itemContainer}>
+        style={styles.itemContainer}
+      >
         <Text style={styles.textContainer}>
           {item.path?.map((path, index) => (
             <HightlightText
@@ -63,13 +64,15 @@ const PathList = <T extends Nestable>({
               text={path}
               textToHightlight={searchText}
               style={styles.pathText}
-              ignoreCase>
+              ignoreCase
+            >
               {index < item.path?.length! - 1 ? (
                 <Text
                   style={[
                     styles.separator,
                     index === 0 ? styles.chevronFirst : undefined,
-                  ]}>
+                  ]}
+                >
                   {SEPARATOR}
                 </Text>
               ) : undefined}
@@ -100,9 +103,9 @@ const styles = StyleSheet.create({
   list: {},
   itemContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     height: 61,
   },
   textContainer: {},

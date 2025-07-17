@@ -1,7 +1,7 @@
-import React from 'react';
-import {Keyboard, Pressable, StyleSheet} from 'react-native';
-import useKeyboard from '../../hooks/useKeyboard';
-import Screen, {ScreenProps} from './Screen';
+import useKeyboard from "@/hooks/useKeyboard";
+import React from "react";
+import { Keyboard, Pressable, StyleSheet } from "react-native";
+import Screen, { ScreenProps } from "./Screen";
 
 interface PressableScreenProps extends ScreenProps {
   dismissKeyboard?: boolean;
@@ -14,7 +14,7 @@ const PressableScreen = ({
   style,
   ...props
 }: PressableScreenProps) => {
-  const {keyboardShown} = useKeyboard();
+  const { keyboardShown } = useKeyboard();
   const onPressHandler = () => {
     if (dismissKeyboard && keyboardShown) {
       Keyboard.dismiss();

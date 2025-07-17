@@ -1,13 +1,13 @@
-import React, {FC, useCallback, useRef} from 'react';
+import theme from "@/styles/theme";
+import React, { FC, useCallback, useRef } from "react";
 import {
   Pressable,
   StyleSheet,
   TextInput,
   TextStyle,
   ViewProps,
-} from 'react-native';
-import theme from '../../styles/theme';
-import {Icon} from '../core';
+} from "react-native";
+import { Icon } from "../core";
 
 interface SearchInputProps extends ViewProps {
   placeholder?: string;
@@ -31,7 +31,7 @@ const SearchInput: FC<SearchInputProps> = ({
   const resetInput = useCallback(() => {
     inputRef?.current?.clear();
     if (onChangeText) {
-      onChangeText('');
+      onChangeText("");
     }
   }, [onChangeText]);
   return (
@@ -67,9 +67,9 @@ export default React.memo(SearchInput);
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: theme.colors.lightGrey,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 7,
     paddingHorizontal: 10,
     height: 45,

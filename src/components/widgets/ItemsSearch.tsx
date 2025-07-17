@@ -1,16 +1,16 @@
-import React from 'react';
-import {Pressable, StyleProp, StyleSheet, ViewStyle} from 'react-native';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import React from "react";
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Icon, Text } from "../core";
 
 interface ItemsSearchProps {
   onPress: () => void;
   style?: StyleProp<ViewStyle>;
 }
 
-const ItemsSearch = ({onPress}: ItemsSearchProps) => {
-  const {t} = useLocale('widgets');
+const ItemsSearch = ({ onPress }: ItemsSearchProps) => {
+  const { t } = useLocale("widgets");
 
   return (
     <>
@@ -21,7 +21,7 @@ const ItemsSearch = ({onPress}: ItemsSearchProps) => {
           color={theme.colors.grey}
           size={25}
         />
-        <Text>{t('itemsSearch.placeholder')}</Text>
+        <Text>{t("itemsSearch.placeholder")}</Text>
       </Pressable>
     </>
   );
@@ -31,11 +31,11 @@ export default React.memo(ItemsSearch);
 
 const styles = StyleSheet.create({
   searchContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: theme.colors.white,
     borderWidth: 2,
     borderColor: theme.colors.lightGrey,
-    alignItems: 'center',
+    alignItems: "center",
     borderRadius: 7,
     paddingHorizontal: 10,
     height: 45,
@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   columnWrapper: {
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   card: {
-    flexBasis: '48%',
+    flexBasis: "48%",
   },
 });

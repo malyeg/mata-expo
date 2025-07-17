@@ -1,18 +1,24 @@
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {ScrollView, StyleProp, StyleSheet, View, ViewStyle} from 'react-native';
-import categoriesApi, {Category} from '../../../api/categoriesApi';
-import countriesApi, {Country, State} from '../../../api/countriesApi';
-import {conditionList, swapList, SwapType} from '../../../api/itemsApi';
-import useAuth from '../../../hooks/useAuth';
-import useFormBuilder from '../../../hooks/useFormBuilder';
-import useLocale from '../../../hooks/useLocale';
-import useLocation from '../../../hooks/useLocation';
-import theme from '../../../styles/theme';
-import {Entity} from '../../../types/DataTypes';
-import {LoggerFactory} from '../../../utils/logger';
-import {Button, Modal} from '../../core';
-import {Picker, TextInput} from '../../form';
-import MultiSelectPicker from '../picker/MultiSelectPicker';
+import categoriesApi, { Category } from "@/../api/categoriesApi";
+import countriesApi, { Country, State } from "@/../api/countriesApi";
+import { conditionList, swapList, SwapType } from "@/../api/itemsApi";
+import useAuth from "@/../hooks/useAuth";
+import useFormBuilder from "@/../hooks/useFormBuilder";
+import useLocale from "@/../hooks/useLocale";
+import useLocation from "@/../hooks/useLocation";
+import theme from "@/../styles/theme";
+import { Entity } from "@/../types/DataTypes";
+import { LoggerFactory } from "@/../utils/logger";
+import { Button, Modal } from "@/core";
+import { Picker, TextInput } from "@/form";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  ScrollView,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
+import MultiSelectPicker from "../picker/MultiSelectPicker";
 
 export interface ItemsFilterForm {
   searchInput?: string;
@@ -38,10 +44,10 @@ export interface ItemsFilterProps {
   defaultValues?: ItemsFilterForm;
   openOnLoad?: boolean;
   onClose?: () => void;
-  focusOn?: 'search' | 'states';
+  focusOn?: "search" | "states";
 }
 
-const logger = LoggerFactory.getLogger('ItemsFilter');
+const logger = LoggerFactory.getLogger("ItemsFilter");
 
 const ItemsFilter = ({
   defaultValues = {},
@@ -54,41 +60,41 @@ const ItemsFilter = ({
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   // const [swapType, setSwapType] = useState<SwapType | null>(null);
   const [states, setStates] = useState<State[] | undefined>([]);
-  const {t} = useLocale('widgets');
-  const {user} = useAuth();
-  const {location} = useLocation();
+  const { t } = useLocale("widgets");
+  const { user } = useAuth();
+  const { location } = useLocation();
   const textInputRef = useRef<any>(null);
   const statesRef = useRef<any>(null);
   const firstLoadRef = useRef(true);
-  const {control, handleSubmit, setValue, watch, reset} =
-    useFormBuilder<ItemsFilterValues>(yup =>
+  const { control, handleSubmit, setValue, watch, reset } =
+    useFormBuilder<ItemsFilterValues>((yup) =>
       yup.object({
         searchInput: yup
           .string()
           .trim()
-          .matches(/^(|.{3,})$/, t('itemsFilter.searchInput.minLength')),
+          .matches(/^(|.{3,})$/, t("itemsFilter.searchInput.minLength")),
         categoryId: yup.string().trim(),
         swapTypes: yup.array(),
         swapCategoryId: yup
           .string()
           .trim()
           .test(
-            'swapCategoryId',
-            t('itemsFilter.swapCategory.required'),
+            "swapCategoryId",
+            t("itemsFilter.swapCategory.required"),
             function (value) {
-              if (this.parent.swapType === ('swapWithAnother' as SwapType)) {
+              if (this.parent.swapType === ("swapWithAnother" as SwapType)) {
                 return !!value;
               }
               return true;
-            },
+            }
           ),
         stateIds: yup.array(),
         countryId: yup.string().trim(),
         conditionTypes: yup.array(),
-      }),
+      })
     );
-  const countryId = watch('countryId');
-  const swapTypes = watch('swapTypes');
+  const countryId = watch("countryId");
+  const swapTypes = watch("swapTypes");
 
   // useEffect(() => {
   //   if (focusOn === 'search') {
@@ -99,7 +105,7 @@ const ItemsFilter = ({
   // }, [focusOn]);
 
   useEffect(() => {
-    logger.log('useEffect', defaultValues);
+    logger.log("useEffect", defaultValues);
 
     if (firstLoadRef.current) {
       firstLoadRef.current = false;
@@ -107,12 +113,14 @@ const ItemsFilter = ({
     }
     reset({
       categoryId: defaultValues?.category?.id.toString(),
-      conditionTypes: defaultValues?.conditionTypes?.map(s => s.id.toString()),
+      conditionTypes: defaultValues?.conditionTypes?.map((s) =>
+        s.id.toString()
+      ),
       countryId: defaultValues?.country?.id.toString(),
       searchInput: defaultValues?.searchInput,
-      stateIds: defaultValues?.states?.map(s => s.id.toString()),
+      stateIds: defaultValues?.states?.map((s) => s.id.toString()),
       swapCategoryId: defaultValues?.swapCategory?.id.toString(),
-      swapTypes: defaultValues?.swapTypes?.map(s => s.id.toString()),
+      swapTypes: defaultValues?.swapTypes?.map((s) => s.id.toString()),
     });
   }, [defaultValues, reset]);
 
@@ -124,28 +132,28 @@ const ItemsFilter = ({
 
   useEffect(() => {
     const stateList = countriesApi.getStates(
-      countryId ?? location?.country?.id!,
+      countryId ?? location?.country?.id!
     );
     setStates(stateList);
-    setValue('stateIds', []);
+    setValue("stateIds", []);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countryId]);
 
   useEffect(() => {
-    if (swapTypes?.includes('swapWithAnother')) {
-      setValue('swapCategoryId', '');
+    if (swapTypes?.includes("swapWithAnother")) {
+      setValue("swapCategoryId", "");
     }
   }, [setValue, swapTypes]);
 
   const onSubmit = (data: ItemsFilterValues) => {
-    logger.log('data.stateIds', data.stateIds);
+    logger.log("data.stateIds", data.stateIds);
     const filters: ItemsFilterForm = {};
     !!data.categoryId &&
       (filters.category = categoriesApi.getById(data.categoryId));
     !!data.conditionTypes &&
-      (filters.conditionTypes = conditionList.filter(s =>
-        data.conditionTypes?.includes(s.id),
+      (filters.conditionTypes = conditionList.filter((s) =>
+        data.conditionTypes?.includes(s.id)
       ));
     !!data.countryId &&
       (filters.country = countriesApi.getById(data.countryId));
@@ -153,7 +161,9 @@ const ItemsFilter = ({
     !!data.stateIds &&
       (filters.states = countriesApi.getStatesByIds(data.stateIds));
     if (data.swapTypes) {
-      filters.swapTypes = swapList.filter(s => data.swapTypes?.includes(s.id));
+      filters.swapTypes = swapList.filter((s) =>
+        data.swapTypes?.includes(s.id)
+      );
       !!data.swapCategoryId &&
         (filters.swapCategory = categoriesApi.getById(data.swapCategoryId));
     }
@@ -172,7 +182,7 @@ const ItemsFilter = ({
   const onReset = (name: string) => {
     setValue(
       name as keyof ItemsFilterValues,
-      name === 'stateIds' ? undefined : '',
+      name === "stateIds" ? undefined : ""
     );
   };
 
@@ -185,9 +195,9 @@ const ItemsFilter = ({
   };
 
   const onModalShow = () => {
-    if (focusOn === 'search') {
+    if (focusOn === "search") {
       textInputRef?.current?.focus();
-    } else if (focusOn === 'states') {
+    } else if (focusOn === "states") {
       statesRef?.current?.open();
     }
   };
@@ -196,8 +206,8 @@ const ItemsFilter = ({
     () =>
       countriesApi
         .getCountries()
-        .filter(c => ['nz', 'au'].includes(c.code.toLowerCase())),
-    [],
+        .filter((c) => ["nz", "au"].includes(c.code.toLowerCase())),
+    []
   );
 
   const isCountryPickerVisible = !location || user.isAdmin;
@@ -207,22 +217,24 @@ const ItemsFilter = ({
       position="full"
       isVisible={isModalVisible}
       showHeaderNav={true}
-      title={t('itemsFilter.title')}
+      title={t("itemsFilter.title")}
       onModalShow={onModalShow}
       containerStyle={styles.modal}
-      onClose={onBack}>
+      onClose={onBack}
+    >
       {defaultValues && (
         <ScrollView
           keyboardShouldPersistTaps="always"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={[styles.container, style]}>
+          contentContainerStyle={[styles.container, style]}
+        >
           <View style={styles.form}>
             <TextInput
               ref={textInputRef}
               name="searchInput"
               style={styles.searchInput}
               defaultValue={defaultValues.searchInput}
-              placeholder={t('itemsFilter.searchInput.placeholder')}
+              placeholder={t("itemsFilter.searchInput.placeholder")}
               returnKeyType="next"
               returnKeyLabel="next"
               placeholderTextColor={theme.colors.grey}
@@ -234,7 +246,7 @@ const ItemsFilter = ({
             {isCountryPickerVisible && (
               <Picker
                 searchable
-                placeholder={t('itemsFilter.country.placeholder')}
+                placeholder={t("itemsFilter.country.placeholder")}
                 name="countryId"
                 items={countries}
                 defaultValue={defaultValues?.country?.id?.toString()}
@@ -246,7 +258,7 @@ const ItemsFilter = ({
             <MultiSelectPicker
               ref={statesRef}
               searchable
-              placeholder={t('itemsFilter.state.placeholder')}
+              placeholder={t("itemsFilter.state.placeholder")}
               name="stateIds"
               items={states as Entity[]}
               control={control}
@@ -257,8 +269,8 @@ const ItemsFilter = ({
               name="categoryId"
               searchable
               items={categoriesApi.getAll()}
-              placeholder={t('itemsFilter.category.placeholder')}
-              modalTitle={t('itemsFilter.category.modalTitle')}
+              placeholder={t("itemsFilter.category.placeholder")}
+              modalTitle={t("itemsFilter.category.modalTitle")}
               defaultValue={defaultValues?.category?.id?.toString()}
               control={control}
               multiLevel
@@ -267,8 +279,8 @@ const ItemsFilter = ({
             <MultiSelectPicker
               name="conditionTypes"
               items={conditionList as Entity[]}
-              placeholder={t('itemsFilter.condition.placeholder')}
-              modalTitle={t('itemsFilter.condition.modalTitle')}
+              placeholder={t("itemsFilter.condition.placeholder")}
+              modalTitle={t("itemsFilter.condition.modalTitle")}
               control={control}
               showReset
             />
@@ -276,19 +288,19 @@ const ItemsFilter = ({
             <MultiSelectPicker
               name="swapTypes"
               items={swapList as Entity[]}
-              placeholder={t('itemsFilter.swapTypes.placeholder')}
-              modalTitle={t('itemsFilter.swapTypes.modalTitle')}
+              placeholder={t("itemsFilter.swapTypes.placeholder")}
+              modalTitle={t("itemsFilter.swapTypes.modalTitle")}
               control={control}
               showReset
             />
 
-            {swapTypes?.includes('swapWithAnother') && (
+            {swapTypes?.includes("swapWithAnother") && (
               <Picker
                 name="swapCategoryId"
                 searchable
                 items={categoriesApi.getAll()}
-                placeholder={t('itemsFilter.swapCategory.placeholder')}
-                modalTitle={t('itemsFilter.swapCategory.modalTitle')}
+                placeholder={t("itemsFilter.swapCategory.placeholder")}
+                modalTitle={t("itemsFilter.swapCategory.modalTitle")}
                 defaultValue={defaultValues?.swapCategory?.id?.toString()}
                 control={control}
                 multiLevel
@@ -298,7 +310,7 @@ const ItemsFilter = ({
 
             <View style={styles.footer}>
               <Button
-                title={t('itemsFilter.showResultsBtnTitle')}
+                title={t("itemsFilter.showResultsBtnTitle")}
                 onPress={handleSubmit(onSubmit, onFormError)}
               />
             </View>
@@ -314,7 +326,7 @@ export default React.memo(ItemsFilter);
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: "space-evenly",
   },
 
   modal: {
@@ -322,26 +334,26 @@ const styles = StyleSheet.create({
   },
   form: {
     flexGrow: 1,
-    justifyContent: 'space-evenly',
+    justifyContent: "space-evenly",
   },
   label: {
     marginRight: 10,
   },
   footer: {
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   rowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   location: {
-    flexBasis: '48%',
+    flexBasis: "48%",
   },
   filterIcon: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginVertical: 5,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   searchInput: {
     // flex: 1,

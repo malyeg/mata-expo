@@ -1,30 +1,30 @@
-import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import useConnectionCheck from '../../hooks/useConnectionCheck';
-import useLocale from '../../hooks/useLocale';
-import useLocation from '../../hooks/useLocation';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
+import useConnectionCheck from "@/hooks/useConnectionCheck";
+import useLocale from "@/hooks/useLocale";
+import useLocation from "@/hooks/useLocation";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import theme from "../../styles/theme";
+import { Icon, Text } from "../core";
 
 const OfflineCard = () => {
-  const {isInternetReachable} = useConnectionCheck();
-  const {connected} = useLocation();
-  const {t} = useLocale('widgets');
+  const { isInternetReachable } = useConnectionCheck();
+  const { connected } = useLocation();
+  const { t } = useLocale("widgets");
 
   return !isInternetReachable ? (
     <OfflineComponent
-      title={t('offlineCard.title')}
-      body={t('offlineCard.body')}
+      title={t("offlineCard.title")}
+      body={t("offlineCard.body")}
     />
   ) : !connected ? (
     <OfflineComponent
-      title={t('offlineCard.title')}
-      body={t('offlineCard.locationBody')}
+      title={t("offlineCard.title")}
+      body={t("offlineCard.locationBody")}
     />
   ) : null;
 };
 
-const OfflineComponent = ({title, body}: {title: string; body: string}) => (
+const OfflineComponent = ({ title, body }: { title: string; body: string }) => (
   <View style={styles.container}>
     <View style={styles.header}>
       <Icon name="wifi-off" size={30} color={theme.colors.white} />
@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
     // flexWrap: 'nowrap',
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
+    alignItems: "center",
+    alignSelf: "flex-start",
   },
   title: {
     ...theme.styles.scale.h6,

@@ -1,17 +1,16 @@
-import React, {ReactElement, ReactNode, useCallback} from 'react';
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
+import { useRouter } from "expo-router";
+import React, { ReactElement, ReactNode, useCallback } from "react";
 import {
-  Platform,
   Pressable,
   StyleProp,
   StyleSheet,
   TextStyle,
   View,
-} from 'react-native';
-import useNavigationHelper from '../../hooks/useNavigationHelper';
-import sharedStyles from '../../styles/SharedStyles';
-import theme from '../../styles/theme';
-import {Icon, Text} from '../core';
-import {IconType} from '../core/Icon';
+} from "react-native";
+import { Icon, Text } from "../core";
+import { IconType } from "../core/Icon";
 
 interface CardProps {
   title: string;
@@ -21,7 +20,7 @@ interface CardProps {
   contentStyle?: StyleProp<TextStyle>;
   iconStyle?: StyleProp<TextStyle>;
   children?: ReactNode;
-  to?: {screen: string; params?: any};
+  to?: { screen: string; params?: any };
 }
 const ItemDetailsCard = ({
   title,
@@ -33,13 +32,13 @@ const ItemDetailsCard = ({
   children,
   to,
 }: CardProps) => {
-  const {navigation} = useNavigationHelper();
+  const router = useRouter();
 
   const onPress = useCallback(() => {
     if (to) {
-      navigation.navigate(to.screen, to.params);
+      router.navigate(to.screen as any, to.params);
     }
-  }, [navigation, to]);
+  }, [router, to]);
   return (
     <Pressable style={styles.container} onPress={onPress}>
       {!!icon && (
@@ -56,7 +55,8 @@ const ItemDetailsCard = ({
           <Text
             style={[styles.content, contentStyle]}
             numberOfLines={3}
-            adjustsFontSizeToFit>
+            adjustsFontSizeToFit
+          >
             {content}
           </Text>
         </View>
@@ -78,9 +78,9 @@ export default ItemDetailsCard;
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
     marginVertical: 5,
     // borderRadius: 5,
     paddingHorizontal: 10,
@@ -105,13 +105,13 @@ const styles = StyleSheet.create({
     // }),
   },
   icon: {
-    position: 'absolute',
+    position: "absolute",
     left: 7,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
     // flexWrap: 'wrap',
-    alignItems: 'center',
+    alignItems: "center",
     marginLeft: 25,
   },
   title: {
@@ -121,15 +121,15 @@ const styles = StyleSheet.create({
     // marginLeft: 5,
   },
   content: {
-    textTransform: 'capitalize',
-    width: '70%',
+    textTransform: "capitalize",
+    width: "70%",
     // textAlign: 'justify',
   },
   childrenContainer: {
     marginLeft: 25,
   },
   chevron: {
-    position: 'absolute',
+    position: "absolute",
     right: 0,
   },
 });

@@ -1,12 +1,12 @@
-import React, {useCallback} from 'react';
+import { CheckBox, Text } from "@/core";
+import React, { useCallback } from "react";
 import {
   Pressable,
   StyleProp,
   StyleSheet,
   TextStyle,
   ViewStyle,
-} from 'react-native';
-import {CheckBox, Text} from '../../core';
+} from "react-native";
 
 // export type PickerItem = {value: string; label?: string};
 
@@ -50,17 +50,17 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     // marginHorizontal: 30,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     height: 61,
   },
   text: {
     flex: 1,
     // paddingHorizontal: 10,
-    textAlignVertical: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    textAlignVertical: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   checkbox: {
     marginRight: 10,

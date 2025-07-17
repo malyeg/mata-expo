@@ -1,4 +1,5 @@
-import React, {FC} from 'react';
+import theme from "@/styles/theme";
+import React, { FC } from "react";
 import {
   GestureResponderEvent,
   Pressable,
@@ -6,10 +7,9 @@ import {
   TextStyle,
   View,
   ViewProps,
-} from 'react-native';
-import theme from '../../styles/theme';
-import Icon from './Icon';
-import Text from './Text';
+} from "react-native";
+import Icon from "./Icon";
+import Text from "./Text";
 
 interface ListItemProps extends ViewProps {
   selected?: boolean;
@@ -38,7 +38,7 @@ const ListItem: FC<ListItemProps> = ({
       </View>
       {selected && (
         <Icon
-          name={'check-circle'}
+          name={"check-circle"}
           size={25}
           color={theme.colors.green}
           style={styles.icon}
@@ -54,15 +54,15 @@ const styles = StyleSheet.create({
   container: {
     // flex: 1,
     height: 61,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   textContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
-  icon: {textAlignVertical: 'center'},
+  icon: { textAlignVertical: "center" },
   text: {
     // marginLeft: 0,
     marginHorizontal: 10,

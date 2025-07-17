@@ -1,10 +1,16 @@
-import React, {FC, useCallback} from 'react';
-import {Pressable, StyleProp, StyleSheet, TextStyle, View} from 'react-native';
-import theme from '../../styles/theme';
-import {Entity, Nestable} from '../../types/DataTypes';
-import {Icon} from '../core';
-import Text from '../core/Text';
-import Chevron from '../icons/Chevron';
+import theme from "@/styles/theme";
+import { Entity, Nestable } from "@/types/DataTypes";
+import React, { FC, useCallback } from "react";
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  TextStyle,
+  View,
+} from "react-native";
+import { Icon } from "../core";
+import Text from "../core/Text";
+import Chevron from "../icons/Chevron";
 
 // export type PickerItem = {value: string; label?: string};
 
@@ -42,7 +48,7 @@ const PickerItem: FC<PickerItemProps> = ({
         {nestedEntity.level === -1
           ? selected && (
               <Icon
-                name={'check-circle'}
+                name={"check-circle"}
                 size={25} // TODO change to responsive
                 color={theme.colors.green}
                 style={styles.selectedIcon}
@@ -70,21 +76,21 @@ const styles = StyleSheet.create({
     // marginHorizontal: 30,
   },
   itemContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     height: 61,
   },
   text: {
     flex: 1,
     // paddingHorizontal: 10,
-    textAlignVertical: 'center',
-    justifyContent: 'center',
-    alignItems: 'center',
+    textAlignVertical: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
   selectedIcon: {
-    textAlignVertical: 'center',
+    textAlignVertical: "center",
   },
   emoji: {
     ...theme.styles.scale.h4,

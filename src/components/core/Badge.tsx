@@ -1,16 +1,16 @@
-import React from 'react';
-import {StyleProp, StyleSheet, Text, View, ViewStyle} from 'react-native';
-import theme from '../../styles/theme';
+import theme from "@/styles/theme";
+import React from "react";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 
 interface BadgeProps {
   count: number;
   style?: StyleProp<ViewStyle>;
-  type?: 'notification' | 'counter';
+  type?: "notification" | "counter";
 }
-const Badge = ({count, style, type = 'counter'}: BadgeProps) => {
+const Badge = ({ count, style, type = "counter" }: BadgeProps) => {
   return count && count > 0 ? (
     <View style={[styles.badge, style]}>
-      <Text style={styles.badgeText}>{type === 'counter' ? count : 'N'}</Text>
+      <Text style={styles.badgeText}>{type === "counter" ? count : "N"}</Text>
     </View>
   ) : null;
 };
@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: theme.colors.salmon,
     borderRadius: 10,
-    overflow: 'hidden',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
   },
   badgeText: {
     ...theme.styles.scale.body4,

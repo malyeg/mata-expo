@@ -1,4 +1,5 @@
-import React, {FC, useCallback} from 'react';
+import theme from "@/styles/theme";
+import React, { FC, useCallback } from "react";
 import {
   Platform,
   StatusBar,
@@ -6,21 +7,20 @@ import {
   StyleSheet,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 import ModalBase, {
   Direction,
   ModalProps as ModalBaseProps,
-} from 'react-native-modal';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import theme from '../../styles/theme';
-import SuccessIcon from '../icons/SuccessIcon';
-import Icon, {IconProps} from './Icon';
-import Text from './Text';
+} from "react-native-modal";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SuccessIcon from "../icons/SuccessIcon";
+import Icon, { IconProps } from "./Icon";
+import Text from "./Text";
 
 export interface ModalProps {
   isVisible?: boolean;
   onClose?: () => void;
-  position?: 'bottom' | 'full';
+  position?: "bottom" | "full";
   showHeaderNav?: boolean;
   title?: string;
   children: React.ReactNode;
@@ -33,8 +33,8 @@ export interface ModalProps {
   scrollHorizontal?: boolean;
   swipeDirection?: Direction | Direction[] | undefined;
   closeIcon?: IconProps;
-  animationIn?: ModalBaseProps['animationIn'];
-  animationOut?: ModalBaseProps['animationOut'];
+  animationIn?: ModalBaseProps["animationIn"];
+  animationOut?: ModalBaseProps["animationOut"];
   avoidKeyboard?: boolean;
   hideCloseIcon?: boolean;
   headerIcon?: {
@@ -43,7 +43,7 @@ export interface ModalProps {
 }
 const Modal: FC<ModalProps> = ({
   isVisible = false,
-  position = 'bottom',
+  position = "bottom",
   showHeaderNav,
   title,
   onClose,
@@ -63,7 +63,7 @@ const Modal: FC<ModalProps> = ({
   avoidKeyboard,
   headerIcon,
 }) => {
-  const {top, bottom} = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const onBack = useCallback(() => {
     if (onClose) {
       onClose();
@@ -86,24 +86,26 @@ const Modal: FC<ModalProps> = ({
       animationIn={animationIn}
       animationOut={animationOut}
       avoidKeyboard={avoidKeyboard}
-      propagateSwipe={propagateSwipe}>
+      propagateSwipe={propagateSwipe}
+    >
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <View
         // edges={{}}
         style={[
           styles.container,
-          {paddingBottom: bottom},
-          Platform.OS === 'ios' && position === 'full'
-            ? {paddingTop: top}
+          { paddingBottom: bottom },
+          Platform.OS === "ios" && position === "full"
+            ? { paddingTop: top }
             : undefined,
-          position === 'bottom' ? styles.bottomStyle : styles.fullScreen,
+          position === "bottom" ? styles.bottomStyle : styles.fullScreen,
           containerStyle,
-        ]}>
+        ]}
+      >
         <View style={[styles.modalHeader]}>
           {headerIcon && (
             <SuccessIcon style={styles.headerIcon} name={headerIcon.name} />
           )}
-          {showHeaderNav && position === 'full' && (
+          {showHeaderNav && position === "full" && (
             <Icon
               name="chevron-left"
               color={theme.colors.grey}
@@ -116,15 +118,17 @@ const Modal: FC<ModalProps> = ({
               style={[
                 styles.modalTitleContainer,
                 headerIcon ? styles.titleWithHeaderIcon : {},
-              ]}>
+              ]}
+            >
               <Text
                 style={[
                   styles.modalTitle,
-                  position === 'bottom' ? styles.titleBottom : {},
-                ]}>
+                  position === "bottom" ? styles.titleBottom : {},
+                ]}
+              >
                 {title}
               </Text>
-              {position === 'bottom' && !hideCloseIcon && (
+              {position === "bottom" && !hideCloseIcon && (
                 <Icon
                   name="chevron-down"
                   color={theme.colors.grey}
@@ -140,9 +144,10 @@ const Modal: FC<ModalProps> = ({
         <View
           style={[
             styles.body,
-            position === 'full' ? styles.fullScreen : undefined,
+            position === "full" ? styles.fullScreen : undefined,
             bodyStyle,
-          ]}>
+          ]}
+        >
           {children}
         </View>
       </View>
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
   modal: {
     flex: 1,
     margin: 0,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   container: {
     // flex: 1,
@@ -164,9 +169,9 @@ const styles = StyleSheet.create({
     // backgroundColor: 'transparent',
   },
   headerIcon: {
-    position: 'absolute',
-    backgroundColor: 'transparent',
-    width: '100%',
+    position: "absolute",
+    backgroundColor: "transparent",
+    width: "100%",
     top: -40,
   },
   titleWithHeaderIcon: {
@@ -189,14 +194,14 @@ const styles = StyleSheet.create({
     // marginTop: 30,
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   modalTitleContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalTitle: {
     ...theme.styles.scale.h5,
@@ -207,8 +212,8 @@ const styles = StyleSheet.create({
   },
   chevronDownIcon: {
     color: theme.colors.salmon,
-    position: 'absolute',
+    position: "absolute",
     right: 20,
   },
-  titleBottom: {marginLeft: 35},
+  titleBottom: { marginLeft: 35 },
 });

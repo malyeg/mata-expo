@@ -1,11 +1,11 @@
-import React, {useCallback, useMemo, useState} from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
-import {RatingWeight, StarItem} from '../../../api/ratingApi';
-import useLocale from '../../../hooks/useLocale';
-import sharedStyles from '../../../styles/SharedStyles';
-import theme from '../../../styles/theme';
-import {Button, Modal, Text} from '../../core';
-import RatingView, {RatingViewProps} from './RatingView';
+import { RatingWeight, StarItem } from "@/../api/ratingApi";
+import useLocale from "@/../hooks/useLocale";
+import sharedStyles from "@/../styles/SharedStyles";
+import theme from "@/../styles/theme";
+import { Button, Modal, Text } from "@/core";
+import React, { useCallback, useMemo, useState } from "react";
+import { StyleSheet, TextInput, View } from "react-native";
+import RatingView, { RatingViewProps } from "./RatingView";
 
 export interface RatingModalProps {
   stars: StarItem[];
@@ -14,7 +14,7 @@ export interface RatingModalProps {
   count?: number;
   onRatingChange?: (ratingWeight: RatingWeight, comments?: string) => void;
   defaultValue?: number;
-  onStarPress?: RatingViewProps['onStarPress'];
+  onStarPress?: RatingViewProps["onStarPress"];
 }
 const RatingModal = ({
   isVisible,
@@ -24,17 +24,17 @@ const RatingModal = ({
   onRatingChange,
 }: RatingModalProps) => {
   const [comments, setComments] = useState<string | undefined>();
-  const {t} = useLocale('widgets');
+  const { t } = useLocale("widgets");
 
   const rated = useMemo(
-    () => stars.filter(s => s.selected)?.length > 0,
-    [stars],
+    () => stars.filter((s) => s.selected)?.length > 0,
+    [stars]
   );
   const onRate = useCallback(() => {
     if (onRatingChange) {
       onRatingChange(
-        stars.filter(s => s.selected).length as RatingWeight,
-        comments,
+        stars.filter((s) => s.selected).length as RatingWeight,
+        comments
       );
     }
     onClose();
@@ -45,12 +45,13 @@ const RatingModal = ({
       isVisible={isVisible}
       onClose={onClose}
       onBackdropPress={disableBackdropPress}
-      title={t('rating.header')}
+      title={t("rating.header")}
       avoidKeyboard
-      containerStyle={styles.modal}>
+      containerStyle={styles.modal}
+    >
       <View style={styles.contentContainer}>
         {/* <Text style={styles.header}>{t('rating.header')}</Text> */}
-        <Text style={styles.body}>{t('rating.body')}</Text>
+        <Text style={styles.body}>{t("rating.body")}</Text>
       </View>
       <RatingView stars={stars} onStarPress={onStarPress} />
 
@@ -58,7 +59,7 @@ const RatingModal = ({
         <TextInput
           multiline={true}
           numberOfLines={5}
-          placeholder={t('rating.inputPlaceholder')}
+          placeholder={t("rating.inputPlaceholder")}
           placeholderTextColor={theme.colors.grey}
           style={[sharedStyles.textArea, styles.textArea]}
           onChangeText={setComments}
@@ -67,7 +68,7 @@ const RatingModal = ({
 
       <Button
         disabled={!rated}
-        title={t('rating.btnSubmitTitle')}
+        title={t("rating.btnSubmitTitle")}
         onPress={onRate}
       />
     </Modal>
@@ -89,23 +90,23 @@ const styles = StyleSheet.create({
     // height: '100%',
   },
   contentContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
   },
   header: {
     ...theme.styles.scale.h5,
     color: theme.colors.salmon,
     marginBottom: 5,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   body: {
     ...theme.styles.scale.h6,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 10,
     // paddingVertical: 20,
     // paddingBottom: 30,
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     // flex: 1,
     marginBottom: 10,
     height: 100,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   error: {
     // borderColor: theme.colors.salmon,

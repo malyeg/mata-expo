@@ -1,14 +1,14 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {StyleSheet, View, ViewProps} from 'react-native';
-import {conditionList} from '../../api/itemsApi';
-import useLocale from '../../hooks/useLocale';
-import theme from '../../styles/theme';
-import {FormProps} from '../../types/DataTypes';
-import {Button} from '../core';
-import {Error, Picker, TextInput} from '../form';
-import PickerItem from '../form/PickerItem';
+import { conditionList } from "@/api/itemsApi";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { FormProps } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useState } from "react";
+import { StyleSheet, View, ViewProps } from "react-native";
+import { Button } from "../core";
+import { Error, Picker, TextInput } from "../form";
+import PickerItem from "../form/PickerItem";
 
-const WITH_ISSUES_ITEM = conditionList.find(i => i.id === 'usedWithIssues')!;
+const WITH_ISSUES_ITEM = conditionList.find((i) => i.id === "usedWithIssues")!;
 interface ItemConditionPickerProps extends ViewProps, FormProps {
   // placeholder?: string;
   // control: any;
@@ -18,13 +18,13 @@ interface ItemConditionPickerProps extends ViewProps, FormProps {
 const ItemConditionPicker = ({
   name,
   control,
-  defaultValue = '',
+  defaultValue = "",
   label,
 }: ItemConditionPickerProps) => {
   const [desc, setDesc] = useState<string>();
   const [selectedValue, setSelectedValue] = useState<string>();
   const [error, setError] = useState<string>();
-  const {t} = useLocale('common');
+  const { t } = useLocale("common");
 
   useEffect(() => {}, []);
 
@@ -43,7 +43,7 @@ const ItemConditionPicker = ({
     onItemChange,
   }: any) => {
     const onPickerItemPress = () => {
-      if (item.id.toString() !== 'usedWithIssues') {
+      if (item.id.toString() !== "usedWithIssues") {
         onCloseModal();
       }
     };
@@ -53,7 +53,7 @@ const ItemConditionPicker = ({
         onItemChange(WITH_ISSUES_ITEM);
         onCloseModal();
       } else {
-        setError(t('itemConditionPicker.descError'));
+        setError(t("itemConditionPicker.descError"));
       }
     };
     return (
@@ -72,18 +72,18 @@ const ItemConditionPicker = ({
                 label=""
                 style={styles.withIssuesInput}
                 name="usedWithIssuesDesc"
-                placeholder={t('itemConditionPicker.withIssuesDesc')}
+                placeholder={t("itemConditionPicker.withIssuesDesc")}
                 onChangeText={onChangeDesc}
                 control={control}
               />
               {!!error && (
                 <Error
                   style={styles.error}
-                  error={{type: 'required', message: error}}
+                  error={{ type: "required", message: error }}
                 />
               )}
               <Button
-                title={t('itemConditionPicker.submit')}
+                title={t("itemConditionPicker.submit")}
                 onPress={onButtonPress}
               />
             </View>
@@ -100,8 +100,8 @@ const ItemConditionPicker = ({
       modalStyle={styles.modal}
       name={name}
       items={conditionList}
-      placeholder={t('itemConditionPicker.placeholder')}
-      modalTitle={t('itemConditionPicker.modalTitle')}
+      placeholder={t("itemConditionPicker.placeholder")}
+      modalTitle={t("itemConditionPicker.modalTitle")}
       onChange={onPickerChange}
       onSelectClose={false}
       renderItem={renderItemHandler}

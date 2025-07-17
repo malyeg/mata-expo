@@ -1,18 +1,24 @@
-import {useNavigation} from '@react-navigation/core';
-import {StackNavigationHelpers} from '@react-navigation/stack/lib/typescript/src/types';
-import React, {useCallback} from 'react';
-import {Dimensions, Pressable, StyleSheet, View, ViewProps} from 'react-native';
-import {Item} from '../../api/itemsApi';
-import {screens} from '../../config/constants';
-import theme from '../../styles/theme';
-import Analytics from '../../utils/Analytics';
-import {Icon, Image, Text} from '../core';
-import SwapIcon from './SwapIcon';
+import { Item } from "@/api/itemsApi";
+import { screens } from "@/config/constants";
+import theme from "@/styles/theme";
+import Analytics from "@/utils/Analytics";
+import { useNavigation } from "@react-navigation/core";
+import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import React, { useCallback } from "react";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  View,
+  ViewProps,
+} from "react-native";
+import { Icon, Image, Text } from "../core";
+import SwapIcon from "./SwapIcon";
 
 const CARD_BORDER = 2;
 const CARD_HEIGHT = 100;
 export const MAP_CARD_HEIGHT = CARD_HEIGHT + CARD_BORDER;
-export const MAP_CARD_WIDTH = Dimensions.get('window').width - 60 + CARD_BORDER;
+export const MAP_CARD_WIDTH = Dimensions.get("window").width - 60 + CARD_BORDER;
 interface ItemCardProps extends ViewProps {
   item: Item;
   showActivityStatus?: boolean;
@@ -21,7 +27,7 @@ interface ItemCardProps extends ViewProps {
   onPress?: (item: Item) => void;
   sourceList?: string;
 }
-const MapItemCard = ({item, style, onPress, sourceList}: ItemCardProps) => {
+const MapItemCard = ({ item, style, onPress, sourceList }: ItemCardProps) => {
   const navigation = useNavigation<StackNavigationHelpers>();
 
   const openItemDetails = useCallback(() => {
@@ -40,7 +46,7 @@ const MapItemCard = ({item, style, onPress, sourceList}: ItemCardProps) => {
   const imageUrl = item.defaultImageURL ?? itemImage?.downloadURL;
 
   const categoryName =
-    item.category?.name.toLowerCase() === 'other' &&
+    item.category?.name.toLowerCase() === "other" &&
     item.category?.path?.length &&
     item.category?.path?.length > 1
       ? item.category?.path[item.category?.path?.length - 2]
@@ -58,7 +64,7 @@ const MapItemCard = ({item, style, onPress, sourceList}: ItemCardProps) => {
         </Text>
       </View>
       <View style={styles.iconsContainer}>
-        {item?.swapOption?.type === 'free' && (
+        {item?.swapOption?.type === "free" && (
           <Icon
             size={40}
             color={theme.colors.salmon}
@@ -85,15 +91,15 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     paddingHorizontal: 5,
     backgroundColor: theme.colors.white,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   detailsContainer: {
     flex: 1,
   },
   iconsContainer: {
     // flex: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 5,
   },
   image: {

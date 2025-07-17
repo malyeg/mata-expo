@@ -1,9 +1,9 @@
-import {Query} from '../../types/DataTypes';
-import {LoggerFactory} from '../../utils/logger';
-import {ApiResponse} from '../Api';
-import {Category} from '../categoriesApi';
-import {Item, ItemStatus} from '../itemsApi';
-import SearchApi from './searchApi';
+import { Query } from "@/types/DataTypes";
+import { LoggerFactory } from "@/utils/logger";
+import { ApiResponse } from "../Api";
+import { Category } from "../categoriesApi";
+import { Item, ItemStatus } from "../itemsApi";
+import SearchApi from "./searchApi";
 
 interface SearchItem {
   objectID: string;
@@ -23,18 +23,18 @@ interface SearchItem {
     lat: number;
     lng: number;
   };
-  offers: Item['offers'];
+  offers: Item["offers"];
 }
-const logger = LoggerFactory.getLogger('ItemsSearchApi');
+const logger = LoggerFactory.getLogger("ItemsSearchApi");
 class ItemsSearchApi extends SearchApi<SearchItem> {
   async search(query: Query) {
     try {
       const resp = await super.search(query);
-      const items = resp?.items.map(i => {
+      const items = resp?.items.map((i) => {
         const item: Item = this.itemMapper(i);
         return item;
       });
-      return {...resp, items} as ApiResponse<Item>;
+      return { ...resp, items } as ApiResponse<Item>;
     } catch (error) {
       logger.error(error);
       throw error;
@@ -51,8 +51,8 @@ class ItemsSearchApi extends SearchApi<SearchItem> {
       id: searchItem.objectID,
       name: searchItem.name,
       category,
-      status: 'online' as ItemStatus,
-      condition: {type: searchItem.conditionType},
+      status: "online" as ItemStatus,
+      condition: { type: searchItem.conditionType },
       defaultImageURL: searchItem.defaultImageURL,
       location: {
         coordinate: {
@@ -69,6 +69,6 @@ class ItemsSearchApi extends SearchApi<SearchItem> {
   }
 }
 
-const itemsSearchApi = new ItemsSearchApi('items');
+const itemsSearchApi = new ItemsSearchApi("items");
 
 export default itemsSearchApi;
