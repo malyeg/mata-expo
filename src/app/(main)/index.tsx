@@ -1,7 +1,8 @@
+import citiesApi from "@/api/citiesApi";
 import { swapList } from "@/api/itemsApi";
-import { Image, Screen } from "@/components/core";
+import { Button, Image, Screen } from "@/components/core";
 import SignUpCard from "@/components/features/auth/SignUpCard";
-import {
+import ItemsFilter, {
   ItemsFilterForm,
   ItemsFilterProps,
 } from "@/components/widgets/data/ItemsFilter";
@@ -16,6 +17,7 @@ import theme from "@/styles/theme";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const HOME_SCREEN = "HomeScreen";
 const bannerImage = require("@/assets/images/freeItemsAd.jpg");
@@ -23,6 +25,7 @@ const bannerImage = require("@/assets/images/freeItemsAd.jpg");
 const HomeScreen = () => {
   const { user, profile } = useAuth();
   const { location } = useLocationStore();
+  const { top } = useSafeAreaInsets();
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const [isItemsFilterVisible, setItemsFilterVisible] = useState(false);
   const [itemsFilterFocusField, setItemsFilterFocusField] =
@@ -62,9 +65,19 @@ const HomeScreen = () => {
     setItemsFilterVisible(false);
   }, []);
 
+  const testCities = async () => {
+    try {
+      console.log("call cities");
+      const city = await citiesApi.getById("100000");
+      console.log("city", city);
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+    }
+  };
+
   return (
     <Screen
-      style={styles.container}
+      style={[styles.container, { paddingTop: top }]}
       refreshable
       onRefresh={onRefresh}
       keyboardShouldPersistTaps="always"
@@ -101,13 +114,14 @@ const HomeScreen = () => {
         style={styles.banner}
         onPress={openFreeItems}
       />
-      {/* <ItemsFilter
+      <ItemsFilter
         onChange={onFilterChange}
         openOnLoad={isItemsFilterVisible}
         onClose={closeFilter}
         focusOn={itemsFilterFocusField}
         defaultValues={{ country: location?.country }}
-      /> */}
+      />
+      <Button title="test cities firebase" onPress={testCities} />
     </Screen>
   );
 };

@@ -6,8 +6,7 @@ import { Profile } from "@/models/Profile.model";
 import { onAuthStateChanged } from "@react-native-firebase/auth";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-import { ICredentials } from "./AuthReducer";
-
+import { ICredentials } from "../contexts/AuthReducer";
 interface AuthState {
   user: User | null;
   profile: Profile | null;
@@ -98,8 +97,6 @@ export const useAuthStore = create<AuthStore>()(
           newProfile
         );
 
-        console.log("User signed up!", session);
-
         if (session) {
           const { user, profile } = session;
           set({
@@ -147,8 +144,6 @@ export const useAuthStore = create<AuthStore>()(
 
       const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         try {
-          console.log("Auth state changed:", currentUser);
-
           if (!currentUser) {
             set({
               user: null,

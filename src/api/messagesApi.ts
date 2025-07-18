@@ -1,9 +1,9 @@
+import { Profile } from "@/models/Profile.model";
 import { IMessage } from "react-native-gifted-chat";
 import { DataSearchable, Entity } from "../types/DataTypes";
 import { PublicUser } from "./authApi";
-import { DataApi } from "./DataApi";
+import { DatabaseApi } from "./DatabaseApi";
 import profilesApi from "./profileApi";
-import { Profile } from "@/models/Profile.model";
 
 export interface ChatUser {
   _id: string;
@@ -29,7 +29,7 @@ export interface Message extends DataSearchable, Entity {
   user?: PublicUser;
 }
 
-class MessagesApi extends DataApi<Message> {
+class MessagesApi extends DatabaseApi<Message> {
   constructor() {
     super("messages");
   }

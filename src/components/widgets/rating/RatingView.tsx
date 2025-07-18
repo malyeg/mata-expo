@@ -1,5 +1,5 @@
-import { StarItem } from "@/../api/ratingApi";
-import theme from "@/../styles/theme";
+import { StarItem } from "@/api/ratingApi";
+import theme from "@/styles/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Star from "./Star";

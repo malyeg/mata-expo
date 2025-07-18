@@ -1,6 +1,6 @@
-import {Entity} from '../types/DataTypes';
-import {DataApi} from './DataApi';
-import firestore from '@react-native-firebase/firestore';
+import firestore from "@react-native-firebase/firestore";
+import { Entity } from "../types/DataTypes";
+import { DatabaseApi } from "./DatabaseApi";
 
 export interface Notification extends Entity {
   id: string;
@@ -11,17 +11,17 @@ export interface Notification extends Entity {
   timestamp: Date;
   delivered: boolean;
   deliveredAt: Date;
-  type: 'push' | 'email' | 'chat';
+  type: "push" | "email" | "chat";
   data: {
     id: string;
-    eventType: 'CLOSE_OFFER';
+    eventType: "CLOSE_OFFER";
     url: string;
   };
 }
 
-class NotificationsApi extends DataApi<Notification> {
+class NotificationsApi extends DatabaseApi<Notification> {
   constructor() {
-    super('notifications');
+    super("notifications");
   }
 
   updateDelivery = (id: string) => {

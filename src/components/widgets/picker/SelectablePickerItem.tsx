@@ -1,4 +1,4 @@
-import { CheckBox, Text } from "@/core";
+import { CheckBox, Text } from "@/components/core";
 import React, { useCallback } from "react";
 import {
   Pressable,

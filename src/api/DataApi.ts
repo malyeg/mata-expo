@@ -1,9 +1,10 @@
+import { Config } from "@/utils/Config";
 import firebase from "@react-native-firebase/app";
 import crashlytics from "@react-native-firebase/crashlytics";
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
-import "@react-native-firebase/functions";
+import { FirebaseFunctionsTypes } from "@react-native-firebase/functions";
 import constants from "../config/constants";
 import {
   DataCollection,
@@ -13,12 +14,9 @@ import {
   Query,
 } from "../types/DataTypes";
 import { DocumentSnapshot, QuerySnapshot } from "../types/UtilityTypes";
-// import {DocumentSnapshot, QuerySnapshot} from '../types/UtilityTypes';
-import { FirebaseFunctionsTypes } from "@react-native-firebase/functions";
 import Analytics, { ActionType, AnalyticsEvent } from "../utils/Analytics";
 import cache, { CacheConfig } from "../utils/cache/cacheManager";
 import { Api, APIOptions, ApiResponse } from "./Api";
-import { Config } from "@/utils/Config";
 
 export interface WriteBatch<T> {
   set: (data: Map<string, T>) => Promise<void>;
@@ -167,7 +165,7 @@ export class DataApi<T extends Entity> extends Api {
     try {
       this.logger.debug("getById:", id, options);
       const snapshot = await this.collection.doc(id).get();
-      if (snapshot.exists) {
+      if (snapshot.exists()) {
         const doc = {
           ...snapshot.data(),
           timestamp: (snapshot?.data()?.timestamp as any)?.toDate(),

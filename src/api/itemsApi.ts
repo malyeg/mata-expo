@@ -4,10 +4,9 @@ import constants from "../config/constants";
 import invalidContent from "../data/invalidContent";
 import { DataSearchable, Entity } from "../types/DataTypes";
 import Analytics, { AnalyticsEvent } from "../utils/Analytics";
-import { APIOptions } from "./Api";
 import { PublicUser } from "./authApi";
 import { Category } from "./categoriesApi";
-import { DataApi } from "./DataApi";
+import { DatabaseApi } from "./DatabaseApi";
 import { Location } from "./locationApi";
 
 export type ItemStatus =
@@ -112,7 +111,7 @@ export interface ImageMetadata {
   docId: string;
 }
 
-class ItemsApi extends DataApi<Item> {
+class ItemsApi extends DatabaseApi<Item> {
   constructor() {
     super("items");
   }
@@ -164,11 +163,11 @@ class ItemsApi extends DataApi<Item> {
     return task;
   };
 
-  delete = async (doc: Item, options?: APIOptions) => {
-    await this.deleteById(doc.id, options);
+  delete = async (item: Item) => {
+    await super.deleteById(item.id);
     try {
-      doc.images?.forEach(async (image) => {
-        await this.deleteImage(doc.userId, image);
+      item.images?.forEach(async (image) => {
+        await this.deleteImage(item.userId, image);
       });
     } catch (error) {
       console.warn(error);

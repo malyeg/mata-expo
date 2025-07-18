@@ -1,6 +1,6 @@
-import theme from "@/../styles/theme";
-import { Icon } from "@/core";
-import PressableOpacity from "@/core/PressableOpacity";
+import { Icon } from "@/components/core";
+import PressableOpacity from "@/components/core/PressableOpacity";
+import theme from "@/styles/theme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 

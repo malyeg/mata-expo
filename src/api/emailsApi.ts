@@ -1,5 +1,5 @@
-import {Entity} from '../types/DataTypes';
-import {DataApi} from './DataApi';
+import { Entity } from "../types/DataTypes";
+import { DatabaseApi } from "./DatabaseApi";
 
 export interface Email extends Entity {
   subject: string;
@@ -13,9 +13,9 @@ export interface Email extends Entity {
   };
 }
 
-class EmailsApi extends DataApi<Email> {
+class EmailsApi extends DatabaseApi<Email> {
   constructor() {
-    super('emails');
+    super("emails");
   }
 }
 

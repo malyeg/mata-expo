@@ -1,10 +1,10 @@
-import useLocale from "@/../hooks/useLocale";
-import useController from "@/../hooks/userController";
-import theme from "@/../styles/theme";
-import { Entity } from "@/../types/DataTypes";
-import { LoggerFactory } from "@/../utils/logger";
-import { Icon, Text } from "@/core";
-import Error from "@/form/Error";
+import { Icon, Text } from "@/components/core";
+import Error from "@/components/form/Error";
+import useController from "@/hooks/useController";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Entity } from "@/types/DataTypes";
+import { LoggerFactory } from "@/utils/logger";
 import React, {
   forwardRef,
   useCallback,

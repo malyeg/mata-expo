@@ -1,5 +1,5 @@
-import theme from "@/../styles/theme";
-import { Icon, Text } from "@/core";
+import { Icon, Text } from "@/components/core";
+import theme from "@/styles/theme";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ItemsFilterForm } from "./ItemsFilter";

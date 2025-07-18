@@ -1,4 +1,5 @@
 import * as ExpoLocation from "expo-location";
+import Geocoder from "react-native-geocoding";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
 import crashlyticsApi from "../api/CrashlyticsApi";
@@ -39,7 +40,7 @@ type LocationStore = LocationState & LocationActions;
 let loadingRef = false;
 let loadingCounterRef = 0;
 let watchSubscription: ExpoLocation.LocationSubscription | null = null;
-let retryIntervalId: NodeJS.Timeout | null = null;
+let retryIntervalId: NodeJS.Timeout | number | null = null;
 
 const positionChanged = (
   position: ExpoLocation.LocationObject,
@@ -103,10 +104,14 @@ const useLocationStore = create<LocationStore>()(
 
     initializeLocation: async () => {
       try {
+        Geocoder.init(process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY, {
+          language: "en",
+        });
         // Check permissions first
         const hasPermission = await locationApi.hasPermission();
         if (!hasPermission) {
           const permissionGranted = await locationApi.requestPermission();
+          console.log("Location permission granted:", permissionGranted);
           if (!permissionGranted) {
             get().setPermission(false);
             return;

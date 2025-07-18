@@ -6,8 +6,7 @@ import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import { Operation, QueryBuilder } from "@/types/DataTypes";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Platform,
@@ -28,7 +27,7 @@ interface ItemDealsTabProps {
 }
 const ItemDealsTab = ({ item, style }: ItemDealsTabProps) => {
   const [isVisible, setVisible] = useState(false);
-  const navigation = useNavigation<StackNavigationHelpers>();
+  const router = useRouter();
   const [deals, setDeals] = useState<ApiResponse<Deal> | undefined>();
   const insets = useSafeAreaInsets();
   const { user } = useAuth();

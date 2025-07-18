@@ -174,6 +174,7 @@ class LocationApi {
     options?: Partial<ExpoLocation.LocationOptions>
   ): Promise<Location> => {
     try {
+      console.log("getCurrentLocation", position, options);
       if (!position) {
         position = await this.getCurrentPosition(options);
       }
@@ -198,12 +199,12 @@ class LocationApi {
     logger.log("getLocationFrom", coordinate);
     try {
       const placeJson = await Geocoder.from(coordinate);
-      logger.log("placeJson received");
+      logger.log("placeJson received", placeJson.results[0]);
 
       const loc = await this.buildLocationFromPlace(
         placeJson.results[0] as unknown as GooglePlaceDetail
       );
-      logger.log("location built");
+      logger.log("location build");
 
       loc.coordinate = coordinate;
       return loc;
@@ -223,6 +224,7 @@ class LocationApi {
     const state = countriesApi.getStateByName(add.state!, country?.id!);
     let city: City | undefined;
 
+    logger.log("building location from place", add, country);
     if (add.locality) {
       const cities = await citiesApi.getByName(add.locality, country!, state);
       if (cities && cities.length > 0) {

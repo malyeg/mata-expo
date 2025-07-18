@@ -1,5 +1,5 @@
-import {Entity} from '../types/DataTypes';
-import {DataApi} from './DataApi';
+import { Entity } from "../types/DataTypes";
+import { DatabaseApi } from "./DatabaseApi";
 
 export interface Ad extends Entity {
   id: string;
@@ -9,30 +9,30 @@ export interface Ad extends Entity {
     url: string;
   };
   url: string;
-  type?: 'admob' | 'campain';
+  type?: "admob" | "campain";
 }
 
-class AdsApi extends DataApi<Ad> {
+class AdsApi extends DatabaseApi<Ad> {
   constructor() {
-    super('ads');
+    super("ads");
   }
 
   async getRandomOne() {
     const ads = await this.getAll();
-    console.log('ads', ads?.items.length);
-    const randomAd = this.weightedRandom(ads?.items!);
+    console.log("ads", ads.length);
+    const randomAd = this.weightedRandom(ads!);
     return randomAd;
   }
 
   weightedRandom(ads: Ad[]) {
-    const weights = ads.map(a => a.weight);
-    console.log({weights});
+    const weights = ads.map((a) => a.weight);
+    console.log({ weights });
     if (ads.length !== weights.length) {
-      throw new Error('Items and weights must be of the same size');
+      throw new Error("Items and weights must be of the same size");
     }
 
     if (!ads.length) {
-      throw new Error('Items must not be empty');
+      throw new Error("Items must not be empty");
     }
 
     // Preparing the cumulative weights array.
@@ -49,7 +49,7 @@ class AdsApi extends DataApi<Ad> {
     // - maxCumulativeWeight = 8
     // - range for the random number is [0...8]
     const maxCumulativeWeight = cumulativeWeights[cumulativeWeights.length - 1];
-    console.log({maxCumulativeWeight});
+    console.log({ maxCumulativeWeight });
     const randomNumber = maxCumulativeWeight * Math.random();
 
     // Picking the random item based on its weight.

@@ -1,4 +1,4 @@
-import { Entity, Nestable } from "@/../types/DataTypes";
+import { Entity, Nestable } from "@/types/DataTypes";
 
 export type PickerItem = Entity & Nestable;
 export type MultiSelectPickerState<T extends PickerItem = PickerItem> = {

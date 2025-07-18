@@ -1,5 +1,5 @@
-import theme from "@/../styles/theme";
-import { Icon } from "@/core";
+import { Icon } from "@/components/core";
+import theme from "@/styles/theme";
 import React, { useCallback } from "react";
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
 

@@ -2,8 +2,7 @@ import { Item } from "@/api/itemsApi";
 import { screens } from "@/config/constants";
 import theme from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
-import { useNavigation } from "@react-navigation/core";
-import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import { Pressable, StyleSheet, View, ViewProps } from "react-native";
 import { Icon, Image, Text } from "../core";
@@ -29,21 +28,21 @@ const ItemCard = ({
   sourceList,
   showSwapIcon = false,
 }: ItemCardProps) => {
-  const navigation = useNavigation<StackNavigationHelpers>();
+  const router = useRouter();
 
   const openItemDetails = useCallback(() => {
     if (onPress) {
       onPress(item);
     } else {
-      navigation.navigate(screens.ITEM_DETAILS, {
+      router.push(screens.ITEM_DETAILS, {
         id: item.id,
       });
     }
     Analytics.logSelectItem(item, sourceList);
     // linkTo('/items/' + item.id);
-  }, [item, navigation, onPress, sourceList]);
+  }, [item, onPress, router, sourceList]);
 
-  const imageUrl = item.defaultImageURL ?? item?.images[0]?.downloadURL;
+  const imageUrl = item.defaultImageURL ?? item?.images?.[0]?.downloadURL;
 
   const categoryName =
     item.category?.name.toLowerCase() === "other" &&

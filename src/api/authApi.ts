@@ -1,16 +1,16 @@
-import { fromFirebaseUser, User } from "@/contexts/user-model";
 import { Profile } from "@/models/Profile.model";
 import auth, { firebase, FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { FirebaseFunctionsTypes } from "@react-native-firebase/functions";
 import { AccessToken, LoginManager } from "react-native-fbsdk-next";
+import constants from "../config/constants";
 import { ICredentials } from "../contexts/AuthReducer";
+import { fromFirebaseUser, User } from "../contexts/user-model";
 import Analytics from "../utils/Analytics";
 import { AppError } from "../utils/AppError";
 import { LoggerFactory } from "../utils/logger";
 import { Api } from "./Api";
 import locationApi from "./locationApi";
 import profilesApi from "./profileApi";
-import { functions } from "@/firebase";
 const logger = LoggerFactory.getLogger("authApi");
 
 export interface PublicUser {
@@ -24,7 +24,7 @@ class AuthApi extends Api {
   functions: FirebaseFunctionsTypes.Module;
   constructor() {
     super();
-    this.functions = functions;
+    this.functions = firebase.app().functions(constants.firebase.REGION);
   }
 
   signIn = async (credentials: ICredentials) => {
@@ -148,43 +148,43 @@ class AuthApi extends Api {
   };
 
   appleSignIn = async () => {
-    try {
-      // const appleAuthRequestResponse = await appleAuth.performRequest({
-      //   requestedOperation: appleAuth.Operation.LOGIN,
-      //   requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-      // });
-      // const { identityToken, nonce, fullName } = appleAuthRequestResponse;
-      // if (identityToken) {
-      //   const appleCredential = firebase.auth.AppleAuthProvider.credential(
-      //     identityToken,
-      //     nonce
-      //   );
-      //   const userCredential = await firebase
-      //     .auth()
-      //     .signInWithCredential(appleCredential);
-      //   const user = this.fromApple(userCredential);
-      //   let profile = await profilesApi.getById(user.id);
-      //   if (profile) {
-      //     logger.debug("profile found", profile.id);
-      //   } else {
-      //     profile = {
-      //       email: user.email,
-      //       id: user.id,
-      //     } as Profile;
-      //     !!fullName?.givenName && (profile.firstName = fullName?.givenName);
-      //     !!fullName?.familyName && (profile.lastName = fullName?.familyName);
-      //     profilesApi.set(user.id, profile);
-      //   }
-      //   Analytics.logLogin("APPLE");
-      //   return { user, profile };
-      // } else {
-      //   console.log("no identityToken");
-      //   // handle this - retry?
-      // }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+    // try {
+    //   const appleAuthRequestResponse = await appleAuth.performRequest({
+    //     requestedOperation: appleAuth.Operation.LOGIN,
+    //     requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    //   });
+    //   const {identityToken, nonce, fullName} = appleAuthRequestResponse;
+    //   if (identityToken) {
+    //     const appleCredential = firebase.auth.AppleAuthProvider.credential(
+    //       identityToken,
+    //       nonce,
+    //     );
+    //     const userCredential = await firebase
+    //       .auth()
+    //       .signInWithCredential(appleCredential);
+    //     const user = this.fromApple(userCredential);
+    //     let profile = await profilesApi.getById(user.id);
+    //     if (profile) {
+    //       logger.debug('profile found', profile.id);
+    //     } else {
+    //       profile = {
+    //         email: user.email,
+    //         id: user.id,
+    //       } as Profile;
+    //       !!fullName?.givenName && (profile.firstName = fullName?.givenName);
+    //       !!fullName?.familyName && (profile.lastName = fullName?.familyName);
+    //       profilesApi.set(user.id, profile);
+    //     }
+    //     Analytics.logLogin('APPLE');
+    //     return {user, profile};
+    //   } else {
+    //     console.log('no identityToken');
+    //     // handle this - retry?
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   throw error;
+    // }
   };
 
   fbSignIn = async () => {

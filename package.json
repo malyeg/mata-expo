@@ -8,7 +8,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "clear:watchman": "watchman watch-del-all"
   },
   "dependencies": {
     "@algolia/cache-common": "^4.25.2",

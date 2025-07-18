@@ -4,8 +4,8 @@ import { Button, Loader, Modal, Text } from "@/components/core";
 import { Error } from "@/components/form";
 import useAuth from "@/hooks/useAuth";
 import theme from "@/styles/theme";
-import { useNavigation } from "@react-navigation/native";
 import { addMilliseconds, isAfter } from "date-fns";
+import { useRouter } from "expo-router";
 import { default as React, useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 
@@ -14,7 +14,7 @@ interface InactiveItemModalProps {
 }
 const InactiveItemModal = ({ item }: InactiveItemModalProps) => {
   const { user } = useAuth();
-  const navigation = useNavigation<StackNavigationHelpers>();
+  const router = useRouter();
   const [isVisible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

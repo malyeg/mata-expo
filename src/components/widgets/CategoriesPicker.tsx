@@ -1,5 +1,5 @@
+import useController from "@/hooks/useController";
 import useLocale from "@/hooks/useLocale";
-import useController from "@/hooks/userController";
 import theme from "@/styles/theme";
 import { Entity } from "@/types/DataTypes";
 import React, {

@@ -1,8 +1,8 @@
-import useLocale from "@/../hooks/useLocale";
-import theme from "@/../styles/theme";
-import { Entity, Nestable } from "@/../types/DataTypes";
-import { Button, Modal } from "@/core";
-import SearchInput from "@/form/SearchInput";
+import { Button, Modal } from "@/components/core";
+import SearchInput from "@/components/form/SearchInput";
+import useLocale from "@/hooks/useLocale";
+import theme from "@/styles/theme";
+import { Entity, Nestable } from "@/types/DataTypes";
 import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,

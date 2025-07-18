@@ -1,15 +1,16 @@
-import categoriesApi, { Category } from "@/../api/categoriesApi";
-import countriesApi, { Country, State } from "@/../api/countriesApi";
-import { conditionList, swapList, SwapType } from "@/../api/itemsApi";
-import useAuth from "@/../hooks/useAuth";
-import useFormBuilder from "@/../hooks/useFormBuilder";
-import useLocale from "@/../hooks/useLocale";
-import useLocation from "@/../hooks/useLocation";
-import theme from "@/../styles/theme";
-import { Entity } from "@/../types/DataTypes";
-import { LoggerFactory } from "@/../utils/logger";
-import { Button, Modal } from "@/core";
-import { Picker, TextInput } from "@/form";
+import categoriesApi, { Category } from "@/api/categoriesApi";
+import countriesApi from "@/api/countriesApi";
+import { conditionList, swapList, SwapType } from "@/api/itemsApi";
+import { Button, Modal } from "@/components/core";
+import { Picker, TextInput } from "@/components/form";
+import useAuth from "@/hooks/useAuth";
+import useFormBuilder from "@/hooks/useFormBuilder";
+import useLocale from "@/hooks/useLocale";
+import useLocation from "@/hooks/useLocation";
+import { Country, State } from "@/models/place.model";
+import theme from "@/styles/theme";
+import { Entity } from "@/types/DataTypes";
+import { LoggerFactory } from "@/utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ScrollView,
@@ -105,8 +106,6 @@ const ItemsFilter = ({
   // }, [focusOn]);
 
   useEffect(() => {
-    logger.log("useEffect", defaultValues);
-
     if (firstLoadRef.current) {
       firstLoadRef.current = false;
       return;
@@ -210,7 +209,7 @@ const ItemsFilter = ({
     []
   );
 
-  const isCountryPickerVisible = !location || user.isAdmin;
+  const isCountryPickerVisible = !location || user?.isAdmin;
 
   return (
     <Modal

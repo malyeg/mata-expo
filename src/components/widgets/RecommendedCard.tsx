@@ -2,8 +2,7 @@ import itemsApi, { Item } from "@/api/itemsApi";
 import { screens } from "@/config/constants";
 import theme from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
-import { useNavigation } from "@react-navigation/core";
-import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import {
   Dimensions,
@@ -26,7 +25,7 @@ interface ItemCardProps extends ViewProps {
 const windowWidth = Dimensions.get("window").width * 0.8;
 
 const RecommendedCard = ({ item, style }: ItemCardProps) => {
-  const navigation = useNavigation<StackNavigationHelpers>();
+  const router = useRouter();
 
   const openItemDetails = useCallback(() => {
     // TODO refactor to constant

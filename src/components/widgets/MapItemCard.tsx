@@ -2,8 +2,7 @@ import { Item } from "@/api/itemsApi";
 import { screens } from "@/config/constants";
 import theme from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
-import { useNavigation } from "@react-navigation/core";
-import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
+import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import {
   Dimensions,
@@ -28,7 +27,7 @@ interface ItemCardProps extends ViewProps {
   sourceList?: string;
 }
 const MapItemCard = ({ item, style, onPress, sourceList }: ItemCardProps) => {
-  const navigation = useNavigation<StackNavigationHelpers>();
+  const router = useRouter();
 
   const openItemDetails = useCallback(() => {
     if (onPress) {

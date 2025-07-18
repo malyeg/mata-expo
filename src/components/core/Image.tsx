@@ -1,7 +1,7 @@
+import { Image as ExpoImage, ImageProps as ExpoImageProps } from "expo-image";
 import React, { useCallback, useState } from "react";
 import { ImageStyle, StyleProp, StyleSheet } from "react-native";
 import Modal from "./Modal";
-import { Image as ExpoImage, ImageProps as ExpoImageProps } from "expo-image";
 export interface ImageProps {
   uri?: string;
   source?: any;
@@ -21,6 +21,7 @@ const Image = ({
   style,
   source,
   resizeMode,
+  uri,
   onPress,
   onPressViewInFullScreen = false,
   onError,

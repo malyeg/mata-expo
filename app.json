@@ -38,6 +38,12 @@
           "backgroundColor": "#ffffff"
         }
       ],
+      [
+        "expo-location",
+        {
+          "NSLocationWhenInUseUsageDescription": "Allowing the user to select and add location to his new items in order to be searchable by others."
+        }
+      ],
       "expo-build-properties",
       [
         "react-native-fbsdk-next",
@@ -53,6 +59,7 @@
         }
       ],
       "@react-native-firebase/app",
+      "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
       [
         "expo-build-properties",

@@ -1,16 +1,16 @@
-import {Entity} from '../types/DataTypes';
-import {DataApi} from './DataApi';
-import {Item} from './itemsApi';
+import { Entity } from "../types/DataTypes";
+import { DatabaseApi } from "./DatabaseApi";
+import { Item } from "./itemsApi";
 
 export interface ListItem extends Entity {
   item: Item;
-  type: 'wish' | 'favorite';
+  type: "wish" | "favorite";
   isAvailable?: boolean;
 }
 
-class ListsApi extends DataApi<ListItem> {
+class ListsApi extends DatabaseApi<ListItem> {
   constructor() {
-    super('lists');
+    super("lists");
   }
 }
 

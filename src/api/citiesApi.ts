@@ -1,6 +1,6 @@
 import { Country, State } from "@/models/place.model";
 import { Entity, QueryBuilder } from "../types/DataTypes";
-import { DataApi } from "./DataApi";
+import { DatabaseApi } from "./DatabaseApi";
 import { Coordinate } from "./locationApi";
 
 export interface City extends Entity {
@@ -9,7 +9,7 @@ export interface City extends Entity {
   stateId: string;
   coordinate: Coordinate;
 }
-class CitiesApi extends DataApi<City> {
+class CitiesApi extends DatabaseApi<City> {
   constructor() {
     super("cities");
   }
@@ -20,9 +20,9 @@ class CitiesApi extends DataApi<City> {
       .filter("stateId", Number(stateId))
       .limit(2000)
       .build();
-    const cities = await this.getAll(query);
+    let cities = await this.getAll(query);
     if (cities) {
-      cities.items = cities.items.map((c) => ({
+      cities = cities.map((c) => ({
         ...c,
         coordinate: {
           latitude: Number(c.coordinate.latitude),
@@ -41,9 +41,9 @@ class CitiesApi extends DataApi<City> {
       filters.push({ field: "stateId", value: Number(stateId) });
     }
     const query = new QueryBuilder<City>().filters(filters).build();
-    const cities = await this.getAll(query);
+    let cities = await this.getAll(query);
     if (cities) {
-      cities.items = cities.items.map((c) => ({
+      cities = cities.map((c) => ({
         ...c,
         coordinate: {
           latitude: Number(c.coordinate.latitude),
@@ -58,8 +58,8 @@ class CitiesApi extends DataApi<City> {
 
   async getByName(cityName: string, country: Country, state?: State) {
     const cities = await this.getByCountryIdAndStateId(country.id, state?.id);
-    if (cities?.items && cities?.items?.length > 0) {
-      return cities.items.filter(
+    if (cities && cities?.length > 0) {
+      return cities.filter(
         (c) => c.name?.toLowerCase() === cityName.toLowerCase()
       );
     }

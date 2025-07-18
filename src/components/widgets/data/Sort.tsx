@@ -1,7 +1,7 @@
-import theme from "@/../styles/theme";
-import { SortDirection } from "@/../types/DataTypes";
-import { Text } from "@/core";
-import Icon from "@/core/Icon";
+import { Text } from "@/components/core";
+import Icon from "@/components/core/Icon";
+import theme from "@/styles/theme";
+import { SortDirection } from "@/types/DataTypes";
 import React, { useCallback, useState } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 

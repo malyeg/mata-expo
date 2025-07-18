@@ -1,8 +1,8 @@
-import { RatingWeight, StarItem } from "@/../api/ratingApi";
-import useLocale from "@/../hooks/useLocale";
-import sharedStyles from "@/../styles/SharedStyles";
-import theme from "@/../styles/theme";
-import { Button, Modal, Text } from "@/core";
+import { RatingWeight, StarItem } from "@/api/ratingApi";
+import { Button, Modal, Text } from "@/components/core";
+import useLocale from "@/hooks/useLocale";
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import RatingView, { RatingViewProps } from "./RatingView";
