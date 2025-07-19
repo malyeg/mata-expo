@@ -24,7 +24,7 @@ const InactiveItemModal = ({ item }: InactiveItemModalProps) => {
       setLoading(true);
       await itemsApi.delete(item);
       closeModal();
-      navigation.goBack();
+      router.back();
     } catch (err) {
       console.error(err);
       setError(err as Error);
@@ -38,7 +38,7 @@ const InactiveItemModal = ({ item }: InactiveItemModalProps) => {
       setLoading(true);
       await itemsApi.archiveItem(item);
       closeModal();
-      navigation.goBack();
+      router.back();
     } catch (err) {
       console.error(err);
       setError(err as Error);

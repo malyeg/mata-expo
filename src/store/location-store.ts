@@ -15,6 +15,9 @@ interface LocationState {
   hasPermission?: boolean;
   watching: boolean;
   lastRetry?: Date;
+  isInitializing: boolean;
+  isInitialized: boolean;
+  initializationError?: string;
 }
 
 interface LocationActions {
@@ -31,6 +34,11 @@ interface LocationActions {
   setPermission: (hasPermission: boolean) => void;
   reloadLocation: () => Promise<void>;
   initializeLocation: () => Promise<void>;
+  setInitializationState: (
+    isInitializing: boolean,
+    isInitialized: boolean,
+    error?: string
+  ) => void;
   cleanup: () => void;
 }
 
@@ -40,7 +48,7 @@ type LocationStore = LocationState & LocationActions;
 let loadingRef = false;
 let loadingCounterRef = 0;
 let watchSubscription: ExpoLocation.LocationSubscription | null = null;
-let retryIntervalId: NodeJS.Timeout | number | null = null;
+let retryIntervalId: NodeJS.Timeout | null = null;
 
 const positionChanged = (
   position: ExpoLocation.LocationObject,
@@ -64,6 +72,9 @@ const useLocationStore = create<LocationStore>()(
     watching: false,
     location: undefined,
     lastRetry: undefined,
+    isInitializing: false,
+    isInitialized: false,
+    initializationError: undefined,
 
     // Actions
     setLocation: (location, connected, hasPermission = true) => {
@@ -87,6 +98,22 @@ const useLocationStore = create<LocationStore>()(
       set({ hasPermission });
     },
 
+    setInitializationState: (isInitializing, isInitialized, error) => {
+      set({
+        isInitializing,
+        isInitialized,
+        initializationError: error,
+      });
+    },
+
+    resetInitialization: () => {
+      set({
+        isInitializing: false,
+        isInitialized: false,
+        initializationError: undefined,
+      });
+    },
+
     reloadLocation: async () => {
       try {
         const resp = await locationApi.loadLocation({
@@ -104,6 +131,7 @@ const useLocationStore = create<LocationStore>()(
 
     initializeLocation: async () => {
       try {
+        get().setInitializationState(true, false, undefined);
         Geocoder.init(process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY, {
           language: "en",
         });
@@ -111,7 +139,6 @@ const useLocationStore = create<LocationStore>()(
         const hasPermission = await locationApi.hasPermission();
         if (!hasPermission) {
           const permissionGranted = await locationApi.requestPermission();
-          console.log("Location permission granted:", permissionGranted);
           if (!permissionGranted) {
             get().setPermission(false);
             return;
@@ -135,9 +162,11 @@ const useLocationStore = create<LocationStore>()(
 
         // Start watching location
         await watchLocation();
+        get().setInitializationState(false, true, undefined);
       } catch (error) {
         logger.error("Error initializing location", error);
         get().setPermission(false);
+        get().setInitializationState(false, false, (error as Error).message);
       }
     },
 
@@ -156,8 +185,6 @@ const useLocationStore = create<LocationStore>()(
 );
 
 const watchLocation = async () => {
-  logger.log("watchLocation");
-
   try {
     watchSubscription = await locationApi.watch(
       async (position: ExpoLocation.LocationObject) => {
@@ -177,7 +204,7 @@ const watchLocation = async () => {
             loadingRef = false;
           }
         } else {
-          logger.log("no change in position");
+          logger.debug("no change in position");
         }
       },
       (error: Error) => {
@@ -199,8 +226,6 @@ const watchLocation = async () => {
 useLocationStore.subscribe(
   (state) => state.watching,
   (watching) => {
-    logger.log("watching state changed", watching);
-
     // Clear existing interval
     if (retryIntervalId) {
       clearInterval(retryIntervalId);

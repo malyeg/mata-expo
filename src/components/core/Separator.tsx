@@ -1,5 +1,5 @@
 import create from "@/styles/EStyleSheet";
-import { colors } from "@/styles/theme";
+import theme from "@/styles/theme";
 import React, { FC } from "react";
 import { View, ViewProps } from "react-native";
 // import create from '../styles/EStyleSheet';
@@ -16,7 +16,7 @@ const styles = create(
   {
     container: {
       width: "100%",
-      backgroundColor: colors.lightGrey,
+      backgroundColor: theme.colors.lightGrey,
       height: 2,
       // borderStyle: 'dotted',
       // paddingVertical: 2,

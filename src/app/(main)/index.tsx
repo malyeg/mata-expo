@@ -1,6 +1,5 @@
-import citiesApi from "@/api/citiesApi";
 import { swapList } from "@/api/itemsApi";
-import { Button, Image, Screen } from "@/components/core";
+import { Image, Screen } from "@/components/core";
 import SignUpCard from "@/components/features/auth/SignUpCard";
 import ItemsFilter, {
   ItemsFilterForm,
@@ -9,6 +8,7 @@ import ItemsFilter, {
 import ItemsSearch from "@/components/widgets/ItemsSearch";
 import NearByItems from "@/components/widgets/NearByItems";
 import OfflineCard from "@/components/widgets/OfflineCard";
+import RecommendedItems from "@/components/widgets/RecommendedItems";
 import TopCategories from "@/components/widgets/TopCategories";
 import UpdateProfileCard from "@/components/widgets/UpdateProfileCard";
 import useAuth from "@/hooks/useAuth";
@@ -65,16 +65,6 @@ const HomeScreen = () => {
     setItemsFilterVisible(false);
   }, []);
 
-  const testCities = async () => {
-    try {
-      console.log("call cities");
-      const city = await citiesApi.getById("100000");
-      console.log("city", city);
-    } catch (error) {
-      console.error("Error fetching cities:", error);
-    }
-  };
-
   return (
     <Screen
       style={[styles.container, { paddingTop: top }]}
@@ -90,7 +80,7 @@ const HomeScreen = () => {
 
       {!!location && (
         <>
-          {/* {profile?.targetCategories && (
+          {profile?.targetCategories && (
             <RecommendedItems
               style={[styles.recommendedItems, styles.topMargin]}
               location={{
@@ -100,7 +90,7 @@ const HomeScreen = () => {
                 },
               }}
             />
-          )} */}
+          )}
           <NearByItems
             key={lastRefresh.getTime()}
             style={styles.nearByItems}
@@ -121,7 +111,6 @@ const HomeScreen = () => {
         focusOn={itemsFilterFocusField}
         defaultValues={{ country: location?.country }}
       />
-      <Button title="test cities firebase" onPress={testCities} />
     </Screen>
   );
 };

@@ -1,5 +1,5 @@
 import ratingApi from "@/api/ratingApi";
-import useAuth from "@/hooks/useAuth";
+import { useAuthStore } from "@/store/auth-store";
 import theme from "@/styles/theme";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
@@ -33,7 +33,7 @@ const ProfileHeader = ({
   onPress,
 }: ProfileHeaderProps) => {
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile } = useAuthStore();
   const [rate, setRate] = useState<number | undefined>();
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const ProfileHeader = ({
           },
         ]}
       >
-        {profile.image ? (
+        {profile?.image ? (
           <Image uri={profile.image.url} style={styles.profileImage} />
         ) : (
           <Icon
@@ -83,9 +83,9 @@ const ProfileHeader = ({
         >
           {user?.isAnonymous
             ? "Guest"
-            : profile.firstName
+            : profile?.firstName
             ? profile.firstName + " " + profile.lastName
-            : profile.email}
+            : profile?.email}
         </Text>
         {showEditIcon && (
           <Pressable onPress={openEditProfile} hitSlop={10}>

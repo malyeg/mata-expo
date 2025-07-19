@@ -1,7 +1,7 @@
-import React from "react";
-import { TextProps, TextStyle } from "react-native";
 import { PressableOpacityProps } from "@/components/core/PressableOpacity";
 import { AtLeastOne } from "@/types/UtilityTypes";
+import React from "react";
+import { TextProps, TextStyle } from "react-native";
 
 // Definitions
 export const Scales = {
@@ -22,7 +22,7 @@ export const Scales = {
   overline: {},
 };
 
-export const colors = {
+const colors = {
   primary: "#727272",
   secondary: "#83D2C8",
   dark: "#727272",
@@ -150,7 +150,7 @@ export const getScaleStyleFromProps = (props: Partial<ScaleProps>): any => {
   let style;
   Object.keys(props).forEach((key: string) => {
     if (scaleObj.hasOwnProperty(key)) {
-      style = scaleObj[<keyof typeof Scales>key];
+      style = scaleObj[key as keyof typeof Scales];
     }
     // return theme.styles.scale[key!];
   });

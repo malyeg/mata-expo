@@ -10,6 +10,7 @@ const logger = LoggerFactory.getLogger("NotificationStore");
 interface NotificationState {
   pushToken?: string;
   unReadNotificationsCount: number;
+  notificationsCount: number; // Total count of all notifications
   lastNotification?: Notifications.Notification;
   lastResponse?: Notifications.NotificationResponse;
   notificationError?: string | null;
@@ -18,8 +19,10 @@ interface NotificationState {
   // Actions
   setPushToken: (token: string | undefined) => void;
   setUnReadNotificationsCount: (count: number) => void;
+  setNotificationsCount: (count: number) => void;
   incrementUnReadNotificationsCount: () => void;
   decrementUnReadNotificationsCount: () => void;
+  incrementNotificationsCount: () => void;
   setLastNotification: (
     notification: Notifications.Notification | undefined
   ) => void;
@@ -101,6 +104,7 @@ async function registerForPushNotificationsAsync(): Promise<RegistrationResult> 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
   pushToken: undefined,
   unReadNotificationsCount: 0,
+  notificationsCount: 0,
   lastNotification: undefined,
   lastResponse: undefined,
   notificationError: null,
@@ -111,16 +115,24 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   setUnReadNotificationsCount: (count) =>
     set({ unReadNotificationsCount: count }),
 
+  setNotificationsCount: (count) => set({ notificationsCount: count }),
+
   incrementUnReadNotificationsCount: () =>
     set((state) => ({
       unReadNotificationsCount: state.unReadNotificationsCount + 1,
     })),
+
   decrementUnReadNotificationsCount: () => {
     console.log("decrementUnReadNotificationsCount");
     set((state) => ({
       unReadNotificationsCount: Math.max(state.unReadNotificationsCount - 1, 0),
     }));
   },
+
+  incrementNotificationsCount: () =>
+    set((state) => ({
+      notificationsCount: state.notificationsCount + 1,
+    })),
 
   setLastNotification: (notification) =>
     set({ lastNotification: notification }),
@@ -180,6 +192,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     set({
       pushToken: undefined,
       unReadNotificationsCount: 0,
+      notificationsCount: 0,
       lastNotification: undefined,
       lastResponse: undefined,
       notificationError: null,

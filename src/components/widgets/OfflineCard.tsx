@@ -8,9 +8,12 @@ import { Icon, Text } from "../core";
 
 const OfflineCard = () => {
   const { isInternetReachable } = useConnectionCheck();
-  const { connected } = useLocation();
+  const { connected, isInitializing } = useLocation();
   const { t } = useLocale("widgets");
 
+  if (isInitializing) {
+    return null; // or a loading indicator
+  }
   return !isInternetReachable ? (
     <OfflineComponent
       title={t("offlineCard.title")}

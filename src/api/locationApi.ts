@@ -73,7 +73,6 @@ class LocationApi {
     try {
       const { status } = await ExpoLocation.getForegroundPermissionsAsync();
       const granted = status === "granted";
-      logger.log("permission granted?", granted);
       return granted;
     } catch (error) {
       logger.error("Error checking permissions", error);
@@ -136,13 +135,13 @@ class LocationApi {
     showLocationDialog?: boolean;
   } = {}): Promise<{ location: Location; connected: boolean } | undefined> => {
     try {
-      if (!force) {
-        const lastKnownLocation = await this.getLastKnownLocation();
-        if (lastKnownLocation) {
-          logger.log("loading lastKnownLocation");
-          return { location: lastKnownLocation, connected: false };
-        }
-      }
+      // if (!force) {
+      //   const lastKnownLocation = await this.getLastKnownLocation();
+      //   if (lastKnownLocation) {
+      //     logger.log("loading lastKnownLocation");
+      //     return { location: lastKnownLocation, connected: false };
+      //   }
+      // }
 
       // Check and request permissions if needed
       const hasPermission = await this.hasPermission();
@@ -159,7 +158,6 @@ class LocationApi {
         // This would typically be handled by the permission request
       };
 
-      logger.log("loading current location", options);
       const newLocation = await this.getCurrentLocation(undefined, options);
 
       return { location: newLocation, connected: true };
@@ -174,7 +172,6 @@ class LocationApi {
     options?: Partial<ExpoLocation.LocationOptions>
   ): Promise<Location> => {
     try {
-      console.log("getCurrentLocation", position, options);
       if (!position) {
         position = await this.getCurrentPosition(options);
       }
@@ -196,10 +193,8 @@ class LocationApi {
   };
 
   getLocationFrom = async (coordinate: Coordinate): Promise<Location> => {
-    logger.log("getLocationFrom", coordinate);
     try {
       const placeJson = await Geocoder.from(coordinate);
-      logger.log("placeJson received", placeJson.results[0]);
 
       const loc = await this.buildLocationFromPlace(
         placeJson.results[0] as unknown as GooglePlaceDetail
@@ -224,7 +219,6 @@ class LocationApi {
     const state = countriesApi.getStateByName(add.state!, country?.id!);
     let city: City | undefined;
 
-    logger.log("building location from place", add, country);
     if (add.locality) {
       const cities = await citiesApi.getByName(add.locality, country!, state);
       if (cities && cities.length > 0) {

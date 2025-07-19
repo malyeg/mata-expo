@@ -3,7 +3,7 @@ import itemsApi from "@/api/itemsApi";
 import listsApi, { ListItem } from "@/api/listsApi";
 import { screens } from "@/config/constants";
 import useNavigationHelper from "@/hooks/useNavigationHelper";
-import theme, { colors } from "@/styles/theme";
+import theme from "@/styles/theme";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Button, Icon, Image, Modal, Text } from "../core";
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     right: 0,
-    backgroundColor: colors.orange,
+    backgroundColor: theme.colors.orange,
     color: theme.colors.white,
     borderRadius: 5,
     padding: 5,

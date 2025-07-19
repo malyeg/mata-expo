@@ -8,7 +8,6 @@ const AuthLayout = () => {
   // Redirect logic is handled in the root _layout.tsx
   // This layout just defines the stack navigator for the auth routes
   const { bottom } = useSafeAreaInsets();
-  console.log("AuthLayout");
   return (
     <Stack
       initialRouteName="sign-in"

@@ -105,8 +105,6 @@ export class DatabaseApi<T extends object> extends Api {
     onError?: ((error: Error) => void) | undefined,
     query?: Query
   ) => {
-    this.logger.debug("onQuerySnapshot", query);
-
     let collectionQuery = query
       ? this.getQuery(query, this.collection)
       : this.collection;
