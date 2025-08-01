@@ -14,9 +14,11 @@ import UpdateProfileCard from "@/components/widgets/UpdateProfileCard";
 import useAuth from "@/hooks/useAuth";
 import useLocationStore from "@/store/location-store";
 import theme from "@/styles/theme";
-import { useRouter } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export const HOME_SCREEN = "HomeScreen";
@@ -27,6 +29,7 @@ const HomeScreen = () => {
   const { location } = useLocationStore();
   const { top } = useSafeAreaInsets();
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const nav = useNavigation<DrawerNavigationProp<any>>();
   const [isItemsFilterVisible, setItemsFilterVisible] = useState(false);
   const [itemsFilterFocusField, setItemsFilterFocusField] =
     useState<ItemsFilterProps["focusOn"]>(undefined);
@@ -65,6 +68,10 @@ const HomeScreen = () => {
     setItemsFilterVisible(false);
   }, []);
 
+  const toggleMenu = useCallback(() => {
+    nav.toggleDrawer();
+  }, [nav]);
+
   return (
     <Screen
       style={[styles.container, { paddingTop: top }]}
@@ -73,6 +80,14 @@ const HomeScreen = () => {
       keyboardShouldPersistTaps="always"
       scrollable={true}
     >
+      <View>
+        <MaterialCommunityIcons
+          name="menu"
+          color={theme.colors.dark}
+          size={30}
+          onPress={toggleMenu}
+        />
+      </View>
       <OfflineCard />
       <ItemsSearch onPress={openFilter} />
       {user?.isAnonymous && <SignUpCard />}
@@ -119,6 +134,7 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
+    gap: 10,
     // flex: 1,
     // paddingBottom: 300,
   },
@@ -135,8 +151,8 @@ const styles = StyleSheet.create({
     left: 0,
   },
   nearByItems: {
-    marginBottom: 10,
-    marginVertical: 10,
+    // marginBottom: 10,
+    // marginVertical: 10,
     marginRight: theme.defaults.SCREEN_PADDING * -1,
   },
   recommendedItems: {
@@ -144,21 +160,21 @@ const styles = StyleSheet.create({
     marginRight: theme.defaults.SCREEN_PADDING * -1,
   },
   categories: {
-    marginVertical: 10,
+    // marginVertical: 10,
     marginRight: theme.defaults.SCREEN_PADDING * -1,
   },
   tabBar: {
     position: "absolute",
   },
   itemsSearch: {
-    marginBottom: 15,
+    // marginBottom: 15,
   },
   banner: {
-    marginTop: 10,
+    // marginTop: 10,
     width: "100%",
     height: 100,
   },
   topMargin: {
-    marginTop: 10,
+    // marginTop: 10,
   },
 });

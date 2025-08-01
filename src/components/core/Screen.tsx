@@ -1,4 +1,4 @@
-import create from "@/styles/EStyleSheet";
+import { create } from "@/styles/EStyleSheet";
 import theme from "@/styles/theme";
 import React, { useState } from "react";
 import {

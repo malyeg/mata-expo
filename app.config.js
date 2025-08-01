@@ -2,7 +2,6 @@
 const appJson = require("./app.json");
 
 module.exports = ({ config }) => {
-  console.log("Using app.config.js");
   // `config` here contains the parsed app.json under `config.expo`
   const base = config.expo || appJson.expo;
 

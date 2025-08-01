@@ -1,5 +1,6 @@
 import theme from "@/styles/theme";
-import React from "react";
+import { useRouter } from "expo-router";
+import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Menu,
@@ -9,7 +10,7 @@ import {
 } from "react-native-popup-menu";
 import { Icon, Text } from "../core";
 import { IconProps } from "../core/Icon";
-import HeaderNav from "./HeaderNav";
+import PressableOpacity from "../core/PressableOpacity";
 
 export interface MenuItem {
   label: string;
@@ -27,10 +28,16 @@ interface HeaderProps {
   children?: React.ReactNode;
 }
 const Header = ({ title, options, route, menu, ...props }: HeaderProps) => {
+  const router = useRouter();
+  const onPressHandler = useCallback(() => {
+    router.back();
+  }, [router]);
   return (
     <>
       <View style={styles.container}>
-        <HeaderNav style={styles.nav} route={route} {...props} />
+        <PressableOpacity onPress={onPressHandler} style={styles.navContainer}>
+          <Icon name="chevron-left" color={theme.colors.grey} size={35} />
+        </PressableOpacity>
         <Text style={styles.title} h5 numberOfLines={1}>
           {title ??
             (route?.params as { title: string })?.title ??
@@ -84,6 +91,14 @@ const styles = StyleSheet.create({
     // height: 20,
     paddingVertical: 10,
     paddingHorizontal: 40,
+    // backgroundColor: "red",
+    // top: 50,
+  },
+  navContainer: {
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
     // flex: 1,

@@ -6,11 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import CarouselBase, {
-  CarouselProps as CarouselBaseProps,
-  CarouselProperties,
-  Pagination,
-} from "react-native-snap-carousel";
+import CarouselBase, { Pagination } from "react-native-snap-carousel";
 
 import { ImageSource } from "@/api/itemsApi";
 import theme from "@/styles/theme";

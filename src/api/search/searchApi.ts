@@ -27,20 +27,27 @@ const logger = LoggerFactory.getLogger("searchApi");
 
 class SearchApi<T> {
   readonly client: SearchClient;
-  readonly index: any;
+  readonly indexName: string; // Store indexName instead of index
 
-  constructor(readonly indexName: string) {
+  constructor(indexName: string) {
     this.client = client;
-    this.index = this.client.initIndex(indexName);
+    this.indexName = indexName; // Store the index name
   }
+
   async search(query: Query): Promise<SearchResponse<T> | undefined> {
     try {
       const searchOptions = this.toSearchOptions(query);
       logger.debug("options filter", searchOptions.filters);
-      const response = await this.index.search<T>(
-        query.searchText ?? "",
-        searchOptions
-      );
+
+      // Use the new v5 API: searchSingleIndex with indexName parameter
+      const response = await this.client.searchSingleIndex({
+        indexName: this.indexName,
+        searchParams: {
+          query: query.searchText ?? "",
+          ...searchOptions,
+        },
+      });
+
       return {
         items: response.hits,
         page: {
@@ -63,14 +70,26 @@ class SearchApi<T> {
     const aroundLatLng = coord
       ? coord?.latitude + "," + coord?.longitude
       : undefined;
-    const searchOptions = {
+
+    const searchOptions: any = {
       hitsPerPage: query.page?.size ?? limit,
       page: query.page?.index ?? 0,
       attributesToHighlight: [],
-      filters,
-      aroundLatLng,
-      aroundRadius: query.location?.aroundRadius,
     };
+
+    // Only add filters if they exist
+    if (filters) {
+      searchOptions.filters = filters;
+    }
+
+    // Only add location params if they exist
+    if (aroundLatLng) {
+      searchOptions.aroundLatLng = aroundLatLng;
+    }
+    if (query.location?.aroundRadius) {
+      searchOptions.aroundRadius = query.location.aroundRadius;
+    }
+
     return searchOptions;
   }
 

@@ -37,7 +37,7 @@ export type WithId<T> = T & { id: string };
 export class DatabaseApi<T extends object> extends Api {
   private collection: FirebaseFirestoreTypes.CollectionReference<FirebaseFirestoreTypes.DocumentData>;
 
-  constructor(private collectionName: string, public actionName?: string) {
+  constructor(public collectionName: string, public actionName?: string) {
     super();
     // collection() returns a CollectionReference under the hood
     this.collection = collection(

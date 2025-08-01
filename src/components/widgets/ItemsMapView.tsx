@@ -5,9 +5,9 @@ import theme from "@/styles/theme";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import Carousel from "react-native-snap-carousel";
+import Carousel from "react-native-reanimated-carousel";
 import MapItem from "./MapItem";
-import MapItemCard, { MAP_CARD_HEIGHT, MAP_CARD_WIDTH } from "./MapItemCard";
+import MapItemCard, { MAP_CARD_HEIGHT } from "./MapItemCard";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -102,14 +102,14 @@ const ItemsMapView = ({ items, onSelectItem }: ItemsMapViewProps) => {
       )} */}
       <View style={styles.itemsContainer}>
         <Carousel
-          layout="default"
           data={items}
           enableSnap={true}
-          enableMomentum={true}
-          sliderWidth={SCREEN_WIDTH}
-          itemWidth={MAP_CARD_WIDTH}
-          sliderHeight={MAP_CARD_HEIGHT}
-          itemHeight={MAP_CARD_HEIGHT}
+          // enableMomentum={true}
+          width={SCREEN_WIDTH}
+          height={MAP_CARD_HEIGHT}
+          // itemWidth={MAP_CARD_WIDTH}
+          // sliderHeight={MAP_CARD_HEIGHT}
+          // itemHeight={MAP_CARD_HEIGHT}
           renderItem={renderCard}
           onSnapToItem={onSnapToItem}
           // slideStyle={styles.slideWrapper}

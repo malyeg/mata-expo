@@ -52,7 +52,7 @@ const DrawerContent = ({
           <DrawerItem
             label={t("drawer.myItemsLabel")}
             icon="view-list-outline"
-            to={screens.MY_ITEMS}
+            to="items"
           />
           <DrawerItem
             label={t("drawer.dealsLabel")}
