@@ -1,6 +1,5 @@
 import itemsApi, { Item } from "@/api/itemsApi";
-import { screens } from "@/config/constants";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
 import { memo, useCallback } from "react";
@@ -29,11 +28,12 @@ const RecommendedCard = ({ item, style }: ItemCardProps) => {
 
   const openItemDetails = useCallback(() => {
     // TODO refactor to constant
-    navigation.navigate(screens.ITEM_DETAILS, {
-      id: item.id,
+    router.navigate({
+      pathname: "/items/[id]",
+      params: { id: item.id },
     });
     Analytics.logSelectItem(item, "recommendedItems");
-  }, [item, navigation]);
+  }, [item, router]);
 
   const imageUrl = itemsApi.getImageUrl(item);
 

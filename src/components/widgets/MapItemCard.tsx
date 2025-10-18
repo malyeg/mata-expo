@@ -1,5 +1,4 @@
 import { Item } from "@/api/itemsApi";
-import { screens } from "@/config/constants";
 import theme from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
@@ -33,13 +32,16 @@ const MapItemCard = ({ item, style, onPress, sourceList }: ItemCardProps) => {
     if (onPress) {
       onPress(item);
     }
-    navigation.navigate(screens.ITEM_DETAILS, {
-      id: item.id,
+    router.navigate({
+      pathname: "/items/[id]",
+      params: {
+        id: item.id,
+      },
     });
 
     Analytics.logSelectItem(item, sourceList);
     // linkTo('/items/' + item.id);
-  }, [item, navigation, onPress, sourceList]);
+  }, [item, router, onPress, sourceList]);
 
   const itemImage = item?.images ? item?.images[0] : undefined;
   const imageUrl = item.defaultImageURL ?? itemImage?.downloadURL;

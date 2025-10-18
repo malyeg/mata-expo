@@ -400,7 +400,6 @@ const ItemDetailsScreen = () => {
       category: item?.category,
     };
     setArchivedModalVisible(false);
-    // navigation.navigate(screens.ITEMS, {
     //   filters,
     // });
   };

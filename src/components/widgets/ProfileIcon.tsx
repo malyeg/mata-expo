@@ -1,7 +1,5 @@
-import { screens } from "@/config/constants";
 import theme from "@/styles/theme";
-import { useNavigation } from "@react-navigation/core";
-import { DrawerNavigationHelpers } from "@react-navigation/drawer/lib/typescript/src/types";
+import { useRouter } from "expo-router";
 import React, { FC } from "react";
 import { StyleProp, StyleSheet, TextStyle, ViewProps } from "react-native";
 import { Icon } from "../core";
@@ -12,9 +10,8 @@ interface ProfileIconProps extends ViewProps {
   iconStyle?: StyleProp<TextStyle>;
 }
 const ProfileIcon: FC<ProfileIconProps> = ({ style, iconStyle, size = 25 }) => {
-  const navigation = useNavigation<DrawerNavigationHelpers>();
-
-  const navigate = () => navigation.navigate(screens.PROFILE);
+  const router = useRouter();
+  const navigate = () => router.navigate("/account");
   return (
     <PressableOpacity
       hitSlop={10}

@@ -51,7 +51,7 @@ const DrawerContent = ({
           <DrawerItem
             label={t("drawer.myItemsLabel")}
             icon="view-list-outline"
-            to="items"
+            to="/account/my-items"
           />
           <DrawerItem
             label={t("drawer.dealsLabel")}

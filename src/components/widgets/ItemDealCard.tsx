@@ -1,13 +1,17 @@
 import { Deal } from "@/api/dealsApi";
 import itemsApi from "@/api/itemsApi";
-import { patterns, screens } from "@/config/constants";
+import { patterns } from "@/config/constants";
 import theme from "@/styles/theme";
-import { DrawerNavigationHelpers } from "@react-navigation/drawer/lib/typescript/src/types";
-import { useNavigation } from "@react-navigation/native";
 import { format } from "date-fns";
+import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
-import { ImageStyle } from "react-native-fast-image";
+import {
+  ImageStyle,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Image, Text } from "../core";
 import Card from "../core/Card";
 
@@ -20,14 +24,17 @@ interface DealCardProps {
 
 const imageSize = 50;
 const ItemDealCard = ({ deal, style, imageStyle, onPress }: DealCardProps) => {
-  const navigation = useNavigation<DrawerNavigationHelpers>();
+  const router = useRouter();
   const onCardPress = useCallback(() => {
     if (onPress) {
       onPress();
     } else {
-      navigation.navigate(screens.DEAL_DETAILS, { id: deal.id });
+      router.navigate({
+        pathname: "/deals/[id]",
+        params: { id: deal.id },
+      });
     }
-  }, [deal.id, navigation, onPress]);
+  }, [deal.id, router, onPress]);
   // const imageUrl = itemsApi.getImageUrl(deal.item)!;
   const swapImageUrl = deal.swapItem
     ? itemsApi.getImageUrl(deal.swapItem)

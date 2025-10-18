@@ -1,8 +1,8 @@
 import categoriesApi from "@/api/categoriesApi";
 import itemsApi from "@/api/itemsApi";
 import listsApi, { ListItem } from "@/api/listsApi";
-import { screens } from "@/config/constants";
 import { theme } from "@/styles/theme";
+import { useRouter } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { Button, Icon, Image, Modal, Text } from "../core";
@@ -14,14 +14,18 @@ interface WishCardProps {
 }
 
 const WishCard = ({ listItem }: WishCardProps) => {
+  const router = useRouter();
   const [isVisible, setVisible] = useState(false);
   const onCardPress = useCallback(() => {
     if (listItem.isAvailable !== false) {
-      navigation.navigate(screens.ITEM_DETAILS, { id: listItem.item.id });
+      router.navigate({
+        pathname: "/items/[id]",
+        params: { id: listItem.item.id },
+      });
     } else {
       setVisible(true);
     }
-  }, [listItem.isAvailable, listItem.item.id, navigation]);
+  }, [listItem.isAvailable, listItem.item.id, router]);
   const item = listItem.item;
   const imageUrl = itemsApi.getImageUrl(listItem.item);
   const category = useMemo(
@@ -31,10 +35,13 @@ const WishCard = ({ listItem }: WishCardProps) => {
 
   const onShowPress = useCallback(() => {
     setVisible(false);
-    navigation.navigate(screens.ITEMS, {
-      categoryId: listItem.item.category.id,
+    router.navigate({
+      pathname: "/items",
+      params: {
+        categoryId: listItem.item.category.id,
+      },
     });
-  }, [listItem.item.category.id, navigation]);
+  }, [listItem.item.category.id, router]);
 
   const deleteItem = useCallback(() => {
     listsApi.deleteById(listItem.id);

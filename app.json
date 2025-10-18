@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.medyour-admin.mata-app",
+      "bundleIdentifier": "com.mata.mataapp",
       "googleServicesFile": "./firebase/GoogleService-Info.plist",
       "infoPlist": {
         "UIDesignRequiresCompatibility": true
@@ -25,7 +25,7 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
-      "package": "com.medyouradmin.mataapp"
+      "package": "com.mata.mataapp"
     },
     "web": {
       "output": "static",

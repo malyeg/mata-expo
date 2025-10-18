@@ -82,7 +82,6 @@ const RecommendedItems = ({
   const onEndReached = (info: any, length: number) => {
     if (length > 20) {
       // TODO navigate to recommended items screen
-      // navigation.navigate();
     }
   };
 
