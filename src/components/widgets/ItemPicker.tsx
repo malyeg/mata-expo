@@ -39,7 +39,7 @@ const ItemPicker = ({
     ]);
     !!categoryId && query.filter("category.id", categoryId);
     itemsApi.getAll(query.build()).then((itemResp) => {
-      if (itemResp && itemResp.items.length > 0) {
+      if (itemResp && itemResp.length > 0) {
         setItems(itemResp);
       } else {
         setItems({ items: [] });

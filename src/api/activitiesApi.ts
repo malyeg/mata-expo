@@ -1,22 +1,17 @@
-import { Config } from "@/utils/Config";
-import firestore from "@react-native-firebase/firestore";
-import { DataCollection } from "../types/DataTypes";
+import { DatabaseApi } from "./DatabaseApi";
 
 export interface Activity {
   online: boolean;
   lastActivity: number;
 }
 
-class ActivitiesApi {
-  collection: DataCollection<Activity>;
+class ActivitiesApi extends DatabaseApi<Activity> {
   constructor() {
-    this.collection = firestore().collection<Activity>(
-      Config.SCHEMA_PREFIX + "activities"
-    );
+    super("activities");
   }
 
   connect = (userId: string) => {
-    this.collection.doc(userId).set({
+    this.update(userId, {
       online: true,
       lastActivity: Date.now(),
     });
@@ -24,7 +19,7 @@ class ActivitiesApi {
 
   disconnect = (userId: string) => {
     if (userId) {
-      this.collection.doc(userId).set({
+      this.update(userId, {
         online: false,
         lastActivity: Date.now(),
       });

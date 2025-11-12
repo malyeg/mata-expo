@@ -33,7 +33,7 @@ import GuestModal from "@/components/modals/GuestModal";
 import useSheet from "@/hooks/useSheet";
 import useSocial from "@/hooks/useSocial";
 import useToast from "@/hooks/useToast";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { QueryBuilder } from "@/types/DataTypes";
 import Analytics from "@/utils/Analytics";
 import { timeAgo } from "@/utils/DateUtils";

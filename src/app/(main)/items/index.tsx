@@ -1,33 +1,27 @@
 import { Category } from "@/api/categoriesApi";
-import itemsApi, { conditionList, Item, swapList } from "@/api/itemsApi";
-import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
-import ItemsFilter, {
-  ItemsFilterForm,
-} from "@/components/widgets/data/ItemsFilter";
-import SelectedFilters from "@/components/widgets/data/SelectedFilters";
-import FilterIcon from "@/components/widgets/FilterIcon";
-import ItemsList from "@/components/widgets/ItemsList";
-import ItemsMapView from "@/components/widgets/ItemsMapView";
+import countriesApi from "@/api/countriesApi";
+import itemsApi, { Item, swapList } from "@/api/itemsApi";
+import { Button, Text } from "@/components/core";
+import { ItemsFilterForm } from "@/components/widgets/data/ItemsFilter";
 import NoDataFound from "@/components/widgets/NoDataFound";
 import { screens } from "@/config/constants";
-import { useSearchQuery } from "@/hooks/db/useSearchQuery";
+import categories from "@/data/categories";
+import { useAlgoliaQuery } from "@/hooks/db/useAlgoliaQuery";
+import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import useLocation from "@/hooks/useLocation";
 import useToast from "@/hooks/useToast";
-import { Country, State } from "@/models/place.model";
-import sharedStyles from "@/styles/SharedStyles";
-import theme from "@/styles/theme";
 import { Filter, Operation, Query, QueryBuilder } from "@/types/DataTypes";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 type ItemsParams = {
   id?: string;
   action?: "OPEN_FILTER";
-  category?: string;
-  country?: string;
-  state?: string;
+  categoryId?: string;
+  countryId?: string;
+  stateId?: string;
   swapType?: string;
   conditionType?: string;
   // filters?: ItemsFilterForm;
@@ -40,70 +34,54 @@ const ItemsScreen = () => {
   const [isMapVisible, setMapVisible] = useState(false);
   const { showErrorToast, hideToast } = useToast();
   const { t } = useLocale(screens.ITEMS);
+  const { user } = useAuth();
   const params = useLocalSearchParams<ItemsParams>();
 
-  const baseQuery: Partial<Query> = {
-    filters: [
-      // {field: 'userId', value: user.id, operation: Operation.NOT_EQUAL},
-    ],
-    page: {
-      index: 0,
-      size: 50,
-    },
-  };
+  console.log("ItemsScreen params", params.categoryId);
+  const [query, setQuery] = useState<Partial<Query | undefined>>();
 
   const {
-    data: items,
-    page,
-    initialLoading,
-    moreLoading,
+    data,
     error,
-    loadData,
-    refreshData,
-    isRefreshing,
+    pagination: { hasMore, totalPages, totalItems },
     loadMore,
-    hasMore,
-  } = useSearchQuery<Item>({
-    collectionName: itemsApi.collectionName,
+    isFetching,
+    refetch,
+    isLoading,
+  } = useAlgoliaQuery({
+    indexName: itemsApi.collectionName,
+    query: query,
+    enabled: false,
   });
 
-  console.log("items pages", page?.totalDocs);
-
-  !!error && showErrorToast(error);
+  useEffect(() => {
+    if (error) {
+      showErrorToast(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   useEffect(() => {
-    const queryBuilder = QueryBuilder.fromQuery<Item>(baseQuery);
-    queryBuilder.location({
-      coordinate: location?.coordinate!,
-      aroundRadius: "all",
-    });
-    const filtersForm = getFilterFormFromParams(params);
-    filtersForm.country = location?.country;
+    const query = getQueryFromParams(params);
+    console.log("Setting query from params", query);
+    // setQuery(query);
+  }, [params]);
 
-    queryBuilder.addToFilters(toQueryFilter(filtersForm));
-    !!filtersForm.searchInput &&
-      queryBuilder.searchText(filtersForm.searchInput);
-    const query = queryBuilder.build();
-    setFilters(filtersForm);
-
-    if (params?.action === "OPEN_FILTER") {
-      setFilterVisible(true);
-    }
-    console.log("updatedFilters", query.searchText, filtersForm.searchInput);
-    loadData(query);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  // useEffect(() => {
+  //   refetch();
+  // }, [query]);
 
   const pageTitle = useMemo(() => {
-    if (page?.totalDocs && page.totalDocs > 0 && !error) {
-      return `${page.totalDocs} ${t("items")}`;
+    if (totalItems && totalItems > 0 && !error) {
+      return `${totalItems} ${t("items")}`;
     }
-    return t("searchItems");
-  }, [page, error, t]);
+    return "Search Items";
+  }, [totalItems, error, t]);
 
   const onFilterChange = async (updatedFilters?: ItemsFilterForm) => {
     hideToast();
-    const queryBuilder = QueryBuilder.fromQuery<Item>(baseQuery);
+    console.log("onFilterChange", updatedFilters);
+    const queryBuilder = QueryBuilder.fromQuery<Item>(query);
     queryBuilder
       .location({
         coordinate: location?.coordinate!,
@@ -114,9 +92,9 @@ const ItemsScreen = () => {
 
     setFilters(updatedFilters);
 
-    const query = queryBuilder.build();
+    const updatedQuery = queryBuilder.build();
 
-    await loadData(query);
+    // await fetch(updatedQuery);
   };
 
   const closeFilterModal = () => setFilterVisible(true);
@@ -155,73 +133,81 @@ const ItemsScreen = () => {
   };
 
   const closeModal = () => setMapVisible(false);
+  console.log("ItemsScreen render");
 
-  return (
-    <Screen scrollable={false} style={styles.screen}>
-      <Stack.Screen
-        options={{
-          title: pageTitle,
-        }}
-      />
-      <View style={styles.header}>
-        {!!filters?.country && items && items?.length > 0 && (
-          <Pressable onPress={openMap} style={styles.viewMap}>
-            <Icon
-              name="map-marker-multiple-outline"
-              color={theme.colors.dark}
-              size={25}
-              style={styles.mapIcon}
-            />
-            <Text style={sharedStyles.link}>{t("viewInMapLabel")}</Text>
-          </Pressable>
-        )}
+  return null;
 
-        <FilterIcon onPress={openFilter} style={styles.filterIcon} />
-        {filters && (
-          <ItemsFilter
-            style={styles.filter}
-            onChange={onFilterChange}
-            defaultValues={filters}
-            openOnLoad={isFilterVisible}
-            onClose={onCloseFilter}
-          />
-        )}
-      </View>
-      {!!filters && (
-        <SelectedFilters filters={filters} onDelete={onFilterChange} />
-      )}
-      <ItemsList
-        items={items}
-        onLoadMore={loadMore}
-        moreLoading={moreLoading}
-        sourceList="searchItems"
-        onRefresh={refreshData}
-        ListEmptyComponent={ListEmptyComponent}
-        refreshing={isRefreshing}
-        hasMore={hasMore}
-      />
+  // return (
+  //   <Screen scrollable={false} style={styles.screen}>
+  //     <Stack.Screen
+  //       options={{
+  //         title: pageTitle,
+  //       }}
+  //     />
+  //     <View style={styles.header}>
+  //       {!!filters?.country && items && items?.length > 0 && (
+  //         <Pressable onPress={openMap} style={styles.viewMap}>
+  //           <Icon
+  //             name="map-marker-multiple-outline"
+  //             color={theme.colors.dark}
+  //             size={25}
+  //             style={styles.mapIcon}
+  //           />
+  //           <Text style={sharedStyles.link}>{t("viewInMapLabel")}</Text>
+  //         </Pressable>
+  //       )}
 
-      {items && (
-        <Modal
-          isVisible={isMapVisible}
-          position="full"
-          title={page?.totalPages + " Items"}
-          showHeaderNav
-          bodyStyle={styles.modal}
-          // containerStyle={styles.modal}
-          onClose={closeModal}
-        >
-          <ItemsMapView
-            items={items}
-            onLoadMore={mapLoadMore}
-            showLoadMore={hasMore}
-            onSelectItem={closeModal}
-          />
-        </Modal>
-      )}
-      {initialLoading && <Loader />}
-    </Screen>
-  );
+  //       <FilterIcon onPress={openFilter} style={styles.filterIcon} />
+  //       {filters && (
+  //         <ItemsFilter
+  //           style={styles.filter}
+  //           onChange={onFilterChange}
+  //           defaultValues={filters}
+  //           openOnLoad={isFilterVisible}
+  //           onClose={onCloseFilter}
+  //         />
+  //       )}
+  //     </View>
+  //     {!!filters && (
+  //       <SelectedFilters filters={filters} onDelete={onFilterChange} />
+  //     )}
+  //     <ItemsList
+  //       items={items}
+  //       // onLoadMore={loadMore}
+  //       moreLoading={hasMore && isFetching}
+  //       sourceList="searchItems"
+  //       // onRefresh={refreshData}
+  //       onEndReached={() => {
+  //         if (hasMore && !isFetching) {
+  //           loadMore();
+  //         }
+  //       }}
+  //       ListEmptyComponent={ListEmptyComponent}
+  //       // refreshing={isRefreshing}
+  //       hasMore={hasMore}
+  //     />
+
+  //     {items && (
+  //       <Modal
+  //         isVisible={isMapVisible}
+  //         position="full"
+  //         title={totalItems + " Items"}
+  //         showHeaderNav
+  //         bodyStyle={styles.modal}
+  //         // containerStyle={styles.modal}
+  //         onClose={closeModal}
+  //       >
+  //         <ItemsMapView
+  //           items={items}
+  //           onLoadMore={mapLoadMore}
+  //           showLoadMore={hasMore}
+  //           onSelectItem={closeModal}
+  //         />
+  //       </Modal>
+  //     )}
+  //     {isLoading && <Loader />}
+  //   </Screen>
+  // );
 };
 
 export default React.memo(ItemsScreen);
@@ -313,22 +299,56 @@ const toQueryFilter = (filtersForm: ItemsFilterForm) => {
   return newFilters;
 };
 
-const getFilterFormFromParams = (params: ItemsParams) => {
-  const filters: ItemsFilterForm = {};
+const getQueryFromParams = (params: ItemsParams) => {
+  const query: Query = {};
 
-  !!params?.category &&
-    (filters.category = JSON.parse(params.category) as Category);
-  !!params?.conditionType &&
-    (filters.conditionTypes = conditionList.filter(
-      (c) => c.id === params.conditionType?.toString()
-    ));
-  !!params?.country &&
-    (filters.country = JSON.parse(params.country) as Country);
-  !!params?.state && (filters.states = [JSON.parse(params.state) as State]);
-  !!params?.swapType &&
-    (filters.swapTypes = swapList.filter(
+  if (params.categoryId) {
+    const category = categories.find(
+      (c) => c.id === params.categoryId
+    ) as Category;
+    query.filters?.push({
+      field: "category.id",
+      value: category.id,
+      operation: Operation.EQUAL,
+    });
+  }
+
+  if (params?.conditionType) {
+    query.filters?.push({
+      field: "conditionType",
+      value: params.conditionType,
+      operation: Operation.EQUAL,
+    });
+  }
+
+  if (params.countryId) {
+    const country = countriesApi
+      .getAll()
+      .find((c) => c.id === params.countryId);
+    query.filters?.push({
+      field: "location.country.id",
+      value: country?.id,
+      operation: Operation.EQUAL,
+    });
+  }
+
+  if (params?.stateId) {
+    query.filters?.push({
+      field: "location.state.id",
+      value: JSON.parse(params.stateId)?.id,
+      operation: Operation.EQUAL,
+    });
+  }
+  if (params?.swapType) {
+    const swapType = swapList.filter(
       (c) => c.id === params.swapType?.toString()
-    ));
+    );
+    query.filters?.push({
+      field: "swapOptionType",
+      value: swapType[0].id,
+      operation: Operation.EQUAL,
+    });
+  }
 
-  return filters;
+  return query;
 };

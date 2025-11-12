@@ -1,18 +1,19 @@
-import {useEffect} from 'react';
-import {AppState, AppStateStatus} from 'react-native';
-import activitiesApi from '../api/activitiesApi';
-import authApi from '../api/authApi';
-import {LoggerFactory} from '../utils/logger';
+import { useEffect } from "react";
+import { AppState, AppStateStatus } from "react-native";
+import activitiesApi from "../api/activitiesApi";
+import authApi from "../api/authApi";
+import { LoggerFactory } from "../utils/logger";
 
-const logger = LoggerFactory.getLogger('useActivity');
+const logger = LoggerFactory.getLogger("useActivity");
 const useActivity = () => {
   useEffect(() => {
     const userId = authApi?.getUser()?.uid!;
+
     const handleAppStateInactiveChange = async (state: AppStateStatus) => {
-      logger.log('state', state);
-      if (state === 'background' || state === 'inactive') {
+      logger.log("state", state);
+      if (state === "background" || state === "inactive") {
         await activitiesApi.disconnect(userId);
-      } else if (state === 'active') {
+      } else if (state === "active") {
         activitiesApi.connect(userId);
       }
     };
@@ -22,8 +23,8 @@ const useActivity = () => {
     }, 10 * 60 * 1000);
     // Assuming user is logged in
     const appStateSub = AppState.addEventListener(
-      'change',
-      handleAppStateInactiveChange,
+      "change",
+      handleAppStateInactiveChange
     );
 
     return () => {

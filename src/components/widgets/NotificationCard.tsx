@@ -30,7 +30,6 @@ const notificationUrlToRoute = (url: string) => {
 };
 const NotificationCard = ({ notification, style }: NotificationCardProps) => {
   const router = useRouter();
-  console.log("Rerendering NotificationCard:", notification.data?.url);
   const notificationDate = notification.timestamp?.getDate();
   const onPress = () => {
     notificationsApi.updateDelivery(notification?.id);

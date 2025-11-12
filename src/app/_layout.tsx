@@ -4,6 +4,7 @@ import { toastConfig } from "@/components/core/Toaster";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
 import { getWarningsOff } from "@/utils/WarningsOff";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { algoliasearch } from "algoliasearch";
 import { Stack } from "expo-router";
 import React, { useEffect } from "react";
@@ -11,6 +12,16 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
+
+// Create a QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 console.log("WarningsOff", getWarningsOff());
 
@@ -68,10 +79,12 @@ const InitialLayout = () => {
 // Main Root Layout component
 const RootLayout = () => {
   return (
-    <GestureHandlerRootView style={styles.container}>
-      <InitialLayout />
-      <Toast config={toastConfig} />
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={styles.container}>
+        <InitialLayout />
+        <Toast config={toastConfig} />
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 };
 

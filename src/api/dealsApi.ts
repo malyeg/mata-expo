@@ -10,7 +10,6 @@ import { PublicUser } from "./authApi";
 import { DatabaseApi } from "./DatabaseApi";
 import { Item } from "./itemsApi";
 import { RatingWeight } from "./ratingApi";
-import itemsSearchApi from "./search/itemsSearchApi";
 
 export type DealStatus =
   | "new"
@@ -113,7 +112,7 @@ class DealsApi extends DatabaseApi<Deal> {
 
   itemHasDeals = async (userId: string, item: Item) => {
     const deals = await this.getUserDeals(userId, item);
-    if (deals && deals.items.length > 0) {
+    if (deals && deals.length > 0) {
       return true;
     }
     return false;

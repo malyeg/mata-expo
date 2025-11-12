@@ -8,6 +8,7 @@ import { LoggerFactory } from "../../utils/logger";
 
 interface QueryProps {
   collectionName: string;
+  query?: Query;
 }
 
 interface SearchState<T> {
@@ -28,10 +29,10 @@ interface SearchState<T> {
 
 const logger = LoggerFactory.getLogger("useSearchQuery");
 
-export function useSearchQuery<T>({ collectionName }: QueryProps) {
+export function useSearchQuery<T>({ collectionName, query }: QueryProps) {
   const [state, setState] = useState<SearchState<T>>({
     data: [],
-    query: null,
+    query: query || null,
     initialLoading: false,
     moreLoading: false,
     isRefreshing: false,
@@ -49,7 +50,7 @@ export function useSearchQuery<T>({ collectionName }: QueryProps) {
   collectionNameRef.current = collectionName;
 
   // NO dependencies - completely stable functions
-  const loadData = useCallback(
+  const fetch = useCallback(
     async (query: Query, initialLoading = true) => {
       if (initialLoading) {
         setState((prev) => ({ ...prev, initialLoading: true, error: null }));
@@ -57,7 +58,7 @@ export function useSearchQuery<T>({ collectionName }: QueryProps) {
 
       try {
         const searchApi = getApi(collectionNameRef.current);
-        const response = await searchApi.search(query);
+        const response = await searchApi.search<any>(query);
 
         setState((prev) => ({
           ...prev,
@@ -162,7 +163,7 @@ export function useSearchQuery<T>({ collectionName }: QueryProps) {
 
   return {
     // Actions - these are now completely stable
-    loadData,
+    fetch,
     refreshData,
     loadMore,
     // State

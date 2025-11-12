@@ -75,7 +75,7 @@ const ForgotPasswordScreen = () => {
       </View>
       <KeyboardView style={styles.footer}>
         <Text body1>{t("haveAccountText")}</Text>
-        <Link href={{ pathname: "/(auth)/login" }} style={sharedStyles.link}>
+        <Link href={{ pathname: "/(auth)/sign-in" }} style={sharedStyles.link}>
           {t("LoginLink")}
         </Link>
       </KeyboardView>

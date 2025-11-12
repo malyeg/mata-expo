@@ -1,12 +1,12 @@
-import {useMemo} from 'react';
-import {IMessage} from 'react-native-gifted-chat';
-import {Deal} from '../api/dealsApi';
-import messagesApi, {Delivery, Message} from '../api/messagesApi';
-import profilesApi from '../api/profileApi';
-import useAuth from './useAuth';
+import { useMemo } from "react";
+import { IMessage } from "react-native-gifted-chat";
+import { Deal } from "../api/dealsApi";
+import messagesApi, { Delivery, Message } from "../api/messagesApi";
+import profilesApi from "../api/profileApi";
+import useAuth from "./useAuth";
 
 const useChat = () => {
-  const {profile} = useAuth();
+  const { profile } = useAuth();
   const context = useMemo(
     () => ({
       addMessage: async (message: Message, deal: Deal) => {
@@ -23,15 +23,17 @@ const useChat = () => {
           },
         ];
         console.log(profile);
-        const updatedMessage: Message = {
-          ...message,
-          user: {
-            ...message.user,
-            displayName: profile.fullName ?? profile.email,
-          },
-        };
-        await messagesApi.set(message.id, updatedMessage);
-        return message;
+        if (message.user) {
+          const updatedMessage: Message = {
+            ...message,
+            user: {
+              ...message.user,
+              displayName: profile.fullName ?? profile.email,
+            },
+          };
+          await messagesApi.set(message.id, updatedMessage);
+          return message;
+        }
       },
       toChatMessage: (message: Message) => {
         const newMessage: IMessage = {
@@ -64,16 +66,16 @@ const useChat = () => {
       updateMessagesRecieved: (messages: Message[]) => {
         const recievedMap = new Map<string, Partial<Message>>();
 
-        messages.forEach(async message => {
+        messages.forEach(async (message) => {
           const delivery = message.deliveries?.find(
-            i => i.userId === profile.id,
+            (i) => i.userId === profile.id
           );
           if (!delivery || !delivery.received) {
             const deliveries: Delivery[] = message.deliveries
               ? [...message.deliveries]
               : [];
             const newDeliveries = deliveries.filter(
-              d => d.userId !== profile.id,
+              (d) => d.userId !== profile.id
             );
 
             newDeliveries.push({
@@ -97,18 +99,18 @@ const useChat = () => {
       },
 
       getNonRecievedMessages: (messages: Message[]) => {
-        const nonRecievedMessages = messages.filter(i => {
+        const nonRecievedMessages = messages.filter((i) => {
           return !(
             !!i.deliveries &&
             i.deliveries.find(
-              x => x.received === true && x.userId === profile.id,
+              (x) => x.received === true && x.userId === profile.id
             )
           );
         });
         return nonRecievedMessages;
       },
     }),
-    [profile],
+    [profile]
   );
   return context;
 };

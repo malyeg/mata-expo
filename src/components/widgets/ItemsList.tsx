@@ -83,7 +83,7 @@ const ItemsList = ({
 
   const verticalSeparator = () => <View style={styles.verticalSeparator} />;
   const horizontalSeparator = () => <View style={styles.horizontalSeparator} />;
-  const keyExtractor = (item: Item) => item.id;
+  const keyExtractor = props.keyExtractor ?? ((item: Item) => item.id);
 
   return (
     <FlatList

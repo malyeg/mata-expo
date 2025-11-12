@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSearchQuery } from "./useSearchQuery";
+import { useSearchQuery } from "./useAlgoliaSearchQuery";
 
 // Example usage hook for a specific index with predefined settings
 export const useProductSearch = (initialQuery: string = "") => {

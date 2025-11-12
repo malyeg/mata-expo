@@ -44,9 +44,9 @@ export interface Coordinate {
   longitudeDelta?: number;
 }
 
-export interface Query {
+export interface Query<T = any> {
   searchText?: string;
-  filters?: Filter[];
+  filters?: Filter<T>[];
   limit?: number;
   orderBy?: Sort[];
   page?: {

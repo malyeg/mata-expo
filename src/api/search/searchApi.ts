@@ -25,7 +25,7 @@ export interface SearchResponse<T> {
 
 const logger = LoggerFactory.getLogger("searchApi");
 
-class SearchApi<T> {
+export class SearchApi<T> {
   readonly client: SearchClient;
   readonly indexName: string; // Store indexName instead of index
 
@@ -157,5 +157,5 @@ function buildFilterString(
       return `${key}:'${value}'`;
   }
 }
-
-export default SearchApi;
+const searchApi = new SearchApi<any>("items");
+export { searchApi };

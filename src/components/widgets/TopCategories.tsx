@@ -19,11 +19,11 @@ const TopCategories = ({ style }: TopCategoriesProps) => {
 
   const renderItem = ({ item }) => {
     const onPress = () => {
-      router.push({
+      router.navigate({
         pathname: "/items",
         params: {
           categoryId: item.id,
-          countryId: location?.country.id,
+          countryId: location?.country?.id,
         },
       });
     };
