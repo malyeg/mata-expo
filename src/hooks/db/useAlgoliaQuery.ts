@@ -78,7 +78,7 @@ export const useAlgoliaQuery = ({
   pagination: paginationOptions,
   enabled = true,
   select,
-}: UseAlgoliaQueryOptions): UseAlgoliaQueryResult => {
+}: UseAlgoliaQueryOptions) => {
   const hitsPerPage = paginationOptions?.itemsPerPage ?? 20;
 
   const infiniteQuery = useInfiniteQuery<AlgoliaPageResult, Error>({
@@ -151,7 +151,7 @@ export const useAlgoliaQuery = ({
       totalItems: lastPage?.totalItems || 0,
       nbPages: lastPage?.nbPages || 0,
       page: lastPage?.page || 0,
-    };
+    } as AlgoliaPageResult;
 
     return result;
   }, [infiniteQuery.data]);

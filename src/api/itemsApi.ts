@@ -83,6 +83,7 @@ export type ImageSource = {
 };
 export interface Item extends DataSearchable, Entity {
   id: string;
+  objectID?: string; // for Algolia
   userId: string; // deprecated
   user: PublicUser;
   name: string;

@@ -1,85 +1,92 @@
+import { Item } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
 import theme from "@/styles/theme";
+import { Query } from "@/types/DataTypes";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { ItemsFilterForm } from "./ItemsFilter";
 
 interface FilterLabelProps {
-  filters: ItemsFilterForm;
-  onDelete?: (filters: ItemsFilterForm) => void;
+  query?: Query<Item>;
+  onDelete?: (field: string) => void;
 }
-const SelectedFilters = ({ filters, onDelete }: FilterLabelProps) => {
-  // const swapTypes = filters.swapTypes
-  //   ? swapList.find(s => filters.swapTypes?.includes(s.id))?.name
-  //   : undefined;
+const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
+  const filters = query?.filters || [];
 
-  const deleteItem = (field: keyof ItemsFilterForm) => {
+  const deleteItem = (field: string) => {
     if (onDelete) {
-      const updatedFilters = { ...filters };
-      delete updatedFilters[field];
-      if (field === "swapTypes") {
-        delete updatedFilters.swapCategory;
-      }
-      onDelete(updatedFilters);
+      onDelete(field);
     }
   };
+
+  // Extract filter values from the filters array
+  const statesFilter = filters.find((f) => f.field === "stateIds");
+  const searchFilter = filters.find((f) => f.field === "searchInput");
+  const conditionTypesFilter = filters.find(
+    (f) => f.field === "conditionTypes"
+  );
+  const categoryFilter = filters.find(
+    (f) => f.field === "catLevel1,catLevel2,catLevel3"
+  );
+  const swapTypesFilter = filters.find((f) => f.field === "swapTypes");
+
   return (
     <View style={styles.container}>
-      {filters.states && filters.states.length > 0 && (
-        <FilterComponent
-          field="states"
-          value={filters.states.map((s) => s.id).join(",")}
-          label={filters.states.map((s) => s.name).join(", ")}
-          onDelete={deleteItem}
-        />
-      )}
-      {filters.searchInput && (
+      {statesFilter &&
+        Array.isArray(statesFilter.value) &&
+        statesFilter.value.length > 0 && (
+          <FilterComponent
+            field="stateIds"
+            value={statesFilter.value.join(",")}
+            label={statesFilter.name || statesFilter.value.join(", ")}
+            onDelete={deleteItem}
+          />
+        )}
+      {searchFilter && searchFilter.value && (
         <FilterComponent
           field="searchInput"
-          value={filters.searchInput}
+          value={String(searchFilter.value)}
           onDelete={deleteItem}
         />
       )}
-      {filters.conditionTypes && filters.conditionTypes.length > 0 && (
+      {conditionTypesFilter &&
+        Array.isArray(conditionTypesFilter.value) &&
+        conditionTypesFilter.value.length > 0 && (
+          <FilterComponent
+            field="conditionTypes"
+            value={conditionTypesFilter.value.join(",")}
+            label={
+              conditionTypesFilter.name || conditionTypesFilter.value.join(", ")
+            }
+            onDelete={deleteItem}
+          />
+        )}
+      {categoryFilter && categoryFilter.value && (
         <FilterComponent
-          field="conditionTypes"
-          value={filters.conditionTypes.map((s) => s.id).join(",")}
-          label={filters.conditionTypes.map((s) => s.name).join(", ")}
+          field="catLevel1,catLevel2,catLevel3"
+          value={String(categoryFilter.value)}
+          label={categoryFilter.name || String(categoryFilter.value)}
           onDelete={deleteItem}
         />
       )}
-      {filters.category && (
-        <FilterComponent
-          field="category"
-          value={filters.category.id}
-          label={filters.category.name}
-          onDelete={deleteItem}
-        />
-      )}
-      {filters.swapTypes && filters.swapTypes.length > 0 && (
-        <FilterComponent
-          field="swapTypes"
-          value={filters.swapTypes.map((s) => s.id).join(",")}
-          label={filters.swapTypes.map((s) => s.name).join(", ")}
-          onDelete={deleteItem}
-        />
-      )}
-      {/* {filters.swapTypes && swapType && (
-        <FilterComponent
-          field="swapType"
-          value={swapType}
-          onDelete={deleteItem}
-        />
-      )} */}
+      {swapTypesFilter &&
+        Array.isArray(swapTypesFilter.value) &&
+        swapTypesFilter.value.length > 0 && (
+          <FilterComponent
+            field="swapTypes"
+            value={swapTypesFilter.value.join(",")}
+            label={swapTypesFilter.name || swapTypesFilter.value.join(", ")}
+            onDelete={deleteItem}
+          />
+        )}
     </View>
   );
 };
 
 const FilterComponent = (f: {
-  field: keyof ItemsFilterForm;
+  field: string;
   value: string;
   label?: string;
-  onDelete?: (field: keyof ItemsFilterForm) => void;
+  onDelete?: (field: string) => void;
 }) => {
   const deleteFilter = () => {
     if (f?.onDelete) {

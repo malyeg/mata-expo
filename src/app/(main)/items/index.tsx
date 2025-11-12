@@ -1,8 +1,13 @@
 import { Category } from "@/api/categoriesApi";
-import countriesApi from "@/api/countriesApi";
 import itemsApi, { Item, swapList } from "@/api/itemsApi";
-import { Button, Text } from "@/components/core";
-import { ItemsFilterForm } from "@/components/widgets/data/ItemsFilter";
+import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
+import ItemsFilter, {
+  ItemsFilterForm,
+} from "@/components/widgets/data/ItemsFilter";
+import SelectedFilters from "@/components/widgets/data/SelectedFilters";
+import FilterIcon from "@/components/widgets/FilterIcon";
+import ItemsList from "@/components/widgets/ItemsList";
+import ItemsMapView from "@/components/widgets/ItemsMapView";
 import NoDataFound from "@/components/widgets/NoDataFound";
 import { screens } from "@/config/constants";
 import categories from "@/data/categories";
@@ -11,10 +16,12 @@ import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import useLocation from "@/hooks/useLocation";
 import useToast from "@/hooks/useToast";
-import { Filter, Operation, Query, QueryBuilder } from "@/types/DataTypes";
-import { useLocalSearchParams } from "expo-router";
+import sharedStyles from "@/styles/SharedStyles";
+import theme from "@/styles/theme";
+import { Filter, Operation, Query } from "@/types/DataTypes";
+import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
-import { StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 type ItemsParams = {
   id?: string;
@@ -36,9 +43,7 @@ const ItemsScreen = () => {
   const { t } = useLocale(screens.ITEMS);
   const { user } = useAuth();
   const params = useLocalSearchParams<ItemsParams>();
-
-  console.log("ItemsScreen params", params.categoryId);
-  const [query, setQuery] = useState<Partial<Query | undefined>>();
+  const [query, setQuery] = useState<Query<Item> | undefined>();
 
   const {
     data,
@@ -62,14 +67,22 @@ const ItemsScreen = () => {
   }, [error]);
 
   useEffect(() => {
-    const query = getQueryFromParams(params);
-    console.log("Setting query from params", query);
-    // setQuery(query);
-  }, [params]);
+    const newQuery = getQueryFromParams(params);
+    setQuery(newQuery);
+    // Only run when specific param values change, not the params object itself
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    params.categoryId,
+    params.conditionType,
+    params.countryId,
+    params.stateId,
+    params.swapType,
+  ]);
 
-  // useEffect(() => {
-  //   refetch();
-  // }, [query]);
+  useEffect(() => {
+    refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const pageTitle = useMemo(() => {
     if (totalItems && totalItems > 0 && !error) {
@@ -78,23 +91,14 @@ const ItemsScreen = () => {
     return "Search Items";
   }, [totalItems, error, t]);
 
-  const onFilterChange = async (updatedFilters?: ItemsFilterForm) => {
+  const onFilterChange = async (field: string) => {
     hideToast();
-    console.log("onFilterChange", updatedFilters);
-    const queryBuilder = QueryBuilder.fromQuery<Item>(query);
-    queryBuilder
-      .location({
-        coordinate: location?.coordinate!,
-        aroundRadius: "all",
-      })
-      .searchText(updatedFilters?.searchInput)
-      .addToFilters(toQueryFilter(updatedFilters!));
-
-    setFilters(updatedFilters);
-
-    const updatedQuery = queryBuilder.build();
-
-    // await fetch(updatedQuery);
+    console.log("onFilterChange field", field, query);
+    const newFilters = query?.filters?.filter((f) => f.field !== field);
+    const newQuery = { ...query, filters: newFilters || [] };
+    console.log("onFilterChange newQuery", newQuery);
+    setQuery(newQuery);
+    refetch();
   };
 
   const closeFilterModal = () => setFilterVisible(true);
@@ -133,81 +137,82 @@ const ItemsScreen = () => {
   };
 
   const closeModal = () => setMapVisible(false);
-  console.log("ItemsScreen render");
 
-  return null;
+  const keyExtractor = (item: Item) => item.objectID?.toString();
 
-  // return (
-  //   <Screen scrollable={false} style={styles.screen}>
-  //     <Stack.Screen
-  //       options={{
-  //         title: pageTitle,
-  //       }}
-  //     />
-  //     <View style={styles.header}>
-  //       {!!filters?.country && items && items?.length > 0 && (
-  //         <Pressable onPress={openMap} style={styles.viewMap}>
-  //           <Icon
-  //             name="map-marker-multiple-outline"
-  //             color={theme.colors.dark}
-  //             size={25}
-  //             style={styles.mapIcon}
-  //           />
-  //           <Text style={sharedStyles.link}>{t("viewInMapLabel")}</Text>
-  //         </Pressable>
-  //       )}
+  if (data?.items === undefined) {
+    return null;
+  }
 
-  //       <FilterIcon onPress={openFilter} style={styles.filterIcon} />
-  //       {filters && (
-  //         <ItemsFilter
-  //           style={styles.filter}
-  //           onChange={onFilterChange}
-  //           defaultValues={filters}
-  //           openOnLoad={isFilterVisible}
-  //           onClose={onCloseFilter}
-  //         />
-  //       )}
-  //     </View>
-  //     {!!filters && (
-  //       <SelectedFilters filters={filters} onDelete={onFilterChange} />
-  //     )}
-  //     <ItemsList
-  //       items={items}
-  //       // onLoadMore={loadMore}
-  //       moreLoading={hasMore && isFetching}
-  //       sourceList="searchItems"
-  //       // onRefresh={refreshData}
-  //       onEndReached={() => {
-  //         if (hasMore && !isFetching) {
-  //           loadMore();
-  //         }
-  //       }}
-  //       ListEmptyComponent={ListEmptyComponent}
-  //       // refreshing={isRefreshing}
-  //       hasMore={hasMore}
-  //     />
+  return (
+    <Screen scrollable={false} style={styles.screen}>
+      <Stack.Screen
+        options={{
+          title: pageTitle,
+        }}
+      />
+      <View style={styles.header}>
+        {!!filters?.country && data.items && data.items.length > 0 && (
+          <Pressable onPress={openMap} style={styles.viewMap}>
+            <Icon
+              name="map-marker-multiple-outline"
+              color={theme.colors.dark}
+              size={25}
+              style={styles.mapIcon}
+            />
+            <Text style={sharedStyles.link}>{t("viewInMapLabel")}</Text>
+          </Pressable>
+        )}
 
-  //     {items && (
-  //       <Modal
-  //         isVisible={isMapVisible}
-  //         position="full"
-  //         title={totalItems + " Items"}
-  //         showHeaderNav
-  //         bodyStyle={styles.modal}
-  //         // containerStyle={styles.modal}
-  //         onClose={closeModal}
-  //       >
-  //         <ItemsMapView
-  //           items={items}
-  //           onLoadMore={mapLoadMore}
-  //           showLoadMore={hasMore}
-  //           onSelectItem={closeModal}
-  //         />
-  //       </Modal>
-  //     )}
-  //     {isLoading && <Loader />}
-  //   </Screen>
-  // );
+        <FilterIcon onPress={openFilter} style={styles.filterIcon} />
+        {filters && (
+          <ItemsFilter
+            style={styles.filter}
+            onChange={onFilterChange}
+            defaultValues={filters}
+            openOnLoad={isFilterVisible}
+            onClose={onCloseFilter}
+          />
+        )}
+      </View>
+      {query && <SelectedFilters query={query} onDelete={onFilterChange} />}
+      <ItemsList
+        items={data.items}
+        // onLoadMore={loadMore}
+        moreLoading={hasMore && isFetching}
+        sourceList="searchItems"
+        // onRefresh={refreshData}
+        onEndReached={() => {
+          if (hasMore && !isFetching) {
+            loadMore();
+          }
+        }}
+        ListEmptyComponent={ListEmptyComponent}
+        // refreshing={isRefreshing}
+        hasMore={hasMore}
+        keyExtractor={keyExtractor}
+      />
+
+      <Modal
+        isVisible={isMapVisible}
+        position="full"
+        title={totalItems + " Items"}
+        showHeaderNav
+        bodyStyle={styles.modal}
+        // containerStyle={styles.modal}
+        onClose={closeModal}
+      >
+        <ItemsMapView
+          items={data.items}
+          onLoadMore={mapLoadMore}
+          showLoadMore={hasMore}
+          onSelectItem={closeModal}
+        />
+      </Modal>
+
+      {isLoading && <Loader />}
+    </Screen>
+  );
 };
 
 export default React.memo(ItemsScreen);
@@ -300,15 +305,16 @@ const toQueryFilter = (filtersForm: ItemsFilterForm) => {
 };
 
 const getQueryFromParams = (params: ItemsParams) => {
-  const query: Query = {};
+  const query: Query = { filters: [] };
 
   if (params.categoryId) {
     const category = categories.find(
       (c) => c.id === params.categoryId
     ) as Category;
+
     query.filters?.push({
-      field: "category.id",
-      value: category.id,
+      field: "catLevel1,catLevel2,catLevel3",
+      value: category.name,
       operation: Operation.EQUAL,
     });
   }
@@ -321,16 +327,16 @@ const getQueryFromParams = (params: ItemsParams) => {
     });
   }
 
-  if (params.countryId) {
-    const country = countriesApi
-      .getAll()
-      .find((c) => c.id === params.countryId);
-    query.filters?.push({
-      field: "location.country.id",
-      value: country?.id,
-      operation: Operation.EQUAL,
-    });
-  }
+  // if (params.countryId) {
+  //   const country = countriesApi
+  //     .getAll()
+  //     .find((c) => c.id === params.countryId);
+  //   query.filters?.push({
+  //     field: "location.country.id",
+  //     value: country?.id,
+  //     operation: Operation.EQUAL,
+  //   });
+  // }
 
   if (params?.stateId) {
     query.filters?.push({

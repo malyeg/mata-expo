@@ -24,7 +24,9 @@
       "googleServicesFile": "./firebase/google-services.json",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.WRITE_EXTERNAL_STORAGE"],
+      "permissions": [
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ],
       "package": "com.mata.mataapp"
     },
     "web": {
@@ -54,20 +56,26 @@
           }
         }
       ],
-
       [
         "expo-build-properties",
         {
           "ios": {
             "useFrameworks": "static",
-            "forceStaticLinking": ["RNFBApp"]
+            "forceStaticLinking": [
+              "RNFBApp"
+            ]
           }
         }
       ],
       [
         "react-native-share",
         {
-          "ios": ["fb", "instagram", "twitter", "tiktoksharesdk"],
+          "ios": [
+            "fb",
+            "instagram",
+            "twitter",
+            "tiktoksharesdk"
+          ],
           "android": [
             "com.facebook.katana",
             "com.instagram.android",
@@ -76,7 +84,8 @@
           ],
           "enableBase64ShareAndroid": true
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
