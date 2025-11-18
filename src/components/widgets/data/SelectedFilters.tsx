@@ -20,7 +20,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
 
   // Extract filter values from the filters array
   const statesFilter = filters.find((f) => f.field === "stateIds");
-  const searchFilter = filters.find((f) => f.field === "searchInput");
+  const searchText = query?.searchText; // Search is stored in query.searchText, not filters
   const conditionTypesFilter = filters.find(
     (f) => f.field === "conditionTypes"
   );
@@ -41,10 +41,10 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
             onDelete={deleteItem}
           />
         )}
-      {searchFilter && searchFilter.value && (
+      {searchText && (
         <FilterComponent
           field="searchInput"
-          value={String(searchFilter.value)}
+          value={searchText}
           onDelete={deleteItem}
         />
       )}

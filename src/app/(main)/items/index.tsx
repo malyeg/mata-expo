@@ -95,9 +95,15 @@ const ItemsScreen = () => {
 
   const onFilterDelete = async (field: string) => {
     hideToast();
-    const newFilters = query?.filters?.filter((f) => f.field !== field);
-    const newQuery = { ...query, filters: newFilters || [] };
-    setQuery(newQuery);
+    if (field === "searchInput") {
+      // searchText is stored separately from filters
+      const newQuery = { ...query, searchText: undefined };
+      setQuery(newQuery);
+    } else {
+      const newFilters = query?.filters?.filter((f) => f.field !== field);
+      const newQuery = { ...query, filters: newFilters || [] };
+      setQuery(newQuery);
+    }
     refetch();
   };
 
