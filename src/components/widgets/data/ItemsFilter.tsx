@@ -8,8 +8,8 @@ import useFormBuilder from "@/hooks/useFormBuilder";
 import useLocale from "@/hooks/useLocale";
 import useLocation from "@/hooks/useLocation";
 import { Country, State } from "@/models/place.model";
-import theme from "@/styles/theme";
-import { Entity } from "@/types/DataTypes";
+import { theme } from "@/styles/theme";
+import { Entity, Operation, Query } from "@/types/DataTypes";
 import { LoggerFactory } from "@/utils/logger";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -40,9 +40,9 @@ export interface ItemsFilterValues {
   conditionTypes?: string[];
 }
 export interface ItemsFilterProps {
-  onChange: (filters: ItemsFilterForm) => void;
+  onChange: (query: Query) => void;
   style?: StyleProp<ViewStyle>;
-  defaultValues?: ItemsFilterForm;
+  defaultValues?: Query;
   openOnLoad?: boolean;
   onClose?: () => void;
   focusOn?: "search" | "states";
@@ -50,8 +50,127 @@ export interface ItemsFilterProps {
 
 const logger = LoggerFactory.getLogger("ItemsFilter");
 
+// Helper function to convert Query filters to ItemsFilterValues
+const queryToFormValues = (query?: Query): ItemsFilterValues => {
+  if (!query?.filters) return {};
+
+  const formValues: ItemsFilterValues = {};
+
+  query.filters.forEach((filter) => {
+    switch (filter.field) {
+      case "catLevel1,catLevel2,catLevel3":
+        // Find category by name
+        const category = categoriesApi
+          .getAll()
+          .find((c) => c.name === filter.value);
+        formValues.categoryId = category?.id?.toString();
+        break;
+      case "countryId":
+        formValues.countryId = filter.value?.toString();
+        break;
+      case "location.state.id":
+        if (!formValues.stateIds) formValues.stateIds = [];
+        formValues.stateIds.push(filter.value?.toString());
+        break;
+      case "conditionType":
+        if (filter.operation === Operation.IN && Array.isArray(filter.value)) {
+          formValues.conditionTypes = filter.value;
+        } else {
+          formValues.conditionTypes = [filter.value?.toString()];
+        }
+        break;
+      case "swapOptionType":
+        if (filter.operation === Operation.IN && Array.isArray(filter.value)) {
+          formValues.swapTypes = filter.value;
+        } else {
+          formValues.swapTypes = [filter.value?.toString()];
+        }
+        break;
+      case "swapCategory":
+        const swapCategory = categoriesApi
+          .getAll()
+          .find((c) => c.name === filter.value);
+        formValues.swapCategoryId = swapCategory?.id?.toString();
+        break;
+    }
+  });
+
+  if (query.searchText) {
+    formValues.searchInput = query.searchText;
+  }
+
+  return formValues;
+};
+
+// Helper function to convert ItemsFilterValues to Query
+const formValuesToQuery = (data: ItemsFilterValues): Query => {
+  const query: Query = { filters: [] };
+
+  if (data.categoryId) {
+    const category = categoriesApi.getById(data.categoryId);
+    if (category) {
+      query.filters?.push({
+        field: "catLevel1,catLevel2,catLevel3",
+        value: category.name,
+        operation: Operation.EQUAL,
+      });
+    }
+  }
+
+  if (data.conditionTypes && data.conditionTypes.length > 0) {
+    query.filters?.push({
+      field: "conditionType",
+      value: data.conditionTypes,
+      operation: Operation.IN,
+    });
+  }
+
+  if (data.countryId) {
+    query.filters?.push({
+      field: "countryId",
+      value: data.countryId,
+      operation: Operation.EQUAL,
+    });
+  }
+
+  if (data.stateIds && data.stateIds.length > 0) {
+    data.stateIds.forEach((stateId) => {
+      query.filters?.push({
+        field: "location.state.id",
+        value: stateId,
+        operation: Operation.EQUAL,
+      });
+    });
+  }
+
+  if (data.swapTypes && data.swapTypes.length > 0) {
+    query.filters?.push({
+      field: "swapOptionType",
+      value: data.swapTypes,
+      operation: Operation.IN,
+    });
+
+    if (data.swapCategoryId) {
+      const swapCategory = categoriesApi.getById(data.swapCategoryId);
+      if (swapCategory) {
+        query.filters?.push({
+          field: "swapCategory",
+          value: swapCategory.name,
+          operation: Operation.EQUAL,
+        });
+      }
+    }
+  }
+
+  if (data.searchInput) {
+    query.searchText = data.searchInput;
+  }
+
+  return query;
+};
+
 const ItemsFilter = ({
-  defaultValues = {},
+  defaultValues,
   onChange,
   onClose,
   style,
@@ -66,7 +185,6 @@ const ItemsFilter = ({
   const { location } = useLocation();
   const textInputRef = useRef<any>(null);
   const statesRef = useRef<any>(null);
-  const firstLoadRef = useRef(true);
   const { control, handleSubmit, setValue, watch, reset } =
     useFormBuilder<ItemsFilterValues>((yup) =>
       yup.object({
@@ -106,28 +224,19 @@ const ItemsFilter = ({
   // }, [focusOn]);
 
   useEffect(() => {
-    if (firstLoadRef.current) {
-      firstLoadRef.current = false;
-      return;
-    }
-    reset({
-      categoryId: defaultValues?.category?.id.toString(),
-      conditionTypes: defaultValues?.conditionTypes?.map((s) =>
-        s.id.toString()
-      ),
-      countryId: defaultValues?.country?.id.toString(),
-      searchInput: defaultValues?.searchInput,
-      stateIds: defaultValues?.states?.map((s) => s.id.toString()),
-      swapCategoryId: defaultValues?.swapCategory?.id.toString(),
-      swapTypes: defaultValues?.swapTypes?.map((s) => s.id.toString()),
-    });
-  }, [defaultValues, reset]);
-
-  useEffect(() => {
     if (openOnLoad) {
       setModalVisible(true);
     }
   }, [openOnLoad]);
+
+  // Initialize form with default values when modal opens
+  useEffect(() => {
+    if (isModalVisible) {
+      const formValues = queryToFormValues(defaultValues);
+      reset(formValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalVisible]);
 
   useEffect(() => {
     const stateList = countriesApi.getStates(
@@ -147,27 +256,8 @@ const ItemsFilter = ({
 
   const onSubmit = (data: ItemsFilterValues) => {
     logger.log("data.stateIds", data.stateIds);
-    const filters: ItemsFilterForm = {};
-    !!data.categoryId &&
-      (filters.category = categoriesApi.getById(data.categoryId));
-    !!data.conditionTypes &&
-      (filters.conditionTypes = conditionList.filter((s) =>
-        data.conditionTypes?.includes(s.id)
-      ));
-    !!data.countryId &&
-      (filters.country = countriesApi.getById(data.countryId));
-    !!data.searchInput && (filters.searchInput = data.searchInput);
-    !!data.stateIds &&
-      (filters.states = countriesApi.getStatesByIds(data.stateIds));
-    if (data.swapTypes) {
-      filters.swapTypes = swapList.filter((s) =>
-        data.swapTypes?.includes(s.id)
-      );
-      !!data.swapCategoryId &&
-        (filters.swapCategory = categoriesApi.getById(data.swapCategoryId));
-    }
-
-    onChange(filters);
+    const query = formValuesToQuery(data);
+    onChange(query);
     setModalVisible(false);
     if (onClose) {
       onClose();
@@ -178,15 +268,9 @@ const ItemsFilter = ({
     console.log(data);
   };
 
-  const onReset = (name: string) => {
-    setValue(
-      name as keyof ItemsFilterValues,
-      name === "stateIds" ? undefined : ""
-    );
-  };
-
   const onBack = () => {
-    reset(defaultValues);
+    const formValues = queryToFormValues(defaultValues);
+    reset(formValues);
     setModalVisible(false);
     if (onClose) {
       onClose();
@@ -232,7 +316,6 @@ const ItemsFilter = ({
               ref={textInputRef}
               name="searchInput"
               style={styles.searchInput}
-              defaultValue={defaultValues.searchInput}
               placeholder={t("itemsFilter.searchInput.placeholder")}
               returnKeyType="next"
               returnKeyLabel="next"
@@ -240,7 +323,6 @@ const ItemsFilter = ({
               control={control}
               showReset
               hideLabel
-              onReset={onReset}
             />
             {isCountryPickerVisible && (
               <Picker
@@ -248,7 +330,6 @@ const ItemsFilter = ({
                 placeholder={t("itemsFilter.country.placeholder")}
                 name="countryId"
                 items={countries}
-                defaultValue={defaultValues?.country?.id?.toString()}
                 control={control}
                 keyboardShouldPersistTaps="always"
                 showReset={user.isAdmin || user.isTester}
@@ -270,7 +351,6 @@ const ItemsFilter = ({
               items={categoriesApi.getAll()}
               placeholder={t("itemsFilter.category.placeholder")}
               modalTitle={t("itemsFilter.category.modalTitle")}
-              defaultValue={defaultValues?.category?.id?.toString()}
               control={control}
               multiLevel
               showReset
@@ -300,7 +380,6 @@ const ItemsFilter = ({
                 items={categoriesApi.getAll()}
                 placeholder={t("itemsFilter.swapCategory.placeholder")}
                 modalTitle={t("itemsFilter.swapCategory.modalTitle")}
-                defaultValue={defaultValues?.swapCategory?.id?.toString()}
                 control={control}
                 multiLevel
                 showReset

@@ -88,6 +88,9 @@ export interface Item extends DataSearchable, Entity {
   user: PublicUser;
   name: string;
   category: Category;
+  catLevel1?: string;
+  catLevel2?: string;
+  catLevel3?: string;
   condition: {
     name?: string;
     type: ConditionType;
@@ -104,6 +107,7 @@ export interface Item extends DataSearchable, Entity {
     type: SwapType;
     category?: Category;
   };
+  swapOptionType?: string; // deprecated
   offers?: string[];
   archived?: boolean;
 }

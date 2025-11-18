@@ -219,6 +219,8 @@ const MultiSelectPicker = forwardRef(
   }
 );
 
+MultiSelectPicker.displayName = "MultiSelectPicker";
+
 const styles = StyleSheet.create({
   container: {
     // height: 100,

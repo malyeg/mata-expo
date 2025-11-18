@@ -1,3 +1,4 @@
+import { ICartItem } from "@/models/card-model";
 import analytics, {
   firebase,
   FirebaseAnalyticsTypes,
@@ -6,7 +7,6 @@ import { Item } from "../api/itemsApi";
 import constants from "../config/constants";
 import { User } from "../contexts/user-model";
 import { LoggerFactory } from "./logger";
-import { ICartItem } from "@/models/card-model";
 
 export interface AnalyticsEvent {
   name?: string;
@@ -143,7 +143,7 @@ class Analytics {
       items: items.map((item) => ({
         item_id: item?.id,
         item_name: item?.name,
-        item_category: item?.category.name,
+        item_category: item?.category?.name,
         item_location_id: item?.location?.placeId,
         item_category2: item.swapOption.type,
       })),
@@ -175,7 +175,7 @@ class Analytics {
     return {
       item_id: item?.id,
       item_name: item?.name,
-      item_category: item?.category.name,
+      item_category: item?.category?.name,
       item_location_id: item?.location?.placeId,
       item_category2: item.swapOption.type,
     } as FirebaseAnalyticsTypes.Item;

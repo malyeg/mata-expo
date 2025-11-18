@@ -1,9 +1,7 @@
 import { Category } from "@/api/categoriesApi";
 import itemsApi, { Item, swapList } from "@/api/itemsApi";
 import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
-import ItemsFilter, {
-  ItemsFilterForm,
-} from "@/components/widgets/data/ItemsFilter";
+import ItemsFilter from "@/components/widgets/data/ItemsFilter";
 import SelectedFilters from "@/components/widgets/data/SelectedFilters";
 import FilterIcon from "@/components/widgets/FilterIcon";
 import ItemsList from "@/components/widgets/ItemsList";
@@ -18,7 +16,7 @@ import useLocation from "@/hooks/useLocation";
 import useToast from "@/hooks/useToast";
 import sharedStyles from "@/styles/SharedStyles";
 import theme from "@/styles/theme";
-import { Filter, Operation, Query } from "@/types/DataTypes";
+import { Operation, Query } from "@/types/DataTypes";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -36,7 +34,6 @@ type ItemsParams = {
 
 const ItemsScreen = () => {
   const { location } = useLocation();
-  const [filters, setFilters] = useState<ItemsFilterForm>();
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [isMapVisible, setMapVisible] = useState(false);
   const { showErrorToast, hideToast } = useToast();
@@ -69,7 +66,6 @@ const ItemsScreen = () => {
   useEffect(() => {
     const newQuery = getQueryFromParams(params);
     setQuery(newQuery);
-    // Only run when specific param values change, not the params object itself
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     params.categoryId,
@@ -91,12 +87,16 @@ const ItemsScreen = () => {
     return "Search Items";
   }, [totalItems, error, t]);
 
-  const onFilterChange = async (field: string) => {
+  const onFilterChange = async (newQuery: Query) => {
     hideToast();
-    console.log("onFilterChange field", field, query);
+    setQuery(newQuery);
+    refetch();
+  };
+
+  const onFilterDelete = async (field: string) => {
+    hideToast();
     const newFilters = query?.filters?.filter((f) => f.field !== field);
     const newQuery = { ...query, filters: newFilters || [] };
-    console.log("onFilterChange newQuery", newQuery);
     setQuery(newQuery);
     refetch();
   };
@@ -129,6 +129,7 @@ const ItemsScreen = () => {
   };
 
   const openFilter = () => {
+    console.log("openFilter");
     setFilterVisible(true);
   };
 
@@ -138,10 +139,19 @@ const ItemsScreen = () => {
 
   const closeModal = () => setMapVisible(false);
 
-  const keyExtractor = (item: Item) => item.objectID?.toString();
+  const keyExtractor = (item: Item) => item.objectID?.toString()!;
 
-  if (data?.items === undefined) {
-    return null;
+  if (isLoading || !data?.items) {
+    return (
+      <Screen scrollable={false} style={styles.screen}>
+        <Stack.Screen
+          options={{
+            title: pageTitle,
+          }}
+        />
+        <Loader />
+      </Screen>
+    );
   }
 
   return (
@@ -152,7 +162,7 @@ const ItemsScreen = () => {
         }}
       />
       <View style={styles.header}>
-        {!!filters?.country && data.items && data.items.length > 0 && (
+        {data.items && data.items.length > 0 && (
           <Pressable onPress={openMap} style={styles.viewMap}>
             <Icon
               name="map-marker-multiple-outline"
@@ -165,17 +175,15 @@ const ItemsScreen = () => {
         )}
 
         <FilterIcon onPress={openFilter} style={styles.filterIcon} />
-        {filters && (
-          <ItemsFilter
-            style={styles.filter}
-            onChange={onFilterChange}
-            defaultValues={filters}
-            openOnLoad={isFilterVisible}
-            onClose={onCloseFilter}
-          />
-        )}
+        <ItemsFilter
+          style={styles.filter}
+          onChange={onFilterChange}
+          defaultValues={query}
+          openOnLoad={isFilterVisible}
+          onClose={onCloseFilter}
+        />
       </View>
-      {query && <SelectedFilters query={query} onDelete={onFilterChange} />}
+      {query && <SelectedFilters query={query} onDelete={onFilterDelete} />}
       <ItemsList
         items={data.items}
         // onLoadMore={loadMore}
@@ -188,7 +196,6 @@ const ItemsScreen = () => {
           }
         }}
         ListEmptyComponent={ListEmptyComponent}
-        // refreshing={isRefreshing}
         hasMore={hasMore}
         keyExtractor={keyExtractor}
       />
@@ -209,8 +216,6 @@ const ItemsScreen = () => {
           onSelectItem={closeModal}
         />
       </Modal>
-
-      {isLoading && <Loader />}
     </Screen>
   );
 };
@@ -262,47 +267,47 @@ const styles = StyleSheet.create({
   },
 });
 
-const toQueryFilter = (filtersForm: ItemsFilterForm) => {
-  const newFilters: Filter[] = [];
-  !!filtersForm.country &&
-    newFilters.push({
-      name: "countryId",
-      field: "location.country.id",
-      value: filtersForm?.country.id,
-    });
-  !!filtersForm.states &&
-    newFilters.push({
-      field: "stateId",
-      operation: Operation.IN,
-      value: filtersForm?.states.map((s) => s.id.toString()),
-    });
+// const toQueryFilter = (filtersForm: ItemsFilterForm) => {
+//   const newFilters: Filter[] = [];
+//   !!filtersForm.country &&
+//     newFilters.push({
+//       name: "countryId",
+//       field: "location.country.id",
+//       value: filtersForm?.country.id,
+//     });
+//   !!filtersForm.states &&
+//     newFilters.push({
+//       field: "stateId",
+//       operation: Operation.IN,
+//       value: filtersForm?.states.map((s) => s.id.toString()),
+//     });
 
-  !!filtersForm.category &&
-    newFilters.push({
-      field: "catLevel1,catLevel2,catLevel3",
-      value: filtersForm.category.name,
-    });
+//   !!filtersForm.category &&
+//     newFilters.push({
+//       field: "catLevel1,catLevel2,catLevel3",
+//       value: filtersForm.category.name,
+//     });
 
-  !!filtersForm.swapTypes &&
-    newFilters.push({
-      field: "swapOptionType",
-      operation: Operation.IN,
-      value: filtersForm.swapTypes.map((s) => s.id),
-    });
-  !!filtersForm.conditionTypes &&
-    newFilters.push({
-      field: "conditionType",
-      operation: Operation.IN,
-      value: filtersForm.conditionTypes.map((s) => s.id),
-    });
-  !!filtersForm.swapCategory &&
-    newFilters.push({
-      field: "swapCategory",
-      value: filtersForm.swapCategory.name,
-    });
+//   !!filtersForm.swapTypes &&
+//     newFilters.push({
+//       field: "swapOptionType",
+//       operation: Operation.IN,
+//       value: filtersForm.swapTypes.map((s) => s.id),
+//     });
+//   !!filtersForm.conditionTypes &&
+//     newFilters.push({
+//       field: "conditionType",
+//       operation: Operation.IN,
+//       value: filtersForm.conditionTypes.map((s) => s.id),
+//     });
+//   !!filtersForm.swapCategory &&
+//     newFilters.push({
+//       field: "swapCategory",
+//       value: filtersForm.swapCategory.name,
+//     });
 
-  return newFilters;
-};
+//   return newFilters;
+// };
 
 const getQueryFromParams = (params: ItemsParams) => {
   const query: Query = { filters: [] };
@@ -327,16 +332,13 @@ const getQueryFromParams = (params: ItemsParams) => {
     });
   }
 
-  // if (params.countryId) {
-  //   const country = countriesApi
-  //     .getAll()
-  //     .find((c) => c.id === params.countryId);
-  //   query.filters?.push({
-  //     field: "location.country.id",
-  //     value: country?.id,
-  //     operation: Operation.EQUAL,
-  //   });
-  // }
+  if (params.countryId) {
+    query.filters?.push({
+      field: "countryId",
+      value: params.countryId,
+      operation: Operation.EQUAL,
+    });
+  }
 
   if (params?.stateId) {
     query.filters?.push({

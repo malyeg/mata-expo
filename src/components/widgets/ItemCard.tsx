@@ -45,16 +45,18 @@ const ItemCard = ({
   const imageUrl = item.defaultImageURL ?? item?.images?.[0]?.downloadURL;
 
   const categoryName =
-    item.category?.name.toLowerCase() === "other" &&
-    item.category?.path?.length &&
-    item.category?.path?.length > 1
-      ? item.category?.path[item.category?.path?.length - 2]
-      : item.category?.name;
+    item.catLevel3 ?? item.catLevel2 ?? item.catLevel1 ?? item.category?.name;
+  // item.category?.name.toLowerCase() === "other" &&
+  // item.category?.path?.length &&
+  // item.category?.path?.length > 1
+  //   ? item.category?.path[item.category?.path?.length - 2]
+  //   : item.category?.name;
 
   return (
     <Pressable style={[styles.card, style]} onPress={openItemDetails}>
       <View style={styles.cardHeader}>
-        {item?.swapOption?.type === "free" && (
+        {(item?.swapOption?.type === "free" ||
+          item?.swapOptionType === "free") && (
           <Icon
             size={30}
             color={theme.colors.salmon}

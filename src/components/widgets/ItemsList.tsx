@@ -45,6 +45,7 @@ const ItemsList = ({
   onScroll,
   ...props
 }: ItemsListProps) => {
+  console.log("Rerendering ItemsList", items[0]);
   const renderItem = useCallback(
     ({ item }: { item: Item; index: number }) => {
       return (

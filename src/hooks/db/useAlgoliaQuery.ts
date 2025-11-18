@@ -35,20 +35,6 @@ interface PaginationState {
   hasMore: boolean;
 }
 
-interface UseAlgoliaQueryResult<TData = any> {
-  data: TData | undefined;
-  isLoading: boolean;
-  isFetching: boolean;
-  isError: boolean;
-  error: Error | null;
-  refetch: () => void;
-  isSuccess: boolean;
-  pagination: PaginationState;
-  loadMore: () => void;
-  hasNextPage: boolean;
-  isFetchingNextPage: boolean;
-}
-
 // Global Algolia client singleton
 let algoliaClient: SearchClient | null = null;
 
@@ -93,35 +79,7 @@ export const useAlgoliaQuery = ({
     ] as any,
     queryFn: async ({ pageParam }): Promise<AlgoliaPageResult> => {
       const page = typeof pageParam === "number" ? pageParam : 0;
-      const client = getAlgoliaClient();
-
       const result = await searchApi.search<Item>(query);
-
-      // const queryBuilder = QueryBuilder.fromQuery(query);
-
-      // // Build search parameters from query object
-      // const algoliaSearchParams: Record<string, any> = {
-      //   query: query.searchText || "",
-      //   ...searchParams,
-      //   page: page,
-      //   hitsPerPage,
-      // };
-
-      // // Add filters if provided
-      // if (query.filters) {
-      //   algoliaSearchParams.filters = query.filters;
-      // }
-
-      // // Add ranking/sorting if provided
-      // if (query.orderBy) {
-      //   algoliaSearchParams.ranking = query.orderBy;
-      // }
-
-      // // Algolia v5 API
-      // const result = await client.searchSingleIndex({
-      //   indexName,
-      //   searchParams: algoliaSearchParams,
-      // });
 
       return {
         items: result.items || [],
@@ -173,9 +131,13 @@ export const useAlgoliaQuery = ({
     };
   }, [infiniteQuery.data, infiniteQuery.hasNextPage, hitsPerPage]);
 
+  const isLoadingState =
+    infiniteQuery.isLoading ||
+    (infiniteQuery.isFetching && !infiniteQuery.data);
+
   return {
     data,
-    isLoading: infiniteQuery.isLoading,
+    isLoading: isLoadingState,
     isFetching: infiniteQuery.isFetching,
     isError: infiniteQuery.isError,
     error: infiniteQuery.error,
