@@ -88,6 +88,7 @@ const ItemsScreen = () => {
   }, [totalItems, error, t]);
 
   const onFilterChange = async (newQuery: Query) => {
+    console.log("onFilterChange", JSON.stringify(newQuery));
     hideToast();
     setQuery(newQuery);
     refetch();

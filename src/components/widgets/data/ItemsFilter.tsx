@@ -68,9 +68,14 @@ const queryToFormValues = (query?: Query): ItemsFilterValues => {
       case "countryId":
         formValues.countryId = filter.value?.toString();
         break;
+      case "stateId":
       case "location.state.id":
         if (!formValues.stateIds) formValues.stateIds = [];
-        formValues.stateIds.push(filter.value?.toString());
+        if (filter.operation === Operation.IN && Array.isArray(filter.value)) {
+          formValues.stateIds = filter.value;
+        } else {
+          formValues.stateIds.push(filter.value?.toString());
+        }
         break;
       case "conditionType":
         if (filter.operation === Operation.IN && Array.isArray(filter.value)) {
@@ -134,12 +139,10 @@ const formValuesToQuery = (data: ItemsFilterValues): Query => {
   }
 
   if (data.stateIds && data.stateIds.length > 0) {
-    data.stateIds.forEach((stateId) => {
-      query.filters?.push({
-        field: "location.state.id",
-        value: stateId,
-        operation: Operation.EQUAL,
-      });
+    query.filters?.push({
+      field: "stateId",
+      value: data.stateIds,
+      operation: Operation.IN,
     });
   }
 
@@ -229,14 +232,14 @@ const ItemsFilter = ({
     }
   }, [openOnLoad]);
 
-  // Initialize form with default values when modal opens
+  // Initialize form with default values when modal opens or defaultValues change
   useEffect(() => {
     if (isModalVisible) {
       const formValues = queryToFormValues(defaultValues);
       reset(formValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalVisible]);
+  }, [isModalVisible, defaultValues]);
 
   useEffect(() => {
     const stateList = countriesApi.getStates(

@@ -1,3 +1,4 @@
+import countriesApi from "@/api/countriesApi";
 import { Item } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
 import theme from "@/styles/theme";
@@ -19,15 +20,19 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
   };
 
   // Extract filter values from the filters array
-  const statesFilter = filters.find((f) => f.field === "stateIds");
+  const statesFilter = filters.find((f) => f.field === "stateId");
   const searchText = query?.searchText; // Search is stored in query.searchText, not filters
-  const conditionTypesFilter = filters.find(
-    (f) => f.field === "conditionTypes"
-  );
+  const conditionTypesFilter = filters.find((f) => f.field === "conditionType");
   const categoryFilter = filters.find(
     (f) => f.field === "catLevel1,catLevel2,catLevel3"
   );
-  const swapTypesFilter = filters.find((f) => f.field === "swapTypes");
+  const swapTypesFilter = filters.find((f) => f.field === "swapOptionType");
+
+  // Get state names from IDs
+  const getStateNames = (stateIds: string[]) => {
+    const states = countriesApi.getStatesByIds(stateIds);
+    return states.map((s) => s.name).join(", ");
+  };
 
   return (
     <View style={styles.container}>
@@ -35,9 +40,9 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
         Array.isArray(statesFilter.value) &&
         statesFilter.value.length > 0 && (
           <FilterComponent
-            field="stateIds"
+            field="stateId"
             value={statesFilter.value.join(",")}
-            label={statesFilter.name || statesFilter.value.join(", ")}
+            label={getStateNames(statesFilter.value)}
             onDelete={deleteItem}
           />
         )}
@@ -52,7 +57,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
         Array.isArray(conditionTypesFilter.value) &&
         conditionTypesFilter.value.length > 0 && (
           <FilterComponent
-            field="conditionTypes"
+            field="conditionType"
             value={conditionTypesFilter.value.join(",")}
             label={
               conditionTypesFilter.name || conditionTypesFilter.value.join(", ")
@@ -72,7 +77,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
         Array.isArray(swapTypesFilter.value) &&
         swapTypesFilter.value.length > 0 && (
           <FilterComponent
-            field="swapTypes"
+            field="swapOptionType"
             value={swapTypesFilter.value.join(",")}
             label={swapTypesFilter.name || swapTypesFilter.value.join(", ")}
             onDelete={deleteItem}
