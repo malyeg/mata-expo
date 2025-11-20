@@ -2,6 +2,7 @@ import crashlytics from "@react-native-firebase/crashlytics";
 import storage from "@react-native-firebase/storage";
 import constants from "../config/constants";
 import invalidContent from "../data/invalidContent";
+import { functions } from "../firebase";
 import { DataSearchable, Entity } from "../types/DataTypes";
 import Analytics, { AnalyticsEvent } from "../utils/Analytics";
 import { PublicUser } from "./authApi";
@@ -211,14 +212,14 @@ class ItemsApi extends DatabaseApi<Item> {
   }
 
   blockItem(item: Item) {
-    const prom = this.functions.httpsCallable("blockItem")({ itemId: item.id });
+    const prom = functions.httpsCallable("blockItem")({ itemId: item.id });
     Analytics.logEvent("block_item");
     return prom;
   }
 
   async archiveItem(item: Item) {
     try {
-      const prom = await this.functions.httpsCallable("archiveItem")({
+      const prom = await functions.httpsCallable("archiveItem")({
         itemId: item.id,
       });
       Analytics.logEvent("archive_no_swap");
@@ -230,7 +231,7 @@ class ItemsApi extends DatabaseApi<Item> {
   }
   async renewItem(item: Item) {
     try {
-      const prom = await this.functions.httpsCallable("renewItem")({
+      const prom = await functions.httpsCallable("renewItem")({
         itemId: item.id,
       });
       Analytics.logEvent("refresh_item");
@@ -243,7 +244,7 @@ class ItemsApi extends DatabaseApi<Item> {
 
   async deleteItem(item: Item) {
     try {
-      const prom = await this.functions.httpsCallable("deleteItem")({
+      const prom = await functions.httpsCallable("deleteItem")({
         itemId: item.id,
       });
       Analytics.logEvent("Delete_swap_out");

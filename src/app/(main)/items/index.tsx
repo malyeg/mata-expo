@@ -161,6 +161,8 @@ const ItemsScreen = () => {
     );
   }
 
+  console.log(data.items?.[0]?.category);
+
   return (
     <Screen scrollable={false} style={styles.screen}>
       <Stack.Screen

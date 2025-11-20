@@ -1,11 +1,91 @@
-import { Item } from "@/api/itemsApi";
+import { Category } from "@/api/categoriesApi";
+import { ConditionType, Item, SwapType } from "@/api/itemsApi";
 import { searchApi } from "@/api/search/searchApi";
+import categories from "@/data/categories";
 import { Query } from "@/types/DataTypes";
 import { Config } from "@/utils/Config";
 import { createNullCache } from "@algolia/cache-common";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { algoliasearch, SearchClient } from "algoliasearch";
 import { useMemo } from "react";
+
+// Helper function to find category by path
+const findCategoryByPath = (
+  catLevel1?: string,
+  catLevel2?: string,
+  catLevel3?: string
+): Category | undefined => {
+  const pathToMatch: string[] = [catLevel1, catLevel2, catLevel3].filter(
+    Boolean
+  ) as string[];
+
+  if (pathToMatch.length === 0) return undefined;
+
+  return (categories as Category[]).find((cat) => {
+    if (!cat.path || cat.path.length !== pathToMatch.length) return false;
+    return cat.path.every((p, i) => p === pathToMatch[i]);
+  });
+};
+
+// Transform Algolia search result to Item type
+const transformAlgoliaToItem = (algoliaHit: any): Item => {
+  const category =
+    findCategoryByPath(
+      algoliaHit.catLevel1,
+      algoliaHit.catLevel2,
+      algoliaHit.catLevel3
+    ) ||
+    ({
+      id: algoliaHit.catLevel3 || algoliaHit.catLevel2 || algoliaHit.catLevel1,
+      name:
+        algoliaHit.catLevel3 || algoliaHit.catLevel2 || algoliaHit.catLevel1,
+    } as Category);
+
+  return {
+    id: algoliaHit.objectID,
+    objectID: algoliaHit.objectID,
+    userId: algoliaHit.userId,
+    user: {
+      id: algoliaHit.userId,
+      rating: algoliaHit.userRating,
+    } as any,
+    name: algoliaHit.name,
+    category,
+    catLevel1: algoliaHit.catLevel1,
+    catLevel2: algoliaHit.catLevel2,
+    catLevel3: algoliaHit.catLevel3,
+    condition: {
+      type: algoliaHit.conditionType as ConditionType,
+      name: algoliaHit.conditionName,
+      desc: algoliaHit.conditionDesc,
+    },
+    description: algoliaHit.description,
+    defaultImageURL: algoliaHit.defaultImageURL,
+    images: algoliaHit.images,
+    location: algoliaHit._geoloc
+      ? ({
+          coordinate: {
+            latitude: algoliaHit._geoloc.lat,
+            longitude: algoliaHit._geoloc.lng,
+          },
+          countryId: algoliaHit.countryId,
+          stateId: algoliaHit.stateId,
+        } as any)
+      : undefined,
+    views: algoliaHit.views,
+    timestamp: algoliaHit.timestamp
+      ? new Date(algoliaHit.timestamp)
+      : undefined,
+    status: algoliaHit.status || "online",
+    swapOption: {
+      type: algoliaHit.swapOptionType as SwapType,
+      category: algoliaHit.swapCategory,
+    },
+    swapOptionType: algoliaHit.swapOptionType,
+    offers: algoliaHit.offers,
+    archived: algoliaHit.archived,
+  };
+};
 
 interface PaginationOptions {
   itemsPerPage?: number;
@@ -81,8 +161,11 @@ export const useAlgoliaQuery = ({
       const page = typeof pageParam === "number" ? pageParam : 0;
       const result = await searchApi.search<Item>(query);
 
+      // Transform Algolia hits to Item objects
+      const transformedItems = (result.items || []).map(transformAlgoliaToItem);
+
       return {
-        items: result.items || [],
+        items: transformedItems,
         page: page,
         nbPages: result.page?.totalPages || 0,
         totalItems: result.page?.totalDocs || 0,

@@ -7,5 +7,5 @@ import { getRemoteConfig } from "@react-native-firebase/remote-config";
 
 export const auth = getAuth();
 export const db = getFirestore();
-export const functions = getFunctions();
+export const functions = getFunctions(undefined, "australia-southeast1");
 export const remoteConfig = getRemoteConfig();
