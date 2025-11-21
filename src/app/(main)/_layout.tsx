@@ -32,7 +32,7 @@ const AppLayout = () => {
       screenOptions={drawerOptions}
       drawerContent={(props) => <DrawerContent {...props} />}
     >
-      <Drawer.Screen name="index" />
+      <Drawer.Screen name="(tabs)" />
     </Drawer>
   );
 };

@@ -1,8 +1,7 @@
 import locationApi, { Location } from "@/api/locationApi";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import React, { FC, useEffect, useRef } from "react";
 import { Platform, StyleSheet, TextStyle, View, ViewProps } from "react-native";
-import Config from "react-native-config";
 import {
   GooglePlaceData,
   GooglePlaceDetail,
@@ -33,7 +32,7 @@ const LocationSearch: FC<LocationSearchProps> = ({
   textStyle,
   query,
 }) => {
-  const ref = useRef<any>();
+  const ref = useRef<any>(null);
   // const [listViewDisplayed, setListViewDisplayed] = useState<boolean>(true);
   useEffect(() => {
     if (!!initialLocation && !!initialLocation.address?.name) {
@@ -102,11 +101,11 @@ const LocationSearch: FC<LocationSearchProps> = ({
         query={{
           key:
             Platform.OS === "ios"
-              ? Config.GOOGLE_MAPS_IOS_API_KEY
-              : Config.GOOGLE_MAPS_ANDROID_API_KEY,
+              ? process.env.GOOGLE_MAPS_IOS_API_KEY
+              : process.env.GOOGLE_MAPS_ANDROID_API_KEY,
           components:
-            "country:" + query?.countryCode?.toLowerCase() ??
-            defaultQuery.components,
+            "country:" +
+            (query?.countryCode?.toLowerCase() ?? defaultQuery.components),
           language: query?.language ?? defaultQuery.language,
         }}
         debounce={1000}

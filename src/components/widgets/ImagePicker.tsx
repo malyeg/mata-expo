@@ -3,7 +3,7 @@ import useAuth from "@/hooks/useAuth";
 import useController from "@/hooks/useController";
 import useLocale from "@/hooks/useLocale";
 import useMountedRef from "@/hooks/useMountRef";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import storage from "@react-native-firebase/storage";
 import React, { FC, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View, ViewProps } from "react-native";

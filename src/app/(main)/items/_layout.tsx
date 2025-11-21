@@ -18,12 +18,6 @@ const ItemsLayout = () => {
           title: "Item Details",
         }}
       />
-      <Stack.Screen
-        name="add-item"
-        options={{
-          title: "Add Item",
-        }}
-      />
     </Stack>
   );
 };

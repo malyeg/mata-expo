@@ -44,8 +44,8 @@ const LocationSelector = ({
   const { t } = useLocale("common");
   const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [location, setLocation] = useImmer<Location>(defaultValue!);
-  const mapSummaryRef = useRef<any>();
-  const mapDetailsRef = useRef<any>();
+  const mapSummaryRef = useRef<any>(null);
+  const mapDetailsRef = useRef<any>(null);
   const { profile } = useAuth();
   const { bottom } = useSafeAreaInsets();
 
