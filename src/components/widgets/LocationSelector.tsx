@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Pressable, StyleSheet, View, ViewProps } from "react-native";
+import { Platform, Pressable, StyleSheet, View, ViewProps } from "react-native";
 import MapView, { MapEvent, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // import Modal from 'react-native-modal';
@@ -128,7 +128,7 @@ const LocationSelector = ({
         <MapView
           ref={mapSummaryRef}
           onPress={openModal}
-          provider={PROVIDER_GOOGLE}
+          provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
           style={styles.map}
           zoomEnabled={false}
           scrollEnabled={false}
@@ -179,7 +179,7 @@ const LocationSelector = ({
         />
         <MapView
           ref={mapDetailsRef}
-          provider={PROVIDER_GOOGLE}
+          provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
           style={styles.map}
           zoomEnabled={true}
           scrollEnabled={true}

@@ -65,6 +65,7 @@
     "react-native-image-resizer": "^1.4.5",
     "react-native-keyboard-controller": "1.18.5",
     "react-native-maps": "1.20.1",
+    "react-native-maps-expo-plugin": "^1.0.4",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-pager-view": "6.9.1",
     "react-native-popup-menu": "^0.18.0",

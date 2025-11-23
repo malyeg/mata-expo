@@ -16,12 +16,7 @@ import useLocationStore from "@/store/location-store";
 import { theme } from "@/styles/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import {
-  useLocalSearchParams,
-  useNavigation,
-  useRouter,
-  useSegments,
-} from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,11 +31,8 @@ const HomeScreen = () => {
   const [lastRefresh, setLastRefresh] = useState(new Date());
   const nav = useNavigation<DrawerNavigationProp<any>>();
   const [isItemsFilterVisible, setItemsFilterVisible] = useState(false);
-  const { categoryId } = useLocalSearchParams<{
-    categoryId: string;
-  }>();
 
-  const segment = useSegments();
+  console.log(location);
   const [itemsFilterFocusField, setItemsFilterFocusField] =
     useState<ItemsFilterProps["focusOn"]>(undefined);
   const router = useRouter();

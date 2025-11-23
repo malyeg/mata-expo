@@ -12,6 +12,7 @@ import { Button, Modal } from "@/components/core";
 import { CheckBox, Error, Picker, TextInput } from "@/components/form";
 import ItemConditionPicker from "@/components/widgets/ItemConditionPicker";
 import ItemImages from "@/components/widgets/ItemImages";
+import LocationSelector from "@/components/widgets/LocationSelector";
 import Sheet from "@/components/widgets/Sheet";
 import useApi from "@/hooks/useApi";
 import useAppReview from "@/hooks/useAppReview";
@@ -59,7 +60,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   const { location } = useLocation();
   const { user, profile, addTargetCategory, getName } = useAuth();
   const { showSuccessToast, showErrorToast, hideToast } = useToast();
-  const [currentItem, setCurrentItem] = useState<Item | undefined>();
   const [loading, setLoading] = useState(false);
   const [imagesError, setImagesError] = useState();
   const appreview = useAppReview();
@@ -121,7 +121,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       const defaultImage =
         data.images.find((i) => i.isDefault) ?? data.images[0];
       const item: Omit<Item, "id"> = {
-        ...currentItem,
         name: data.name,
         category: categoriesApi.getAll().find((c) => c.id === data.category)!,
         condition: {
@@ -161,27 +160,30 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
           disabled: true,
         },
       };
-
-      const savedItem = await request<Item>(() => {
-        return itemsApi.set(itemIdRef.current!, item as Item, options);
-      });
-      Analytics.logEvent(currentItem ? "update_item" : "add_item", {
-        category: savedItem.category.name,
+      console.log("Submitting item", item.userId);
+      // const savedItem = await request<Item>(() => {
+      //   return itemsApi.set(itemIdRef.current!, item as Item, options);
+      // });
+      console.log("Submitting item - request", item);
+      const savedItem = (await itemsApi.create(item)) as unknown as Item;
+      console.log("Submitted item", savedItem.id);
+      Analytics.logEvent("add_item", {
+        category: item.category.name,
       });
       !!item?.swapOption.category &&
         addTargetCategory(item?.swapOption.category.id!);
 
       reset();
+      onClose();
       router.navigate({
         pathname: "/items/[id]",
         params: { id: savedItem.id },
       });
 
       appreview.requestInAppReview();
-      showSuccessToast(
-        currentItem ? t("editItemSuccess") : t("addItemSuccess")
-      );
+      showSuccessToast(t("addItemSuccess"));
     } catch (err: any) {
+      console.log("AddItemModal:onFormSuccess:error", err);
       showErrorToast(err);
     }
   };
@@ -212,7 +214,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       hideCloseIcon={false}
       bodyStyle={{
         flex: 1,
-        justifyContent: "space-evenly",
+        justifyContent: "space-between",
         // alignItems: "center",
       }}
     >
@@ -221,7 +223,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         templateSize={3}
         onUpload={onUploadHandler}
         control={control}
-        item={currentItem}
         docId={itemIdRef.current!}
         onError={setImagesError}
       />
@@ -239,7 +240,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         control={control}
         onSubmitEditing={focusToDiscription}
         hideLabel
-        defaultValue={currentItem?.name}
       />
 
       <TextInput
@@ -250,7 +250,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         returnKeyType="next"
         control={control}
         hideLabel
-        defaultValue={currentItem?.description}
       />
 
       <Picker
@@ -262,14 +261,9 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         control={control}
         multiLevel
         hideLabel
-        defaultValue={currentItem?.category?.id.toString()}
       />
 
-      <ItemConditionPicker
-        name="conditionType"
-        control={control}
-        defaultValue={currentItem?.condition.type}
-      />
+      <ItemConditionPicker name="conditionType" control={control} />
 
       <Picker
         position="bottom"
@@ -280,7 +274,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         control={control}
         onChange={onSwapChange}
         hideLabel
-        defaultValue={currentItem?.swapOption.type}
       />
 
       {swapType === "swapWithAnother" && (
@@ -293,26 +286,23 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
           control={control}
           multiLevel
           hideLabel
-          defaultValue={currentItem?.swapOption.category?.id}
         />
       )}
 
-      {/* <LocationSelector
+      <LocationSelector
         style={styles.location}
         control={control}
-        defaultValue={currentItem ? currentItem?.location : location}
         onModalChange={onLocationModalChange}
-      /> */}
+      />
       <CheckBox
         style={styles.draftCheckBox}
         control={control}
         name="status"
         label={t("status.saveAsDraftLabel")}
-        defaultValue={currentItem?.status === "draft"}
       />
 
       <Button
-        title={!currentItem ? t("addBtnTitle") : t("updateBtnTitle")}
+        title={t("addBtnTitle")}
         disabled={uploading}
         onPress={handleSubmit(onFormSuccess, onFormError)}
       />

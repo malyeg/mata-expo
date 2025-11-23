@@ -10,7 +10,7 @@ import OutgoingDeals from "@/components/features/deals/OutgoingDeals";
 import { screens } from "@/config/constants";
 import useLocale from "@/hooks/useLocale";
 import sharedStyles from "@/styles/SharedStyles";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 
 const dealsTabsOptions: MaterialTopTabNavigationOptions = {
   lazy: true,

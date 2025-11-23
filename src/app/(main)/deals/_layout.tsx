@@ -12,6 +12,12 @@ const DealsLayout = () => {
           title: "Deals",
         }}
       />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          title: "Deal Details",
+        }}
+      />
     </Stack>
   );
 };

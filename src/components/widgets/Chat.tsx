@@ -85,7 +85,13 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   const onSend = useCallback(
     async (newMessages: IMessage[] = []) => {
       const lastMessage = newMessages[newMessages.length - 1];
-      // TODO remove after message revamp
+
+      // Optimistically update the UI immediately
+      setChatMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages)
+      );
+
+      // Then persist to database
       const message = toMessage(lastMessage, deal);
       await addMessage(message, deal);
     },

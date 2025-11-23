@@ -36,13 +36,31 @@ const useChat = () => {
         }
       },
       toChatMessage: (message: Message) => {
+        // Convert Firestore Timestamp to Date if needed
+        let createdAt: Date;
+        if (message.timestamp) {
+          if (message.timestamp instanceof Date) {
+            createdAt = message.timestamp;
+          } else if (
+            typeof message.timestamp === "object" &&
+            "toDate" in message.timestamp
+          ) {
+            // Firestore Timestamp object
+            createdAt = (message.timestamp as any).toDate();
+          } else {
+            createdAt = new Date(message.timestamp);
+          }
+        } else {
+          createdAt = new Date();
+        }
+
         const newMessage: IMessage = {
           _id: message.id,
           text: message.text,
           user: {
             _id: message?.userId ?? message?.user?.id,
           },
-          createdAt: message.timestamp ?? new Date(),
+          createdAt,
           system: message.system,
         };
         return newMessage;

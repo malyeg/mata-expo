@@ -22,7 +22,7 @@ import useToast from "@/hooks/useToast";
 import sharedStyles from "@/styles/SharedStyles";
 import { theme } from "@/styles/theme";
 import { differenceInDays } from "date-fns";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
@@ -53,6 +53,7 @@ const DealDetailsScreen = () => {
 
   const { requestInAppReview } = useAppReview();
 
+  const title = user.id === deal?.userId ? "Outgoing deal" : "Incoming deal";
   useEffect(() => {
     const loadData = (d: Deal) => {
       if (!d) {
@@ -287,9 +288,11 @@ const DealDetailsScreen = () => {
 
   return deal ? (
     <Screen style={styles.screen}>
-      {/* <Stack.Screen options={{
-        title:
-      }} /> */}
+      <Stack.Screen
+        options={{
+          title,
+        }}
+      />
       <KeyboardView>
         <Card style={styles.card} contentStyle={sharedStyles.centerRow}>
           <DealStatus deal={deal} style={styles.statusText} />

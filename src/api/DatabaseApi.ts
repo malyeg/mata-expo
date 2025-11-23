@@ -31,6 +31,36 @@ import { Api } from "./Api";
 export type WithId<T> = T & { id: string };
 
 /**
+ * Remove undefined values from an object recursively
+ */
+function removeUndefinedValues<T extends object>(obj: T): Partial<T> {
+  const cleaned: any = {};
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+
+      if (value === undefined) {
+        continue;
+      }
+
+      if (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date)
+      ) {
+        cleaned[key] = removeUndefinedValues(value);
+      } else {
+        cleaned[key] = value;
+      }
+    }
+  }
+
+  return cleaned;
+}
+
+/**
  * A generic Firestore API class for any collection.
  *   - T: the shape of your document data (without `id`)
  */
@@ -77,7 +107,8 @@ export class DatabaseApi<T extends object> extends Api {
   /** Overwrite (or create) a document with a known ID */
   async set(id: string, data: T): Promise<void> {
     const ref = doc(db, this.collectionName, id);
-    await setDoc(ref, data);
+    const cleanedData = removeUndefinedValues(data);
+    await setDoc(ref, cleanedData);
   }
   /** Update specific fields of a document */
   async update(id: string, data: UpdateData<T>): Promise<void> {
