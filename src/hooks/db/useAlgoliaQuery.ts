@@ -118,6 +118,29 @@ interface PaginationState {
 // Global Algolia client singleton
 let algoliaClient: SearchClient | null = null;
 
+if (
+  !process.env.EXPO_PUBLIC_ALGOLIA_APP_ID ||
+  !process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY
+) {
+  console.warn(
+    "Algolia configuration is missing. Please set EXPO_PUBLIC_ALGOLIA_APP_ID and EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY in your .env file."
+  );
+} else {
+  algoliaClient = algoliasearch(
+    Config.algolia.ALGOLIA_APP_KEY,
+    Config.algolia.ALGOLIA_SEARCH_KEY,
+    {
+      // Caches responses from Algolia
+      // responsesCache: createInMemoryCache(), // or createNullCache()
+      responsesCache: createNullCache(), // or createNullCache()
+
+      // Caches Promises with the same request payload
+      // requestsCache: createInMemoryCache({serializable: false}), // or createNullCache()
+      requestsCache: createNullCache(),
+    }
+  );
+}
+
 algoliaClient = algoliasearch(
   Config.algolia.ALGOLIA_APP_KEY,
   Config.algolia.ALGOLIA_SEARCH_KEY,

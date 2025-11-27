@@ -39,7 +39,6 @@ const ItemDealsTab = ({ item, style }: ItemDealsTabProps) => {
           ])
           .build();
         const dealsResponse = await dealsApi.getAll(query);
-        console.log("dealsResponse");
         if (!!dealsResponse && dealsResponse.length > 0) {
           setDeals(dealsResponse);
         }

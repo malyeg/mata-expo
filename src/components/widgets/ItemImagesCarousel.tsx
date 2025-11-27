@@ -6,36 +6,46 @@ import CarouselBase, {
   TCarouselProps,
 } from "react-native-reanimated-carousel";
 
-import { ImageSource } from "@/api/itemsApi";
+import { ImageSource, Item } from "@/api/itemsApi";
 import { theme } from "@/styles/theme";
 import { useSharedValue } from "react-native-reanimated";
 import { Icon } from "../core";
 import Card from "../core/Card";
 import Image, { ImageProps } from "../core/Image";
 
-type CarouselBaseProps = TCarouselProps<ImageSource> & {
+type ItemImagesCarouselProps = Omit<
+  TCarouselProps<ImageSource>,
+  "data" | "renderItem"
+> & {
+  item: Item;
   resizeMode?: ImageProps["resizeMode"];
 };
 
 const windowWidth = Dimensions.get("window").width;
-const itemWidth = windowWidth - theme.defaults.SCREEN_PADDING * 4;
+// Account for: screen padding (2x) + card padding (2x) + extra padding (2x)
+const itemWidth = windowWidth - theme.defaults.SCREEN_PADDING * 6;
 
-const Carousel = ({ resizeMode = "contain", ...props }: CarouselBaseProps) => {
+const ItemImagesCarousel = ({
+  item,
+  resizeMode = "contain",
+  style,
+  ...props
+}: ItemImagesCarouselProps) => {
   const progress = useSharedValue<number>(0);
   const [activeSlide, setActiveSlide] = useState<number>(0);
   const [fullScreen, setFullScreen] = useState(false);
   const ref = React.useRef<ICarouselInstance>(null);
 
-  const { data, style } = props;
+  const data = item.images;
 
-  const renderItemHandler: any = useCallback(
+  const renderItem: any = useCallback(
     (itemInfo: { item: ImageSource; index: number }) => {
       return (
         <>
           <Image
             uri={itemInfo.item.downloadURL!}
             style={styles.image}
-            resizeMode={resizeMode}
+            contentFit="cover"
           />
           {!!itemInfo?.item?.isDefault && (
             <Icon
@@ -66,19 +76,25 @@ const Carousel = ({ resizeMode = "contain", ...props }: CarouselBaseProps) => {
     });
   };
 
+  if (!item.images || item.images.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <Card style={[styles.card, style]}>
         <CarouselBase
           {...props}
+          data={data ?? []}
           snapEnabled={true}
           width={itemWidth}
-          renderItem={renderItemHandler}
+          height={250}
+          renderItem={renderItem}
           onSnapToItem={onSnapToItem}
           style={styles.slideWrapper}
         />
 
-        {!!data && data.length > 0 && (
+        {!!data && data.length > 1 && (
           <Pagination.Basic
             data={data}
             progress={progress}
@@ -104,12 +120,13 @@ const Carousel = ({ resizeMode = "contain", ...props }: CarouselBaseProps) => {
   );
 };
 
-export default React.memo(Carousel);
+export default React.memo(ItemImagesCarousel);
 
 const styles = StyleSheet.create({
   card: {
     flexDirection: "column",
-    // padding: 50,
+    paddingVertical: 20,
+    paddingHorizontal: theme.defaults.SCREEN_PADDING,
   },
   container: {
     flexDirection: "column",
@@ -131,22 +148,13 @@ const styles = StyleSheet.create({
   slideWrapper: {},
   image: {
     overflow: "hidden",
-    flex: 1,
     width: "100%",
-    // height: 100,
-    // marginBottom: 20,
-    // zIndex: 1,
-  },
-  imageFull: {
-    flex: 1,
-    // height: '100%',
-    // width: '100%',
-    // backgroundColor: 'grey',
+    aspectRatio: 1.1,
   },
   PaginationContainer: {
     padding: 0,
-    marginTop: -20,
-    marginBottom: -30,
+    marginTop: 10,
+    // marginBottom: -30,
   },
   paginationDot: {
     width: 10,

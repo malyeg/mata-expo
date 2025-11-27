@@ -29,6 +29,7 @@ const AppLayout = () => {
   useAppExit();
   return (
     <Drawer
+      backBehavior="history"
       screenOptions={drawerOptions}
       drawerContent={(props) => <DrawerContent {...props} />}
     >

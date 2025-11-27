@@ -22,6 +22,7 @@ import {
   getDoc,
   getDocs,
   onSnapshot,
+  serverTimestamp,
   setDoc,
   updateDoc,
 } from "@react-native-firebase/firestore";
@@ -99,13 +100,18 @@ export class DatabaseApi<T extends object> extends Api {
   }
 
   /** Add a new document (Firestore auto‑generates the ID) */
-  async create(data: Omit<T, "id">): Promise<string> {
-    const ref = await addDoc(this.collection, data);
-    return ref.id;
+  async create(data: Omit<T, "id">): Promise<T> {
+    // add timestamp
+    const ref = await addDoc(this.collection, {
+      ...data,
+      timestamp: serverTimestamp(),
+    });
+    return { id: ref.id, ...data } as T;
   }
 
   /** Overwrite (or create) a document with a known ID */
   async set(id: string, data: T): Promise<void> {
+    delete (data as any).timestamp;
     const ref = doc(db, this.collectionName, id);
     const cleanedData = removeUndefinedValues(data);
     await setDoc(ref, cleanedData);
@@ -176,7 +182,14 @@ export class DatabaseApi<T extends object> extends Api {
       ref,
       (snapshot) => {
         if (snapshot.exists()) {
-          onNext({ id: snapshot.id, ...(snapshot.data() as T) });
+          const data = snapshot.data();
+          console.log("data!!!", JSON.stringify((data as any)?.timestamp));
+          const timestamp = (data as any)?.timestamp?.toDate?.();
+          onNext({
+            id: snapshot.id,
+            ...(data as T),
+            timestamp,
+          });
         } else {
           onNext(null);
         }

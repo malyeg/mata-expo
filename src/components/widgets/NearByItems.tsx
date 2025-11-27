@@ -81,7 +81,7 @@ const NearByItems = ({ style }: NearByItemsProps) => {
   const onEndReached = useCallback(
     (info: any, length: number) => {
       if (length > 20) {
-        router.push("/items");
+        router.navigate("/items");
       }
     },
     [router]

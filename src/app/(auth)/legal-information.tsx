@@ -1,10 +1,10 @@
-import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
 import { Screen, Text } from "@/components/core";
 import Card from "@/components/core/Card";
 import { screens } from "@/config/constants";
 import useLocale from "@/hooks/useLocale";
 import { useRouter } from "expo-router";
+import React from "react";
+import { Dimensions, StyleSheet } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const LegalInformationScreen = () => {
@@ -12,12 +12,12 @@ const LegalInformationScreen = () => {
   const { t } = useLocale(screens.LEGAL_INFORMATION);
 
   const openPrivacyModal = () => {
-    router.push({
+    router.navigate({
       pathname: "/(auth)/privacy-policy",
     });
   };
   const openTermsModal = () => {
-    router.push({
+    router.navigate({
       pathname: "/(auth)/terms",
     });
   };

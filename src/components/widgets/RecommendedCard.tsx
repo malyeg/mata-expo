@@ -29,7 +29,7 @@ const RecommendedCard = ({ item, style }: ItemCardProps) => {
   const openItemDetails = useCallback(() => {
     // TODO refactor to constant
     router.navigate({
-      pathname: "/items/[id]",
+      pathname: "/(main)/(tabs)/(home)/item/[id]",
       params: { id: item.id },
     });
     Analytics.logSelectItem(item, "recommendedItems");

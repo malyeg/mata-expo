@@ -10,7 +10,7 @@ interface UpdateProfileCardProps {
 const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
   const router = useRouter();
   const openEditProfileScreen = () => {
-    router.push("/edit-profile");
+    router.navigate("/edit-profile");
   };
   return (
     <View style={[styles.container, style]}>

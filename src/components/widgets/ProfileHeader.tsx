@@ -47,7 +47,7 @@ const ProfileHeader = ({
   }, [profile?.ratings]);
 
   const openEditProfile = useCallback(() => {
-    router.push("/account/edit-profile");
+    router.navigate("/account/edit-profile");
   }, [router]);
   const profileIconSize = icon?.size ?? IMAGE_SIZE;
   return (

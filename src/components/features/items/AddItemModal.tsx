@@ -164,7 +164,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       // const savedItem = await request<Item>(() => {
       //   return itemsApi.set(itemIdRef.current!, item as Item, options);
       // });
-      console.log("Submitting item - request", item);
       const savedItem = (await itemsApi.create(item)) as unknown as Item;
       console.log("Submitted item", savedItem.id);
       Analytics.logEvent("add_item", {
@@ -197,9 +196,11 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   }, []);
   const onLocationModalChange = useCallback((status: "opened" | "closed") => {
     // setSwapType(value as SwapType);
-    status === "opened"
-      ? setLocationSelectorOpen(true)
-      : setLocationSelectorOpen(false);
+    if (status === "opened") {
+      setLocationSelectorOpen(true);
+    } else {
+      setLocationSelectorOpen(false);
+    }
   }, []);
 
   const categories = useMemo(() => categoriesApi.getAll(), []);

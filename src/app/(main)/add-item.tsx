@@ -1,19 +1,8 @@
+import { Redirect } from "expo-router";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 
 const AddItem = () => {
-  return (
-    <View style={styles.container}>
-      <Text>AddItem</Text>
-    </View>
-  );
+  return <Redirect href="/(main)/(tabs)" />;
 };
 
 export default AddItem;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-  },
-});

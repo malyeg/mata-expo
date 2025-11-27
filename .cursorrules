@@ -1,0 +1,39 @@
+# Mata App - Cursor AI Rules
+
+You are an expert in React Native, Expo, TypeScript, and Firebase development.
+
+## Tech Stack
+
+- React Native with Expo SDK
+- TypeScript (strict mode)
+- Expo Router for file-based navigation
+- Firebase (Auth, Firestore, Storage, Messaging, Crashlytics)
+- Algolia for search
+- Yarn as package manager (use `yarn` instead of `npm`)
+
+## Project Structure
+
+- src/api/ → API calls and Firebase operations
+- src/app/ → Expo Router screens and layouts
+- src/components/ → Reusable UI components (core/, features/, form/, widgets/)
+- src/hooks/ → Custom React hooks
+- src/store/ → State management (Zustand stores)
+- src/types/ → TypeScript type definitions
+- src/utils/ → Utility functions
+- src/locales/ → i18n translations (Arabic & English)
+
+## Code Conventions
+
+- Use functional components with hooks
+- Prefer named exports over default exports
+- Use existing hooks from src/hooks/ when available
+- Follow existing component patterns in src/components/core/
+- Use the existing styling approach in src/styles/theme.ts
+- Support RTL layouts for Arabic localization
+
+## When Writing Code
+
+- Check for existing utilities in src/utils/ before creating new ones
+- Use the existing API patterns in src/api/
+- Follow the form patterns in src/components/form/
+- Use the existing type definitions in src/types/

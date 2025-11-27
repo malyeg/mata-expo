@@ -32,7 +32,6 @@ const HomeScreen = () => {
   const nav = useNavigation<DrawerNavigationProp<any>>();
   const [isItemsFilterVisible, setItemsFilterVisible] = useState(false);
 
-  console.log(location);
   const [itemsFilterFocusField, setItemsFilterFocusField] =
     useState<ItemsFilterProps["focusOn"]>(undefined);
   const router = useRouter();
@@ -49,7 +48,7 @@ const HomeScreen = () => {
   const onFilterChange = useCallback(
     (filters: ItemsFilterForm) => {
       setItemsFilterVisible(false);
-      router.push("/(main)/items", {
+      router.navigate("/(main)/items", {
         filters,
       });
     },
@@ -61,7 +60,7 @@ const HomeScreen = () => {
       swapTypes: swapList.filter((s) => s.id === "free"),
     };
     setItemsFilterVisible(false);
-    router.push("/(main)/items", {
+    router.navigate("/(main)/items", {
       filters,
     });
   }, [router]);

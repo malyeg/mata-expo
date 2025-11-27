@@ -34,7 +34,7 @@ const ItemCard = ({
       onPress(item);
     } else {
       router.push({
-        pathname: "/items/[id]",
+        pathname: "/(main)/(tabs)/(home)/item/[id]",
         params: { id: item.id },
       });
     }

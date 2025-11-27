@@ -202,7 +202,6 @@ class LocationApi {
       const loc = await this.buildLocationFromPlace(
         placeJson.results[0] as unknown as GooglePlaceDetail
       );
-      logger.log("location build");
 
       loc.coordinate = coordinate;
       return loc;
@@ -222,13 +221,18 @@ class LocationApi {
     const state = countriesApi.getStateByName(add.state!, country?.id!);
     let city: City | undefined;
 
+    console.log("add", JSON.stringify(add));
+    console.log("country", JSON.stringify(country));
+    console.log("state", JSON.stringify(state));
+
     if (add.locality) {
       const cities = await citiesApi.getByName(add.locality, country!, state);
+
       if (cities && cities.length > 0) {
         city = cities[0];
       }
     } else if (state) {
-      const dbCities = (await citiesApi.getByStateId(state.id))?.items;
+      const dbCities = await citiesApi.getByStateId(state.id);
       if (dbCities && dbCities.length > 0) {
         city = dbCities[0];
       }

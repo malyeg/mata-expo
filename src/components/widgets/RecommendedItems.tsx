@@ -3,7 +3,7 @@ import itemsApi, { Item, ItemStatus } from "@/api/itemsApi";
 import { Location } from "@/api/locationApi";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { Operation, QueryBuilder } from "@/types/DataTypes";
 import React, { useEffect, useState } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";

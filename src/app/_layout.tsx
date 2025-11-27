@@ -1,18 +1,20 @@
 // app/_layout.tsx
 
+import configApi from "@/api/AppConfig";
 import { toastConfig } from "@/components/core/Toaster";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
 import { getWarningsOff } from "@/utils/WarningsOff";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { algoliasearch } from "algoliasearch";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
 
+void SplashScreen.preventAutoHideAsync();
 // Create a QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,28 +27,22 @@ const queryClient = new QueryClient({
 
 console.log("WarningsOff", getWarningsOff());
 
-if (
-  !process.env.EXPO_PUBLIC_ALGOLIA_APP_ID ||
-  !process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY
-) {
-  console.warn(
-    "Algolia configuration is missing. Please set EXPO_PUBLIC_ALGOLIA_APP_ID and EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY in your .env file."
-  );
-} else {
-  algoliasearch(
-    process.env.EXPO_PUBLIC_ALGOLIA_APP_ID,
-    process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_API_KEY
-  );
-}
-
 const InitialLayout = () => {
-  const { initializeLocation } = useLocationStore();
-  const { _initializeOnFirstAccess, authListener, isInitialized } =
-    useAuthStore();
+  const { initializeLocation, isInitialized: isLocationInitialized } =
+    useLocationStore();
+  const {
+    _initializeOnFirstAccess,
+    authListener,
+    isInitialized: isAuthInitialized,
+  } = useAuthStore();
 
   useEffect(() => {
-    _initializeOnFirstAccess();
-    initializeLocation();
+    // run in parallel
+    Promise.all([
+      _initializeOnFirstAccess(),
+      initializeLocation(),
+      configApi.fetchConfig(),
+    ]);
 
     return () => {
       authListener && authListener();
@@ -54,9 +50,12 @@ const InitialLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!isInitialized) {
+  console.log("isInitialized ", isLocationInitialized, isAuthInitialized);
+
+  if (!isAuthInitialized || !isLocationInitialized) {
     console.log("InitialLayout - Waiting for auth store initialization...");
-    return null; // or a loading component
+    SplashScreen.hideAsync();
+    return null; // or a loading component  ئ                                                 ** *
   }
 
   return (

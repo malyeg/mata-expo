@@ -28,7 +28,6 @@ export const authGuards = {
 
   canAccessAuth: () => {
     const { isAuthenticated } = useAuthStore.getState();
-
     // During initialization, allow access to auth screens as fallback
     if (!isAuthenticated) {
       return true;

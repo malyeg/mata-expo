@@ -59,7 +59,7 @@ export interface VersioningInfo {
 
 const logger = LoggerFactory.getLogger("ConfigApi");
 class AppConfigApi {
-  fetchConfig = async (minimumFetchIntervalMillis: number) => {
+  fetchConfig = async (minimumFetchIntervalMillis: number = 1000 * 60 * 5) => {
     try {
       await remoteConfig.setConfigSettings({
         minimumFetchIntervalMillis,
@@ -74,8 +74,10 @@ class AppConfigApi {
           "No configs were fetched from the backend, and the local configs were already activated."
         );
       }
+      logger.log("configs fetched", remoteConfig.getAll());
     } catch (error) {
-      console.warn(error);
+      logger.error("Error fetching configs", error);
+      crashlytics().recordError(error as Error);
     }
   };
 

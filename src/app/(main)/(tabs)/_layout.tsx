@@ -20,6 +20,7 @@ export default function TabLayout() {
   return (
     <>
       <Tabs
+        initialRouteName="(home)"
         screenOptions={{
           headerTitleStyle: {
             fontSize: 25,
@@ -65,13 +66,15 @@ export default function TabLayout() {
               />
             </TouchableOpacity>
           ),
+          lazy: false,
         }}
       >
         <Tabs.Screen
-          name="index"
+          name="(home)"
           options={{
             title: "Home",
             headerShown: false,
+
             tabBarIcon: ({ color }) => (
               <FontAwesome size={20} name="home" color={color} />
             ),
