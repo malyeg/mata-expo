@@ -11,6 +11,15 @@ export default {
     },
   },
   common: {
+    timeAgo: {
+      justNow: "الآن",
+      seconds: "{{count}} ثانية",
+      minutes: "{{count}} دقيقة",
+      hours: "{{count}} ساعة",
+      days: "{{count}} يوم",
+      months: "{{count}} شهر",
+      years: "{{count}} سنة",
+    },
     form: {
       error: {
         email: "بريد إلكتروني غير صالح",
@@ -534,6 +543,9 @@ export default {
   },
   itemDetailsScreen: {
     ownerItemsTitle: "منتجات أخرى للمالك",
+    ownerTitle: "المالك: ",
+    guestLabel: "زائر",
+    sinceLabel: "منذ {{time}}",
     itemDescriptionTitle: "الوصف: ",
     addressTitle: "الموقع: ",
     categoryTitle: "الفئة: ",
@@ -553,6 +565,8 @@ export default {
     archivedDialog: {
       header: "تحذير",
       body: "المنتج لم يعد متاحًا، هل تريد عرض منتجات مشابهة؟",
+      cancelBtn: "إلغاء",
+      showBtn: "عرض",
     },
     deleteConfirmationHeader: "تأكيد",
     deleteConfirmationBody:

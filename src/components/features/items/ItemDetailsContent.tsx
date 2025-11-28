@@ -442,14 +442,14 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
         </View>
         {timeAgoString && (
           <View style={styles.sinceContainer}>
-            <Text>Since {timeAgoString}</Text>
+            <Text>{t("sinceLabel", { params: { time: timeAgoString } })}</Text>
           </View>
         )}
 
         {item.userId !== user.id && (
           <ItemDetailsCard
-            title="Owner: "
-            content={item?.user?.name ?? item.user?.email ?? "Guest"}
+            title={t("ownerTitle")}
+            content={item?.user?.name ?? item.user?.email ?? t("guestLabel")}
             icon="account-outline"
             onPress={() =>
               router.navigate({
@@ -473,7 +473,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
         />
         {item.userId === user.id && (
           <ItemDetailsCard
-            title="Status: "
+            title={t("statusTitle")}
             content={item.status}
             icon="cast-connected"
             contentStyle={item.status === "online" ? styles.greenText : {}}
@@ -494,7 +494,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
         <ItemDetailsCard
           title={
             item.swapOption.type === "swapWithAnother"
-              ? "Swap with: "
+              ? t("swapCategoryTitle")
               : t("swapTypeTitle")
           }
           content={
@@ -543,13 +543,13 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
           <Text>{t("archivedDialog.body")}</Text>
           <View style={styles.archivedButtonsContainer}>
             <Button
-              title="Cancel"
+              title={t("archivedDialog.cancelBtn")}
               style={styles.archivedButton}
               themeType="white"
               onPress={goBack}
             />
             <Button
-              title="Show"
+              title={t("archivedDialog.showBtn")}
               style={styles.archivedButton}
               onPress={showSimilarItems}
             />
@@ -736,4 +736,3 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
 });
-

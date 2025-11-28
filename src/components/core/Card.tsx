@@ -9,7 +9,7 @@ import {
   ViewProps,
   ViewStyle,
 } from "react-native";
-import Icon, { IconProps } from "./Icon";
+import Icon, { ChevronIcon, IconProps } from "./Icon";
 
 interface CardProps extends ViewProps {
   icon?: IconProps;
@@ -47,8 +47,7 @@ const CardBody = ({ hideChevron, icon, children, onPress }: CardProps) => {
       )}
       {children}
       {!!onPress && !hideChevron && (
-        <Icon
-          name="chevron-right"
+        <ChevronIcon
           color={theme.colors.salmon}
           style={styles.chevron}
           size={25}

@@ -1,4 +1,5 @@
 import { Timestamp } from "@react-native-firebase/firestore";
+import i18n from "@/locales/i18n";
 
 function timeAgo(date: Date | Timestamp): string {
   if (date instanceof Timestamp) {
@@ -14,25 +15,30 @@ function timeAgo(date: Date | Timestamp): string {
   const months = Math.floor(days / 30);
   const years = Math.floor(months / 12);
 
+  // Use i18n directly for translation
+  const translate = (key: string, count: number) => {
+    return i18n.t(`common:timeAgo.${key}`, { count });
+  };
+
   if (ms === 0) {
-    return "Just now";
+    return i18n.t("common:timeAgo.justNow");
   }
   if (seconds < 60) {
-    return seconds + " seconds";
+    return translate("seconds", seconds);
   }
   if (minutes < 60) {
-    return minutes + " minutes";
+    return translate("minutes", minutes);
   }
   if (hours < 24) {
-    return hours + " hours";
+    return translate("hours", hours);
   }
   if (days < 30) {
-    return days + " days";
+    return translate("days", days);
   }
   if (months < 12) {
-    return months + " months";
+    return translate("months", months);
   } else {
-    return years + " years";
+    return translate("years", years);
   }
 }
 

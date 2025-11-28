@@ -1,4 +1,4 @@
-import { Button, Icon, Modal, Screen, Text } from "@/components/core";
+import { Button, Modal, Screen, Text } from "@/components/core";
 import ProfileHeader from "@/components/widgets/ProfileHeader";
 import useApi from "@/hooks/useApi";
 import useAuth from "@/hooks/useAuth";
@@ -14,6 +14,7 @@ import {
   ViewStyle,
 } from "react-native";
 // import useSocial from '@/hooks/useSocial';
+import { ChevronIcon } from "@/components/core/Icon";
 import theme from "@/styles/theme";
 import { useRouter } from "expo-router";
 
@@ -155,8 +156,7 @@ const ProfileItem: FC<ProfileItemProps> = ({
     <Pressable onPress={onPress} style={[styles.itemContainer, style]}>
       <Text style={[styles.itemText, titleStyle]}>{title}</Text>
       {chevron && (
-        <Icon
-          name="chevron-right"
+        <ChevronIcon
           color={theme.colors.grey}
           size={35}
           style={styles.chevronIcon}

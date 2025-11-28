@@ -11,6 +11,15 @@ export default {
     },
   },
   common: {
+    timeAgo: {
+      justNow: "Just now",
+      seconds: "{{count}} seconds",
+      minutes: "{{count}} minutes",
+      hours: "{{count}} hours",
+      days: "{{count}} days",
+      months: "{{count}} months",
+      years: "{{count}} years",
+    },
     form: {
       error: {
         email: "Invalid email",
@@ -542,6 +551,9 @@ export default {
   },
   itemDetailsScreen: {
     ownerItemsTitle: "Owner other items",
+    ownerTitle: "Owner: ",
+    guestLabel: "Guest",
+    sinceLabel: "Since {{time}}",
     itemDescriptionTitle: "Description: ",
     addressTitle: "Location: ",
     categoryTitle: "Category: ",
@@ -561,6 +573,8 @@ export default {
     archivedDialog: {
       header: "Warning",
       body: "Item is no longer available, show similar items?",
+      cancelBtn: "Cancel",
+      showBtn: "Show",
     },
     deleteConfirmationHeader: "Confirm",
     deleteConfirmationBody:

@@ -38,6 +38,12 @@ const ProfileLayout = () => {
           title: t("screens.wishList"),
         }}
       />
+      <Stack.Screen
+        name="change-password"
+        options={{
+          title: t("screens.changePassword"),
+        }}
+      />
     </Stack>
   );
 };
