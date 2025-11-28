@@ -1,4 +1,5 @@
-import theme from "@/styles/theme";
+import useLocale from "@/hooks/useLocale";
+import { theme } from "@/styles/theme";
 import { Entity, Nestable } from "@/types/DataTypes";
 import React, { FC, useCallback } from "react";
 import {
@@ -9,8 +10,8 @@ import {
   View,
 } from "react-native";
 import { Icon } from "../core";
+import { ChevronIcon } from "../core/Icon";
 import Text from "../core/Text";
-import Chevron from "../icons/Chevron";
 
 // export type PickerItem = {value: string; label?: string};
 
@@ -37,13 +38,15 @@ const PickerItem: FC<PickerItemProps> = ({
     onChange(item);
   }, [item, onChange, onPress]);
 
+  const { locale } = useLocale();
+
   const nestedEntity = item as unknown as Nestable;
   return (
     <Pressable onPress={onItemChange} style={styles.container}>
       <View style={styles.itemContainer}>
         {!!item.emoji && <Text style={styles.emoji}>{item.emoji}</Text>}
         <Text body1 style={styles.text} adjustsFontSizeToFit={true}>
-          {item.name ?? item.id}
+          {item.localizedName?.[locale] ?? item.name ?? item.id}
         </Text>
         {nestedEntity.level === -1
           ? selected && (
@@ -54,7 +57,7 @@ const PickerItem: FC<PickerItemProps> = ({
                 style={styles.selectedIcon}
               />
             )
-          : nestedEntity.level > -1 &&
+          : nestedEntity?.level > -1 &&
             nestedEntity.hasChildren !== false && (
               // <Icon
               //   name="chevron-right"
@@ -62,7 +65,10 @@ const PickerItem: FC<PickerItemProps> = ({
               //   size={35}
               //   style={[styles.chevronIcon, chevronStyle]}
               // />
-              <Chevron style={chevronStyle} />
+              <ChevronIcon
+                style={[styles.chevronIcon, chevronStyle]}
+                size={35}
+              />
             )}
       </View>
       {children}
@@ -78,26 +84,27 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     height: 61,
   },
   text: {
-    flex: 1,
+    // flex: 1,
     // paddingHorizontal: 10,
-    textAlignVertical: "center",
-    justifyContent: "center",
-    alignItems: "center",
+    // textAlignVertical: "center",
+    // justifyContent: "flex-start",
+    // alignItems: "center",
   },
   selectedIcon: {
     textAlignVertical: "center",
+    marginStart: "auto",
   },
   emoji: {
     ...theme.styles.scale.h4,
-    marginRight: 10,
+    marginEnd: 10,
   },
   chevronIcon: {
-    marginRight: -10,
+    marginStart: "auto",
   },
 });
 

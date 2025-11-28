@@ -1,5 +1,5 @@
 import useLocale from "@/hooks/useLocale";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import React from "react";
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { Icon, Text } from "../core";
@@ -42,12 +42,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   text: {
-    flex: 1,
-    ...theme.styles.scale.body1,
-    color: theme.colors.dark,
-    // backgroundColor: 'blue',
-  },
-  searchInput: {
     flex: 1,
     ...theme.styles.scale.body1,
     color: theme.colors.dark,

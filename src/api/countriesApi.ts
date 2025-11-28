@@ -1,8 +1,6 @@
 import { Country, State } from "@/models/place.model";
 import countries from "../data/countries";
 import states from "../data/states";
-import { Entity } from "../types/DataTypes";
-import { Coordinate } from "./locationApi";
 
 class CountriesApi {
   private countryList: Country[];
@@ -20,6 +18,7 @@ class CountriesApi {
     const country: Country = {
       id: c.id.toString(),
       name: c.name,
+      localizedName: c.localizedName,
       code: c.code,
       phoneCode: c.phoneCode,
       emoji: c.emoji,

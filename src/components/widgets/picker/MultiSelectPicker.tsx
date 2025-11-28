@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
 
   inputText: {
-    flex: 1,
+    // flex: 1,
   },
   placeholderText: {
     color: theme.colors.grey,

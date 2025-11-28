@@ -14,7 +14,7 @@ import ModalBase, {
 } from "react-native-modal";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SuccessIcon from "../icons/SuccessIcon";
-import Icon, { IconProps } from "./Icon";
+import Icon, { ChevronBackIcon, IconProps } from "./Icon";
 import Text from "./Text";
 
 export interface ModalProps {
@@ -106,10 +106,10 @@ const Modal: FC<ModalProps> = ({
             <SuccessIcon style={styles.headerIcon} name={headerIcon.name} />
           )}
           {showHeaderNav && position === "full" && (
-            <Icon
-              name="chevron-left"
+            <ChevronBackIcon
               color={theme.colors.grey}
               size={35}
+              style={styles.chevronBackIcon}
               onPress={onBack}
             />
           )}
@@ -216,4 +216,7 @@ const styles = StyleSheet.create({
     right: 20,
   },
   titleBottom: { marginLeft: 35 },
+  chevronBackIcon: {
+    marginStart: 10,
+  },
 });

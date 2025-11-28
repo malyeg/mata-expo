@@ -212,6 +212,7 @@ export interface Entity extends DataSearchable {
   // value: string;
   id: string;
   name?: string;
+  localizedName?: { [key: string]: string };
   timestamp?: Date;
   userId: string; // TODO remove (deprecated in favor of user)
   user?: PublicUser;

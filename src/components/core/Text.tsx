@@ -19,6 +19,7 @@ const AppText = ({
     getScaleStyleFromProps(props),
     getScaleStyle(scale),
     style,
+    styles.text,
   ];
   const children =
     !maxSize || typeof props.children !== "string"
@@ -33,6 +34,10 @@ const AppText = ({
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  text: {
+    // textAlign: I18nManager.isRTL ? "right" : "left",
+  },
+});
 
 export default React.memo(AppText);

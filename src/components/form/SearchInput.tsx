@@ -75,15 +75,17 @@ const styles = StyleSheet.create({
     height: 45,
   },
   text: {
-    flex: 1,
+    // flex: 1,
     ...theme.styles.scale.body1,
     color: theme.colors.dark,
     // backgroundColor: 'blue',
   },
   icon: {
     paddingRight: 5,
+    // marginLeft: "auto",
   },
   resetIcon: {
     // marginRight: 1,
+    marginStart: "auto",
   },
 });
