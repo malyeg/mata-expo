@@ -94,6 +94,7 @@ export default {
       myArchivedItems: "My Archived Items",
       userItems: "User Items",
       items: "Search Items",
+      totalItems: "{{count}} Items",
       itemDetails: "Item Details",
       deals: "My Deals",
       archivedDeals: "My Archived Deals",

@@ -83,7 +83,7 @@ const ItemPicker = ({
     <Modal
       isVisible={isVisible}
       showHeaderNav={true}
-      title={title ?? "Select item"}
+      title={title ?? t("itemDetailsScreen:itemPickerTitle")}
       position="full"
       onClose={onClose}
     >

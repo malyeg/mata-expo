@@ -1,4 +1,5 @@
 import { Item } from "@/api/itemsApi";
+import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
@@ -28,6 +29,13 @@ const ItemCard = ({
   showSwapIcon = false,
 }: ItemCardProps) => {
   const router = useRouter();
+  const { t } = useLocale("addItemScreen");
+
+  const getStatusLabel = (status: string) => {
+    if (status === "online") return t("status.online");
+    if (status === "draft") return t("status.draft");
+    return status;
+  };
 
   const openItemDetails = useCallback(() => {
     if (onPress) {
@@ -73,7 +81,9 @@ const ItemCard = ({
               item.status === "online" ? styles.onlineBackgroundColor : {},
             ]}
           >
-            <Text style={[styles.activityStatusText]}>{item.status}</Text>
+            <Text style={[styles.activityStatusText]}>
+              {getStatusLabel(item.status)}
+            </Text>
           </View>
         )}
       </View>
@@ -123,7 +133,6 @@ const styles = StyleSheet.create({
   activityStatusText: {
     color: theme.colors.white,
     ...theme.styles.scale.body3,
-    textTransform: "capitalize",
   },
   onlineBackgroundColor: {
     backgroundColor: theme.colors.green,

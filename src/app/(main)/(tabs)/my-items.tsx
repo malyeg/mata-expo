@@ -55,7 +55,7 @@ const MyItemsScreen = () => {
   const NoData = (
     <NoDataFound style={styles.card} title={t("noData.title")}>
       <Link to={{ screen: screens.ADD_ITEM }} style={[sharedStyles.link]}>
-        <Text style={styles.noDataLink}>Add new Item</Text>
+        <Text style={styles.noDataLink}>{t("common:screens.addItem")}</Text>
       </Link>
     </NoDataFound>
   );

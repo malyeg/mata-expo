@@ -1006,6 +1006,11 @@
     "@eslint/core" "^0.16.0"
     levn "^0.4.1"
 
+"@expo-google-fonts/cairo@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/cairo/-/cairo-0.4.2.tgz#ce7e9ffd354fa12fb90d3c751112bf7dd1c5ee9b"
+  integrity sha512-iWXHgE4MH6BfFqs8IxhbjNphAboUsb8NSEVIf1kWVGkiwCkAXDHxotgASabuPhhM1SQQXrgOPdmjT9VyeakM3Q==
+
 "@expo/cli@54.0.16":
   version "54.0.16"
   resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-54.0.16.tgz#62e49a7a2f790cdd412731dab980b38bf69f21db"
@@ -1076,7 +1081,7 @@
     wrap-ansi "^7.0.0"
     ws "^8.12.1"
 
-"@expo/code-signing-certificates@^0.0.5":
+"@expo/code-signing-certificates@0.0.5", "@expo/code-signing-certificates@^0.0.5":
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@expo/code-signing-certificates/-/code-signing-certificates-0.0.5.tgz#a693ff684fb20c4725dade4b88a6a9f96b02496c"
   integrity sha512-BNhXkY1bblxKZpltzAx98G2Egj9g1Q+JRcvR7E99DOj862FTCX+ZPsAUtPTr7aHxwtrL7+fL3r0JSmM9kBm+Bw==
@@ -3152,6 +3157,11 @@ anymatch@^3.0.3:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+arg@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/arg/-/arg-4.1.0.tgz#583c518199419e0037abb74062c37f8519e575f0"
+  integrity sha512-ZWc51jO3qegGkVh8Hwpv636EkbesNV5ZNQPCtRa+0qytRYPEs9IYT9qITY9buezqUH5uqyzlWLcufrzU2rffdg==
+
 arg@^5.0.2:
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/arg/-/arg-5.0.2.tgz#c81433cc427c92c4dcf4865142dbca6f15acd59c"
@@ -4585,6 +4595,11 @@ expo-device@~8.0.9:
   dependencies:
     ua-parser-js "^0.7.33"
 
+expo-eas-client@~1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/expo-eas-client/-/expo-eas-client-1.0.7.tgz#9c9c7909d7bb9b6ceb4bef6875f1b9119ef22a8c"
+  integrity sha512-Q/b1X0fM+3beqqvffok14pjxMF600NxopdSr9WJY61fF4xllcVnALS0kEudffp9ihMOfcb5xWYqzKj6jMqYDIw==
+
 expo-file-system@~19.0.18:
   version "19.0.18"
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-19.0.18.tgz#cc6c3b904a9f543677a82910cc2569027d515f46"
@@ -4624,6 +4639,13 @@ expo-linking@~8.0.9:
   dependencies:
     expo-constants "~18.0.10"
     invariant "^2.2.4"
+
+expo-localization@~17.0.7:
+  version "17.0.7"
+  resolved "https://registry.yarnpkg.com/expo-localization/-/expo-localization-17.0.7.tgz#24559be23cb7d9757fd8f8c88380d7b4ee2339a2"
+  integrity sha512-ACg1B0tJLNa+f8mZfAaNrMyNzrrzHAARVH1sHHvh+LolKdQpgSKX69Uroz1Llv4C71furpwBklVStbNcEwVVVA==
+  dependencies:
+    rtl-detect "^1.0.2"
 
 expo-location@~19.0.7:
   version "19.0.7"
@@ -4717,6 +4739,11 @@ expo-status-bar@~3.0.8:
   dependencies:
     react-native-is-edge-to-edge "^1.2.1"
 
+expo-structured-headers@~5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/expo-structured-headers/-/expo-structured-headers-5.0.0.tgz#b3cc223a7a58964652093f088a8988316db9ed9d"
+  integrity sha512-RmrBtnSphk5REmZGV+lcdgdpxyzio5rJw8CXviHE6qH5pKQQ83fhMEcigvrkBdsn2Efw2EODp4Yxl1/fqMvOZw==
+
 expo-symbols@~1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/expo-symbols/-/expo-symbols-1.0.7.tgz#3e69d9b2fa84844dc7c39ec445a05e5a783deffd"
@@ -4736,6 +4763,26 @@ expo-updates-interface@~2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-2.0.0.tgz#7721cb64c37bcb46b23827b2717ef451a9378749"
   integrity sha512-pTzAIufEZdVPKql6iMi5ylVSPqV1qbEopz9G6TSECQmnNde2nwq42PxdFBaUEd8IZJ/fdJLQnOT3m6+XJ5s7jg==
+
+expo-updates@~29.0.13:
+  version "29.0.13"
+  resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-29.0.13.tgz#d8fd9cca4fbabe6c8c3db746537ce61c06274441"
+  integrity sha512-tf/yex7U7betbIyDNwaSyDWDxMQVgmJ5qyghGEDlHP0052CPKUvbNEdtdf4DNCpsL3uxn8+71A4O4NxQdJEFuA==
+  dependencies:
+    "@expo/code-signing-certificates" "0.0.5"
+    "@expo/plist" "^0.4.7"
+    "@expo/spawn-async" "^1.7.2"
+    arg "4.1.0"
+    chalk "^4.1.2"
+    debug "^4.3.4"
+    expo-eas-client "~1.0.7"
+    expo-manifests "~1.0.9"
+    expo-structured-headers "~5.0.0"
+    expo-updates-interface "~2.0.0"
+    getenv "^2.0.0"
+    glob "^10.4.2"
+    ignore "^5.3.1"
+    resolve-from "^5.0.0"
 
 expo-web-browser@~15.0.9:
   version "15.0.9"
@@ -7669,6 +7716,11 @@ rimraf@^3.0.2:
   integrity sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==
   dependencies:
     glob "^7.1.3"
+
+rtl-detect@^1.0.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/rtl-detect/-/rtl-detect-1.1.2.tgz#ca7f0330af5c6bb626c15675c642ba85ad6273c6"
+  integrity sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==
 
 run-parallel@^1.1.9:
   version "1.2.0"

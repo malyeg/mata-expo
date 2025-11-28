@@ -38,6 +38,7 @@ const ItemsScreen = () => {
   const [isMapVisible, setMapVisible] = useState(false);
   const { showErrorToast, hideToast } = useToast();
   const { t } = useLocale(screens.ITEMS);
+  const { t: tCommon } = useLocale("common");
   const { user } = useAuth();
   const params = useLocalSearchParams<ItemsParams>();
   const [query, setQuery] = useState<Query<Item> | undefined>();
@@ -82,10 +83,10 @@ const ItemsScreen = () => {
 
   const pageTitle = useMemo(() => {
     if (totalItems && totalItems > 0 && !error) {
-      return `${totalItems} ${t("items")}`;
+      return tCommon("screens.totalItems", { count: totalItems });
     }
-    return "Search Items";
-  }, [totalItems, error, t]);
+    return tCommon("screens.items");
+  }, [totalItems, error, tCommon]);
 
   const onFilterChange = async (newQuery: Query) => {
     console.log("onFilterChange", JSON.stringify(newQuery));
@@ -212,7 +213,7 @@ const ItemsScreen = () => {
       <Modal
         isVisible={isMapVisible}
         position="full"
-        title={totalItems + " Items"}
+        title={`${totalItems} ${tCommon("screens.items")}`}
         showHeaderNav
         bodyStyle={styles.modal}
         // containerStyle={styles.modal}

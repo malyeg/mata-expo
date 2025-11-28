@@ -209,7 +209,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
     <Modal
       isVisible={isVisible}
       position="full"
-      title="Add Item"
+      title={t("title")}
       showHeaderNav
       onClose={onClose}
       hideCloseIcon={false}

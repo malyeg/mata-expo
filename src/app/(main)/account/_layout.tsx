@@ -1,39 +1,41 @@
+import useLocale from "@/hooks/useLocale";
 import useScreenOptions from "@/hooks/useScreenOptions";
 import { Stack } from "expo-router";
 import React from "react";
 
 const ProfileLayout = () => {
   const screenOptions = useScreenOptions();
+  const { t } = useLocale("common");
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name="index"
         options={{
-          title: "Account",
+          title: t("screens.profile"),
         }}
       />
       <Stack.Screen
         name="edit-profile"
         options={{
-          title: "Edit Profile",
+          title: t("screens.editProfile"),
         }}
       />
       <Stack.Screen
         name="archived-items"
         options={{
-          title: "Archived Items",
+          title: t("screens.myArchivedItems"),
         }}
       />
       <Stack.Screen
         name="my-items"
         options={{
-          title: "My Items",
+          title: t("screens.myItems"),
         }}
       />
       <Stack.Screen
         name="wish-list"
         options={{
-          title: "My Wish List",
+          title: t("screens.wishList"),
         }}
       />
     </Stack>

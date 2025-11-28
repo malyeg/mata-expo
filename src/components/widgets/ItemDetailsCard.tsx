@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { Icon, Text } from "../core";
-import { IconType } from "../core/Icon";
+import { ChevronIcon, IconType } from "../core/Icon";
 
 interface CardProps {
   title: string;
@@ -58,8 +58,7 @@ const ItemDetailsCard = ({
         {!!children && <View style={styles.childrenContainer}>{children}</View>}
       </View>
       {onPress && (
-        <Icon
-          name="chevron-right"
+        <ChevronIcon
           color={theme.colors.salmon}
           style={styles.chevron}
           size={25}

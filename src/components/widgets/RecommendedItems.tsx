@@ -73,7 +73,12 @@ const RecommendedItems = ({
   }, [location?.city, location?.state, profile?.targetCategories, user.id]);
 
   const listEmptyComponent = (
-    <NoDataFound body={"no items found in " + location.state?.name} icon="" />
+    <NoDataFound
+      body={t("nearByItems.noItemsFoundText", {
+        params: { city: location.state?.name ?? "" },
+      })}
+      icon=""
+    />
   );
 
   const renderItem = ({ item }) => (

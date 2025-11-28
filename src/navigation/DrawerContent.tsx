@@ -12,6 +12,7 @@ import useLocale from "../hooks/useLocale";
 import { useNotificationStore } from "@/store/notification-store";
 import { theme } from "../styles/theme";
 import DrawerItem from "./DrawerItem";
+import LanguageSwitcher from "@/components/widgets/LanguageSwitcher";
 
 const DrawerContent = ({
   navigation,
@@ -93,10 +94,7 @@ const DrawerContent = ({
         to={screens.LEGAL_INFORMATION}
       />
 
-      {/* <Pressable onPress={toggleLanguage}>
-        <MaterialIcons name="language" size={24} color="white" />
-        <Text>{t("drawer.localeLabel")}</Text>
-      </Pressable> */}
+      <LanguageSwitcher />
 
       {(user?.isAdmin || user?.isTester) && (
         <DrawerItem

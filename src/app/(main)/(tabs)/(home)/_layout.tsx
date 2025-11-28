@@ -1,9 +1,11 @@
+import useLocale from "@/hooks/useLocale";
 import useScreenOptions from "@/hooks/useScreenOptions";
 import { Stack } from "expo-router";
 import React from "react";
 
 const HomeStackLayout = () => {
   const screenOptions = useScreenOptions();
+  const { t } = useLocale("common");
 
   return (
     <Stack
@@ -25,7 +27,7 @@ const HomeStackLayout = () => {
       <Stack.Screen
         name="item/[id]"
         options={{
-          title: "Item Details",
+          title: t("screens.itemDetails"),
           headerShown: true,
         }}
       />

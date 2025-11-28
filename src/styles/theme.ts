@@ -99,9 +99,41 @@ const defaults = {
   SCREEN_PADDING: 20,
 };
 
+// Font families for different locales
+const fonts = {
+  arabic: {
+    regular: "Cairo_400Regular",
+    medium: "Cairo_500Medium",
+    semiBold: "Cairo_600SemiBold",
+    bold: "Cairo_700Bold",
+  },
+  default: {
+    regular: undefined, // Use system font
+    medium: undefined,
+    semiBold: undefined,
+    bold: undefined,
+  },
+};
+
+/**
+ * Get the appropriate font family based on locale
+ * @param locale - The current locale ('ar' | 'en')
+ * @param weight - The font weight ('regular' | 'medium' | 'semiBold' | 'bold')
+ */
+export const getFontFamily = (
+  locale: string,
+  weight: keyof typeof fonts.arabic = "regular"
+): string | undefined => {
+  if (locale === "ar") {
+    return fonts.arabic[weight];
+  }
+  return fonts.default[weight];
+};
+
 const theme = {
   colors,
   fontWeight,
+  fonts,
   defaults,
   styles: {
     scale: {

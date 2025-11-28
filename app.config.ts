@@ -80,6 +80,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     "expo-web-browser",
+    "expo-localization",
   ],
   experiments: {
     typedRoutes: true,

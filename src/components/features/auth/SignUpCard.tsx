@@ -1,5 +1,6 @@
 import { Button, Icon, Text } from "@/components/core";
 import useAuth from "@/hooks/useAuth";
+import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
@@ -9,6 +10,7 @@ interface SignUpCardProps {
 }
 const SignUpCard = ({ style }: SignUpCardProps) => {
   const { signOut } = useAuth();
+  const { t } = useLocale("common");
 
   const openSignIn = () => {
     signOut();
@@ -23,13 +25,13 @@ const SignUpCard = ({ style }: SignUpCardProps) => {
       />
       <View style={styles.updateTextContainer}>
         <Text style={[styles.updateText]}>
-          Sign up / log in for better experience
+          {t("tabBar.anonymousDialog.body")}
         </Text>
       </View>
 
       <View>
         <Button
-          title="Sign in"
+          title={t("tabBar.anonymousDialog.confirmTitle")}
           themeType="white"
           style={styles.updateButton}
           textStyle={styles.updateButtonText}

@@ -1,3 +1,4 @@
+import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -9,6 +10,8 @@ interface UpdateProfileCardProps {
 }
 const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
   const router = useRouter();
+  const { t } = useLocale("editProfileScreen");
+
   const openEditProfileScreen = () => {
     router.navigate("/edit-profile");
   };
@@ -22,12 +25,12 @@ const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
       />
       <View style={styles.updateTextContainer}>
         <Text style={styles.updateText}>
-          Complete your profile for better experience
+          {t("common:dialogs.guestDialog.body")}
         </Text>
       </View>
       <View>
         <Button
-          title="Update"
+          title={t("submitBtnTitle")}
           style={styles.updateButton}
           textStyle={styles.updateButtonText}
           onPress={openEditProfileScreen}

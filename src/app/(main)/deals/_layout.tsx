@@ -1,21 +1,23 @@
+import useLocale from "@/hooks/useLocale";
 import useScreenOptions from "@/hooks/useScreenOptions";
 import { Stack } from "expo-router";
 import React from "react";
 
 const DealsLayout = () => {
   const screenOptions = useScreenOptions();
+  const { t } = useLocale("common");
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name="index"
         options={{
-          title: "Deals",
+          title: t("screens.deals"),
         }}
       />
       <Stack.Screen
         name="[id]"
         options={{
-          title: "Deal Details",
+          title: t("screens.dealDetails"),
         }}
       />
     </Stack>

@@ -5,16 +5,25 @@ import { toastConfig } from "@/components/core/Toaster";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
 import { getWarningsOff } from "@/utils/WarningsOff";
+import { initializeRTL } from "@/hooks/useLanguage";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
+import {
+  useFonts,
+  Cairo_400Regular,
+  Cairo_500Medium,
+  Cairo_600SemiBold,
+  Cairo_700Bold,
+} from "@expo-google-fonts/cairo";
 
 void SplashScreen.preventAutoHideAsync();
+
 // Create a QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,14 +44,23 @@ const InitialLayout = () => {
     authListener,
     isInitialized: isAuthInitialized,
   } = useAuthStore();
+  const [isLanguageInitialized, setIsLanguageInitialized] = useState(false);
 
   useEffect(() => {
-    // run in parallel
-    Promise.all([
-      _initializeOnFirstAccess(),
-      initializeLocation(),
-      configApi.fetchConfig(),
-    ]);
+    const initialize = async () => {
+      // Initialize RTL settings first (before rendering)
+      await initializeRTL();
+      setIsLanguageInitialized(true);
+
+      // Then run other initializations in parallel
+      await Promise.all([
+        _initializeOnFirstAccess(),
+        initializeLocation(),
+        configApi.fetchConfig(),
+      ]);
+    };
+
+    initialize();
 
     return () => {
       authListener && authListener();
@@ -50,13 +68,20 @@ const InitialLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log("isInitialized ", isLocationInitialized, isAuthInitialized);
+  console.log(
+    "isInitialized ",
+    isLocationInitialized,
+    isAuthInitialized,
+    isLanguageInitialized
+  );
 
-  if (!isAuthInitialized || !isLocationInitialized) {
-    console.log("InitialLayout - Waiting for auth store initialization...");
-    SplashScreen.hideAsync();
-    return null; // or a loading component  ئ                                                 ** *
+  if (!isAuthInitialized || !isLocationInitialized || !isLanguageInitialized) {
+    console.log("InitialLayout - Waiting for initialization...");
+    return null;
   }
+
+  // Hide splash screen once everything is initialized
+  SplashScreen.hideAsync();
 
   return (
     <Stack
@@ -77,6 +102,18 @@ const InitialLayout = () => {
 
 // Main Root Layout component
 const RootLayout = () => {
+  const [fontsLoaded] = useFonts({
+    Cairo_400Regular,
+    Cairo_500Medium,
+    Cairo_600SemiBold,
+    Cairo_700Bold,
+  });
+
+  // Wait for fonts to load
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={styles.container}>

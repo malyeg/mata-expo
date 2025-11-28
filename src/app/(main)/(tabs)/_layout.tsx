@@ -2,6 +2,7 @@ import { Icon } from "@/components/core";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/core/Icon";
 import AddItemModal from "@/components/features/items/AddItemModal";
 import { headerBackIconSize } from "@/components/HeaderBack";
+import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
@@ -10,6 +11,7 @@ import { I18nManager, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const router = useRouter();
+  const { t } = useLocale("common");
   const [isAddItemModalVisible, setisAddItemModalVisible] = useState(false);
   const IconComponent = I18nManager.isRTL ? ChevronRightIcon : ChevronLeftIcon;
 
@@ -72,7 +74,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(home)"
           options={{
-            title: "Home",
+            title: t("tabBar.homeTitle"),
             headerShown: false,
 
             tabBarIcon: ({ color }) => (
@@ -83,7 +85,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="my-items"
           options={{
-            title: "My Items",
+            title: t("tabBar.myItemsTitle"),
             tabBarIcon: ({ color }) => (
               <Icon name="view-list-outline" size={20} color={color} />
             ),
@@ -113,7 +115,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="notifications"
           options={{
-            title: "Notifications",
+            title: t("tabBar.notificationsTitle"),
             tabBarIcon: ({ color }) => (
               <Icon name="bell-outline" size={20} color={color} />
             ),
@@ -122,7 +124,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="my-deals"
           options={{
-            title: "My Deals",
+            title: t("tabBar.dealsTitle"),
             tabBarIcon: ({ color }) => (
               <Icon name="handshake" size={20} color={color} />
             ),
