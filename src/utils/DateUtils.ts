@@ -1,5 +1,30 @@
 import i18n from "@/locales/i18n";
 import { Timestamp } from "@react-native-firebase/firestore";
+import { format as dateFnsFormat } from "date-fns";
+import { ar, enUS } from "date-fns/locale";
+
+const locales: Record<string, Locale> = {
+  ar: ar,
+  en: enUS,
+};
+
+function getDateLocale(): Locale {
+  return locales[i18n.language] || enUS;
+}
+
+function formatDate(
+  date: Date | Timestamp | number,
+  formatStr: string
+): string {
+  const dateObj =
+    date instanceof Timestamp
+      ? date.toDate()
+      : date instanceof Date
+        ? date
+        : new Date(date);
+
+  return dateFnsFormat(dateObj, formatStr, { locale: getDateLocale() });
+}
 
 function timeAgo(date: Date | Timestamp): string {
   if (date instanceof Timestamp) {
@@ -43,4 +68,4 @@ function timeAgo(date: Date | Timestamp): string {
 }
 
 export default timeAgo;
-export { timeAgo };
+export { timeAgo, formatDate, getDateLocale };

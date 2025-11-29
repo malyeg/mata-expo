@@ -28,9 +28,9 @@ export const firebase = {
 };
 
 export const patterns = {
-  DATE: "MMMM do, yyyy",
-  DATE_TIME: "MMMM do, yyyy HH:MM",
-  FULL_TIME: "HH:MM:ss:SS",
+  DATE: "d MMMM, yyyy",
+  DATE_TIME: "d MMMM, yyyy HH:mm",
+  FULL_TIME: "HH:mm:ss:SS",
 };
 
 export const payment = {

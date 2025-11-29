@@ -13,11 +13,11 @@ import useApi from "@/hooks/useApi";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import sharedStyles from "@/styles/SharedStyles";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { Filter, Operation, QueryBuilder } from "@/types/DataTypes";
+import { formatDate } from "@/utils/DateUtils";
 import { useRoute } from "@react-navigation/core";
 import { Link } from "@react-navigation/native";
-import { format } from "date-fns";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -81,7 +81,7 @@ const OutgoingDeals = () => {
 
           {!!item.timestamp && (
             <Text style={styles.date}>
-              {format(item.timestamp, patterns.DATE)}
+              {formatDate(item.timestamp, patterns.DATE)}
             </Text>
           )}
 

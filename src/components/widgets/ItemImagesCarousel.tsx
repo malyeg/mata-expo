@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Pressable, StyleSheet, View } from "react-native";
 import CarouselBase, {
   ICarouselInstance,
   Pagination,
@@ -9,7 +9,7 @@ import CarouselBase, {
 import { ImageSource, Item } from "@/api/itemsApi";
 import { theme } from "@/styles/theme";
 import { useSharedValue } from "react-native-reanimated";
-import { Icon } from "../core";
+import { Icon, Modal, Text } from "../core";
 import Card from "../core/Card";
 import Image, { ImageProps } from "../core/Image";
 
@@ -21,7 +21,7 @@ type ItemImagesCarouselProps = Omit<
   resizeMode?: ImageProps["resizeMode"];
 };
 
-const windowWidth = Dimensions.get("window").width;
+const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
 // Account for: screen padding (2x) + card padding (2x) + extra padding (2x)
 const itemWidth = windowWidth - theme.defaults.SCREEN_PADDING * 6;
 
@@ -32,9 +32,12 @@ const ItemImagesCarousel = ({
   ...props
 }: ItemImagesCarouselProps) => {
   const progress = useSharedValue<number>(0);
+  const fullScreenProgress = useSharedValue<number>(0);
   const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [fullScreenActiveSlide, setFullScreenActiveSlide] = useState<number>(0);
   const [fullScreen, setFullScreen] = useState(false);
   const ref = React.useRef<ICarouselInstance>(null);
+  const fullScreenRef = React.useRef<ICarouselInstance>(null);
 
   const data = item.images;
 
@@ -57,21 +60,49 @@ const ItemImagesCarousel = ({
         </>
       );
     },
+    []
+  );
 
-    [resizeMode]
+  const renderFullScreenItem: any = useCallback(
+    (itemInfo: { item: ImageSource; index: number }) => {
+      return (
+        <View style={styles.fullScreenImageContainer}>
+          <Image
+            uri={itemInfo.item.downloadURL!}
+            style={styles.fullScreenImage}
+            contentFit="contain"
+          />
+        </View>
+      );
+    },
+    []
   );
 
   const onSnapToItem = useCallback((index: number) => {
     setActiveSlide(index);
   }, []);
 
-  const onModalClose = useCallback(() => setFullScreen(false), []);
+  const onFullScreenSnapToItem = useCallback((index: number) => {
+    setFullScreenActiveSlide(index);
+  }, []);
 
-  const openModal = useCallback(() => setFullScreen(true), []);
+  const onModalClose = () => setFullScreen(false);
+
+  const openFullScreenModal = () => {
+    setFullScreenActiveSlide(activeSlide);
+    setFullScreen(true);
+  };
 
   const onPressPagination = (index: number) => {
     ref.current?.scrollTo({
       count: index - progress.value,
+      animated: true,
+    });
+  };
+
+  const onPressFullScreenPagination = (index: number) => {
+    fullScreenRef.current?.scrollTo({
+      count: index - fullScreenProgress.value,
       animated: true,
     });
   };
@@ -113,9 +144,55 @@ const ItemImagesCarousel = ({
           name="fullscreen"
           size={30}
           style={styles.fullscreenIcon}
-          onPress={openModal}
+          onPress={openFullScreenModal}
         />
       </Card>
+
+      {/* Fullscreen Image Modal */}
+      <Modal
+        isVisible={fullScreen}
+        onClose={onModalClose}
+        position="full"
+        onBackdropPress={onModalClose}
+        style={styles.fullScreenModal}
+        containerStyle={styles.fullScreenModalContainer}
+        bodyStyle={styles.fullScreenModalBody}
+        hideCloseIcon
+      >
+        <Pressable style={styles.closeButton} onPress={onModalClose}>
+          <Icon name="close" size={28} color={theme.colors.white} />
+        </Pressable>
+
+        <View style={styles.fullScreenCarouselWrapper}>
+          <CarouselBase
+            ref={fullScreenRef}
+            data={data ?? []}
+            snapEnabled={true}
+            width={windowWidth}
+            height={windowHeight * 0.75}
+            renderItem={renderFullScreenItem}
+            onSnapToItem={onFullScreenSnapToItem}
+            onProgressChange={fullScreenProgress}
+            defaultIndex={activeSlide}
+          />
+        </View>
+
+        {!!data && data.length > 1 && (
+          <View style={styles.fullScreenPaginationWrapper}>
+            <Text style={styles.imageCounter}>
+              {fullScreenActiveSlide + 1} / {data.length}
+            </Text>
+            <Pagination.Basic
+              data={data}
+              progress={fullScreenProgress}
+              containerStyle={styles.fullScreenPaginationContainer}
+              dotStyle={styles.fullScreenPaginationDot}
+              activeDotStyle={styles.fullScreenPaginationActiveDot}
+              onPress={onPressFullScreenPagination}
+            />
+          </View>
+        )}
+      </Modal>
     </>
   );
 };
@@ -202,5 +279,70 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
+  },
+  fullScreenModal: {
+    margin: 0,
+  },
+  fullScreenModalContainer: {
+    backgroundColor: "#000000",
+    paddingBottom: 0,
+  },
+  fullScreenModalBody: {
+    flex: 1,
+    paddingHorizontal: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: 15,
+    zIndex: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullScreenCarouselWrapper: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullScreenImageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: windowWidth,
+  },
+  fullScreenImage: {
+    width: "100%",
+    height: "100%",
+  },
+  fullScreenPaginationWrapper: {
+    paddingVertical: 20,
+    alignItems: "center",
+  },
+  fullScreenPaginationContainer: {
+    padding: 0,
+  },
+  fullScreenPaginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
+    marginHorizontal: 4,
+  },
+  fullScreenPaginationActiveDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: theme.colors.white,
+  },
+  imageCounter: {
+    color: theme.colors.white,
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
