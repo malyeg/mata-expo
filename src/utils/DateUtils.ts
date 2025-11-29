@@ -1,5 +1,5 @@
-import { Timestamp } from "@react-native-firebase/firestore";
 import i18n from "@/locales/i18n";
+import { Timestamp } from "@react-native-firebase/firestore";
 
 function timeAgo(date: Date | Timestamp): string {
   if (date instanceof Timestamp) {

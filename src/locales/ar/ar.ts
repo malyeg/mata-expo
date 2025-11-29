@@ -143,6 +143,13 @@ export default {
     },
   },
   widgets: {
+    dealStatus: {
+      new: "جديد",
+      accepted: "بدأت",
+      closed: "مغلقة",
+      rejected: "مرفوضة",
+      cancelled: "ملغاة",
+    },
     passwordMeter: {
       medium: "جيد",
       strong: "ممتاز 👍",

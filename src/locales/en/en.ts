@@ -147,6 +147,13 @@ export default {
     },
   },
   widgets: {
+    dealStatus: {
+      new: "New",
+      accepted: "Started",
+      closed: "Closed",
+      rejected: "Rejected",
+      cancelled: "Cancelled",
+    },
     passwordMeter: {
       medium: "Okay",
       strong: "Excellent 👍",

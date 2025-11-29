@@ -44,3 +44,4 @@ const HomeItemDetailsScreen = () => {
 };
 
 export default HomeItemDetailsScreen;
+
