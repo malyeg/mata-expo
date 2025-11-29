@@ -32,7 +32,9 @@ export default {
     },
     picker: {
       pickerPlaceholder: "Select",
+      select: "Select",
       searchPlaceholder: "Search",
+      selectAll: "Select All",
     },
     imagePicker: {
       imageAction: "Image Actions",

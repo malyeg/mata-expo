@@ -49,6 +49,7 @@ const MultiSelectPickerModal = <T extends Entity>({
   const [selectedItems, setSelectedItems] = useState<T[] | undefined>();
   const [searchText, setSearchText] = useState("");
   const searchSubjectRef = useRef(new Subject<string>());
+  const { locale } = useLocale();
 
   useEffect(() => {
     searchSubjectRef.current
@@ -106,7 +107,7 @@ const MultiSelectPickerModal = <T extends Entity>({
       <SelectablePickerItem
         item={item}
         onChange={onChange}
-        label={item.name ?? item.id}
+        label={item.localizedName?.[locale] ?? item.name ?? item.id}
         selected={!!selectedItems?.find((i) => i.id === item.id)}
       />
     );
@@ -159,7 +160,7 @@ const MultiSelectPickerModal = <T extends Entity>({
         <SelectablePickerItem
           style={styles.selectAll}
           item={{ id: "-1", name: "all" }}
-          label="Select All"
+          label={t("picker.selectAll")}
           onChange={onSelectAllChange}
           labelStyle={styles.allLabel}
           selected={items.length === selectedItems.length}
@@ -181,7 +182,7 @@ const MultiSelectPickerModal = <T extends Entity>({
         }
         getItemLayout={getItemLayout}
       />
-      <Button title="Select" onPress={submit} />
+      <Button title={t("picker.select")} onPress={submit} />
     </Modal>
   ) : null;
 };

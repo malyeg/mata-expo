@@ -19,22 +19,44 @@ export type ItemStatus =
 export type ConditionType = "new" | "goodAsNew" | "used" | "usedWithIssues";
 export type SwapType = "free" | "swapWithAnother" | "swapWithAny";
 
-export const conditionList: { id: ConditionType; name: string }[] = [
+interface ItemCondition {
+  id: ConditionType;
+  name: string;
+  localizedName: { [key: string]: string };
+}
+
+export const conditionList: ItemCondition[] = [
   {
     id: "new",
     name: "New",
+    localizedName: {
+      en: "New",
+      ar: "جديد",
+    },
   },
   {
     id: "goodAsNew",
     name: "Good As New",
+    localizedName: {
+      en: "Good As New",
+      ar: "جيد كما جديد",
+    },
   },
   {
     id: "used",
     name: "Used",
+    localizedName: {
+      en: "Used",
+      ar: "مستعمل",
+    },
   },
   {
     id: "usedWithIssues",
     name: "Used with Issues",
+    localizedName: {
+      en: "Used with Issues",
+      ar: "مستعمل مع مشاكل",
+    },
   },
 ];
 
@@ -56,14 +78,26 @@ export const swapList = [
   {
     id: "free",
     name: "For Free",
+    localizedName: {
+      en: "For Free",
+      ar: "مجانا",
+    },
   },
   {
     id: "swapWithAny",
     name: "swap with ANY item",
+    localizedName: {
+      en: "swap with ANY item",
+      ar: "مبادلة مع أي عنصر",
+    },
   },
   {
     id: "swapWithAnother",
     name: "Swap with specific category item",
+    localizedName: {
+      en: "Swap with specific category item",
+      ar: "مبادلة مع عنصر من نفس الفئة",
+    },
   },
 ];
 

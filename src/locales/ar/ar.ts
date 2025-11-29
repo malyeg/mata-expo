@@ -32,7 +32,9 @@ export default {
     },
     picker: {
       pickerPlaceholder: "اختر",
+      select: "اختر",
       searchPlaceholder: "بحث",
+      selectAll: "تحديد الكل",
     },
     imagePicker: {
       imageAction: "إجراءات الصورة",
