@@ -4,6 +4,7 @@ import { Entity, Nestable } from "../types/DataTypes";
 export interface Category extends Entity, Nestable {
   id: string;
   name: string;
+  localizedName: { [key: string]: string };
   group?: string;
   parent?: string;
   level?: number;

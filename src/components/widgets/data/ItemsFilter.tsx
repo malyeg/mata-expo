@@ -115,6 +115,7 @@ const formValuesToQuery = (data: ItemsFilterValues): Query => {
     const category = categoriesApi.getById(data.categoryId);
     if (category) {
       query.filters?.push({
+        id: category.id,
         field: "catLevel1,catLevel2,catLevel3",
         value: category.name,
         operation: Operation.EQUAL,

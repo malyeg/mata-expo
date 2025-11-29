@@ -1,4 +1,6 @@
+import categoriesApi from "@/api/categoriesApi";
 import itemsApi, { Item } from "@/api/itemsApi";
+import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
@@ -25,7 +27,7 @@ const windowWidth = Dimensions.get("window").width * 0.8;
 
 const RecommendedCard = ({ item, style }: ItemCardProps) => {
   const router = useRouter();
-
+  const { locale } = useLocale();
   const openItemDetails = useCallback(() => {
     // TODO refactor to constant
     router.navigate({
@@ -36,6 +38,10 @@ const RecommendedCard = ({ item, style }: ItemCardProps) => {
   }, [item, router]);
 
   const imageUrl = itemsApi.getImageUrl(item);
+
+  const category = //TODO: get category name from item.category.localizedName if doesn't exists get category from categories.js and use it's name localizedName
+    item.category?.localizedName?.[locale] ??
+    categoriesApi.getById(item.category?.id)?.localizedName?.[locale];
 
   return (
     <Pressable style={[styles.card, style]} onPress={openItemDetails}>
@@ -51,7 +57,7 @@ const RecommendedCard = ({ item, style }: ItemCardProps) => {
 
       <View style={styles.contentContainer}>
         <View>
-          <Text style={styles.categoryText}>{item.category?.name}</Text>
+          <Text style={styles.categoryText}>{category}</Text>
           <Text numberOfLines={1} style={styles.nameText} ellipsizeMode="tail">
             {item.name}
           </Text>

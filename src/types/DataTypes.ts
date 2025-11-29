@@ -23,6 +23,7 @@ export enum Operation {
 }
 
 export type Filter<T = any> = {
+  id?: string;
   field: string;
   value: any;
   name?: string;

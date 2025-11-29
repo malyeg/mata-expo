@@ -1,3 +1,4 @@
+import categoriesApi from "@/api/categoriesApi";
 import { Item } from "@/api/itemsApi";
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
@@ -29,13 +30,17 @@ const ItemCard = ({
   showSwapIcon = false,
 }: ItemCardProps) => {
   const router = useRouter();
-  const { t } = useLocale("addItemScreen");
+  const { t, locale } = useLocale("addItemScreen");
 
   const getStatusLabel = (status: string) => {
     if (status === "online") return t("status.online");
     if (status === "draft") return t("status.draft");
     return status;
   };
+
+  const category = //TODO: get category name from item.category.localizedName if doesn't exists get category from categories.js and use it's name localizedName
+    item.category?.localizedName?.[locale] ??
+    categoriesApi.getById(item.category?.id)?.localizedName?.[locale];
 
   const openItemDetails = useCallback(() => {
     if (onPress) {
@@ -51,9 +56,8 @@ const ItemCard = ({
   }, [item, onPress, router, sourceList]);
 
   const imageUrl = item.defaultImageURL ?? item?.images?.[0]?.downloadURL;
-
-  const categoryName =
-    item.catLevel3 ?? item.catLevel2 ?? item.catLevel1 ?? item.category?.name;
+  const categoryName = category ?? item.category?.name;
+  console.log(category);
   // item.category?.name.toLowerCase() === "other" &&
   // item.category?.path?.length &&
   // item.category?.path?.length > 1

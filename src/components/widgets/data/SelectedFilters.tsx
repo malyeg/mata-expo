@@ -1,6 +1,8 @@
+import categoriesApi from "@/api/categoriesApi";
 import countriesApi from "@/api/countriesApi";
 import { Item } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
+import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import { Query } from "@/types/DataTypes";
 import React from "react";
@@ -12,7 +14,7 @@ interface FilterLabelProps {
 }
 const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
   const filters = query?.filters || [];
-
+  const { locale } = useLocale();
   const deleteItem = (field: string) => {
     if (onDelete) {
       onDelete(field);
@@ -26,6 +28,13 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
   const categoryFilter = filters.find(
     (f) => f.field === "catLevel1,catLevel2,catLevel3"
   );
+  if (categoryFilter) {
+    const category = categoriesApi.getById(
+      categoryFilter.id ?? categoryFilter.value
+    );
+    console.log(filters, categoryFilter);
+    categoryFilter.name = category?.localizedName?.[locale] ?? category?.name;
+  }
   const swapTypesFilter = filters.find((f) => f.field === "swapOptionType");
 
   // Get state names from IDs

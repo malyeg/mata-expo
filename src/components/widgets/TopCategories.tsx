@@ -1,3 +1,4 @@
+import useLocale from "@/hooks/useLocale";
 import useLocation from "@/hooks/useLocation";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -16,7 +17,7 @@ const TopCategories = ({ style }: TopCategoriesProps) => {
   const router = useRouter();
 
   const { location } = useLocation();
-
+  const { locale } = useLocale();
   const renderItem = ({ item }) => {
     const onPress = () => {
       router.navigate({
@@ -47,8 +48,7 @@ const TopCategories = ({ style }: TopCategoriesProps) => {
           />
         </View>
         <Text style={styles.name}>
-          {item.name}
-          {/* {item.name} */}
+          {item.localizedName[locale] ?? item.name}
         </Text>
       </PressableOpacity>
     );

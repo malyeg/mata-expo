@@ -328,6 +328,7 @@ const getQueryFromParams = (params: ItemsParams) => {
     ) as Category;
 
     query.filters?.push({
+      id: category.id,
       field: "catLevel1,catLevel2,catLevel3",
       value: category.name,
       operation: Operation.EQUAL,
