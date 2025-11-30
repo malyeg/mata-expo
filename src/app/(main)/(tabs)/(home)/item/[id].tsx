@@ -1,6 +1,7 @@
 import { ItemDetailsContent } from "@/components/features/items/ItemDetailsContent";
+import ItemDetailsMenu from "@/components/features/items/ItemDetailsMenu";
 import { useNavigation } from "@react-navigation/native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useLayoutEffect } from "react";
 
 const HomeItemDetailsScreen = () => {
@@ -40,8 +41,16 @@ const HomeItemDetailsScreen = () => {
     return null;
   }
 
-  return <ItemDetailsContent itemId={itemId} />;
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: ItemDetailsMenu,
+        }}
+      />
+      <ItemDetailsContent itemId={itemId} />
+    </>
+  );
 };
 
 export default HomeItemDetailsScreen;
-

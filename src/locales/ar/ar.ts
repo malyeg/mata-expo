@@ -30,6 +30,12 @@ export default {
       title: "لم يتم العثور على نتائج",
       subTitle: "لم نجد أي نتائج، حاول مرة أخرى",
     },
+    appMenu: {
+      reportIssueLabel: "الإبلاغ عن مشكلة",
+      shareLabel: "مشاركة",
+      contactProviderLabel: "الاتصال بالمزود",
+      providerDetailsLabel: "تفاصيل المزود",
+    },
     picker: {
       pickerPlaceholder: "اختر",
       select: "اختر",

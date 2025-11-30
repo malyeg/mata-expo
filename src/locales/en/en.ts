@@ -30,6 +30,13 @@ export default {
       title: "No result found",
       subTitle: "We found no result , try again",
     },
+    appMenu: {
+      modalOptionsTitle: "Options",
+      reportIssueLabel: "Report Issue",
+      shareLabel: "Share",
+      contactProviderLabel: "Contact Provider",
+      providerDetailsLabel: "Provider Details",
+    },
     picker: {
       pickerPlaceholder: "Select",
       select: "Select",

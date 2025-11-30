@@ -1,5 +1,6 @@
 import { ItemDetailsContent } from "@/components/features/items/ItemDetailsContent";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import ItemDetailsMenu from "@/components/features/items/ItemDetailsMenu";
+import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 
 export const ITEM_DETAILS_SCREEN_NAME = "ItemDetailsScreen";
@@ -13,7 +14,16 @@ const ItemDetailsScreen = () => {
     return null;
   }
 
-  return <ItemDetailsContent itemId={itemId} />;
+  return (
+    <>
+      <Stack.Screen
+        options={{
+          headerRight: ItemDetailsMenu,
+        }}
+      />
+      <ItemDetailsContent itemId={itemId} />
+    </>
+  );
 };
 
 export default ItemDetailsScreen;
