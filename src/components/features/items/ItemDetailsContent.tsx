@@ -26,6 +26,7 @@ import useApi from "@/hooks/useApi";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 
+import categoriesApi from "@/api/categoriesApi";
 import GuestModal from "@/components/modals/GuestModal";
 import ItemImagesCarousel from "@/components/widgets/ItemImagesCarousel";
 import useSheet from "@/hooks/useSheet";
@@ -54,7 +55,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
   const { request, loader } = useApi();
   const { addTargetCategory } = useAuth();
   const { user, sharedUser, getName } = useAuth();
-  const { t } = useLocale("itemDetailsScreen");
+  const { t, locale } = useLocale("itemDetailsScreen");
   const { show, sheetRef } = useSheet();
   const { showErrorToast, showToast } = useToast();
   const [isArchivedModalVisible, setArchivedModalVisible] = useState(false);
@@ -346,17 +347,30 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
 
   const categoryName = useMemo(() => {
     if (item && item.category.path && item.category.path.length > 0) {
-      return item.category.path && item.category.path.length === 1 ? (
-        item.category.name
-      ) : (
-        <Text>
-          {item.category.path?.slice(0, -1).join(" / ")}
-          {" / "}
-          <Text style={styles.lastCategoryName}>{item.category.name}</Text>
-        </Text>
-      );
+      const category = categoriesApi.getById(item.category.id).localizedName?.[
+        locale
+      ];
+      if (item.category.path && item.category.path.length === 1) {
+        return category;
+      } else {
+        const allCategories = categoriesApi.getAll();
+        const localizedPath = item.category.path
+          ?.slice(0, -1)
+          .map((name) => {
+            const cat = allCategories.find((c) => c.name === name);
+            return cat?.localizedName?.[locale] || name;
+          })
+          .join(" / ");
+        return (
+          <Text>
+            {localizedPath}
+            {" / "}
+            <Text style={styles.lastCategoryName}>{category}</Text>
+          </Text>
+        );
+      }
     }
-  }, [item]);
+  }, [item, locale]);
 
   const showSwapButton =
     item?.userId !== user?.id && !item?.archived && item?.status === "online";

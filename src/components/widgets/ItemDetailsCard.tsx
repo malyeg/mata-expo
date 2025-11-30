@@ -3,6 +3,7 @@ import theme from "@/styles/theme";
 import { useRouter } from "expo-router";
 import React, { ReactElement, ReactNode } from "react";
 import {
+  I18nManager,
   Pressable,
   StyleProp,
   StyleSheet,
@@ -49,7 +50,7 @@ const ItemDetailsCard = ({
           <Text style={styles.title}>{title}</Text>
           <Text
             style={[styles.content, contentStyle]}
-            numberOfLines={3}
+            numberOfLines={2}
             adjustsFontSizeToFit
           >
             {content}
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
   content: {
     textTransform: "capitalize",
     width: "70%",
-    // textAlign: 'justify',
+    textAlign: I18nManager.isRTL ? "left" : "justify",
   },
   childrenContainer: {
     marginLeft: 25,
