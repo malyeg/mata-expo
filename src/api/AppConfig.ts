@@ -74,7 +74,7 @@ class AppConfigApi {
           "No configs were fetched from the backend, and the local configs were already activated."
         );
       }
-      logger.log("configs fetched", remoteConfig.getAll());
+      logger.log("configs fetched");
     } catch (error) {
       logger.error("Error fetching configs", error);
       crashlytics().recordError(error as Error);

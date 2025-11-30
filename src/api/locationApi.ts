@@ -221,10 +221,6 @@ class LocationApi {
     const state = countriesApi.getStateByName(add.state!, country?.id!);
     let city: City | undefined;
 
-    console.log("add", JSON.stringify(add));
-    console.log("country", JSON.stringify(country));
-    console.log("state", JSON.stringify(state));
-
     if (add.locality) {
       const cities = await citiesApi.getByName(add.locality, country!, state);
 

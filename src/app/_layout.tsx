@@ -68,15 +68,7 @@ const InitialLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  console.log(
-    "isInitialized ",
-    isLocationInitialized,
-    isAuthInitialized,
-    isLanguageInitialized
-  );
-
   if (!isAuthInitialized || !isLocationInitialized || !isLanguageInitialized) {
-    console.log("InitialLayout - Waiting for initialization...");
     return null;
   }
 

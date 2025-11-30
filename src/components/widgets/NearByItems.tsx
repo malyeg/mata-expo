@@ -53,11 +53,10 @@ const NearByItems = ({ style }: NearByItemsProps) => {
     const query = new QueryBuilder<Item>().filters(filters).limit(50).build();
     const unsubscribe = itemsApi.onQuerySnapshot(
       (snapshot) => {
-        console.log(snapshot.data[0].category);
         setItemsResponse({ items: snapshot.data ?? [] });
       },
       (error) => {
-        console.log(error);
+        console.error(error);
       },
       query
     );
