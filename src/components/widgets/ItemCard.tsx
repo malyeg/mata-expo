@@ -57,7 +57,6 @@ const ItemCard = ({
 
   const imageUrl = item.defaultImageURL ?? item?.images?.[0]?.downloadURL;
   const categoryName = category ?? item.category?.name;
-  console.log(category);
   // item.category?.name.toLowerCase() === "other" &&
   // item.category?.path?.length &&
   // item.category?.path?.length > 1

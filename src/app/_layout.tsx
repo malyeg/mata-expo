@@ -2,10 +2,17 @@
 
 import configApi from "@/api/AppConfig";
 import { toastConfig } from "@/components/core/Toaster";
+import { initializeRTL } from "@/hooks/useLanguage";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
 import { getWarningsOff } from "@/utils/WarningsOff";
-import { initializeRTL } from "@/hooks/useLanguage";
+import {
+  Cairo_400Regular,
+  Cairo_500Medium,
+  Cairo_600SemiBold,
+  Cairo_700Bold,
+  useFonts,
+} from "@expo-google-fonts/cairo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -14,13 +21,6 @@ import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
-import {
-  useFonts,
-  Cairo_400Regular,
-  Cairo_500Medium,
-  Cairo_600SemiBold,
-  Cairo_700Bold,
-} from "@expo-google-fonts/cairo";
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -81,7 +81,7 @@ const InitialLayout = () => {
   }
 
   // Hide splash screen once everything is initialized
-  SplashScreen.hideAsync();
+  // SplashScreen.hideAsync();
 
   return (
     <Stack

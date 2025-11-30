@@ -1,6 +1,7 @@
 // app/(app)/_layout.tsx
 import useActivity from "@/hooks/useActivity";
 import useAppExit from "@/hooks/useAppExit";
+import usePushTokenSync from "@/hooks/usePushTokenSync";
 import DrawerContent from "@/navigation/DrawerContent";
 import { DrawerNavigationOptions } from "@react-navigation/drawer";
 import { Drawer } from "expo-router/drawer";
@@ -27,6 +28,7 @@ const drawerOptions: DrawerNavigationOptions = {
 const AppLayout = () => {
   useActivity();
   useAppExit();
+  usePushTokenSync();
   return (
     <Drawer
       backBehavior="history"

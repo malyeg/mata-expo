@@ -6,7 +6,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   slug: "mata-app",
   version: "1.0.0",
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./assets/images/logo.png",
   scheme: "mataapp",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
@@ -21,7 +21,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
-      foregroundImage: "./assets/images/adaptive-icon.png",
+      foregroundImage: "./assets/bootsplash_logo.png",
     },
     googleServicesFile: "./firebase/google-services.json",
     edgeToEdgeEnabled: true,
@@ -48,8 +48,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
-        imageWidth: 200,
+        image: "./assets/images/logo.png",
+        // imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#ffffff",
         dark: {

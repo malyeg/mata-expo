@@ -1,3 +1,5 @@
+import profilesApi from "@/api/profileApi";
+import { Profile } from "@/models/Profile.model";
 import { LoggerFactory } from "@/utils/logger";
 import Constants from "expo-constants";
 import * as Device from "expo-device";
@@ -15,6 +17,7 @@ interface NotificationState {
   lastResponse?: Notifications.NotificationResponse;
   notificationError?: string | null;
   isInitialized: boolean;
+  tokenListenerSubscription?: Notifications.Subscription;
 
   // Actions
   setPushToken: (token: string | undefined) => void;
@@ -35,6 +38,11 @@ interface NotificationState {
 
   registerForPushNotifications: () => Promise<void>;
   initialize: () => Promise<void>;
+  syncTokenToProfile: (profile: Profile) => Promise<Profile | undefined>;
+  startTokenListener: (
+    onTokenChange: (token: string) => void
+  ) => Notifications.Subscription;
+  stopTokenListener: () => void;
   reset: () => void;
 }
 
@@ -109,6 +117,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
   lastResponse: undefined,
   notificationError: null,
   isInitialized: false,
+  tokenListenerSubscription: undefined,
 
   setPushToken: (token) => set({ pushToken: token }),
 
@@ -187,7 +196,59 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     set({ isInitialized: true });
   },
 
-  reset: () =>
+  syncTokenToProfile: async (profile: Profile) => {
+    const { pushToken } = get();
+
+    if (!pushToken) {
+      logger.warn("No push token available to sync");
+      return undefined;
+    }
+
+    // Skip simulator token in development
+    if (pushToken === "simulator") {
+      logger.debug("Skipping sync for simulator token");
+      return profile;
+    }
+
+    // Skip if token is already the same
+    if (profile.token === pushToken) {
+      logger.debug("Push token already synced to profile");
+      return profile;
+    }
+
+    logger.debug("Syncing push token to profile...", pushToken);
+    const updatedProfile = await profilesApi.updateToken(profile, pushToken);
+    logger.debug("Push token synced successfully");
+    return updatedProfile;
+  },
+
+  startTokenListener: (onTokenChange: (token: string) => void) => {
+    // Remove existing listener if any
+    get().stopTokenListener();
+
+    logger.debug("Starting push token listener...");
+    const subscription = Notifications.addPushTokenListener((tokenData) => {
+      const newToken = tokenData.data;
+      logger.debug("Push token changed:", newToken);
+      set({ pushToken: newToken });
+      onTokenChange(newToken);
+    });
+
+    set({ tokenListenerSubscription: subscription });
+    return subscription;
+  },
+
+  stopTokenListener: () => {
+    const { tokenListenerSubscription } = get();
+    if (tokenListenerSubscription) {
+      logger.debug("Stopping push token listener...");
+      tokenListenerSubscription.remove();
+      set({ tokenListenerSubscription: undefined });
+    }
+  },
+
+  reset: () => {
+    get().stopTokenListener();
     set({
       pushToken: undefined,
       unReadNotificationsCount: 0,
@@ -196,5 +257,7 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
       lastResponse: undefined,
       notificationError: null,
       isInitialized: false,
-    }),
+      tokenListenerSubscription: undefined,
+    });
+  },
 }));
