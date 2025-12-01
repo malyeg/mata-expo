@@ -3,6 +3,7 @@ import { theme } from "@/styles/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Modal, Separator } from "../core";
 
 type AppMenuProps = {
@@ -11,6 +12,7 @@ type AppMenuProps = {
 const AppMenu = ({ children }: AppMenuProps) => {
   const [visible, setVisible] = React.useState(false);
   const { t } = useLocale("common");
+  const { bottom } = useSafeAreaInsets();
   const openMenu = () => {
     setVisible(true);
   };
@@ -33,7 +35,12 @@ const AppMenu = ({ children }: AppMenuProps) => {
 
         // Add divider after each child except the last one
         if (index < childrenArray.length - 1) {
-          result.push(<Separator key={`menu-divider-${child.key ?? index}`} />);
+          result.push(
+            <Separator
+              style={{ marginVertical: 5 }}
+              key={`menu-divider-${child.key ?? index}`}
+            />
+          );
         }
       }
     });
@@ -56,7 +63,12 @@ const AppMenu = ({ children }: AppMenuProps) => {
         title={t("appMenu.modalOptionsTitle")}
         isVisible={visible}
         onClose={closeMenu}
-        containerStyle={styles.modalContentContainer}
+        containerStyle={[
+          styles.modalContentContainer,
+          {
+            paddingBottom: bottom + 50,
+          },
+        ]}
       >
         {childrenWithProps}
         {/* <Text>Menu</Text> */}

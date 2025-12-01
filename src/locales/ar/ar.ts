@@ -35,6 +35,7 @@ export default {
       shareLabel: "مشاركة",
       contactProviderLabel: "الاتصال بالمزود",
       providerDetailsLabel: "تفاصيل المزود",
+      sendComplainLabel: "إرسال شكوى",
     },
     picker: {
       pickerPlaceholder: "اختر",
@@ -327,6 +328,18 @@ export default {
     passwordLink: "هل نسيت كلمة المرور؟",
     haveAccountText: "هل لديك حساب بالفعل؟",
     LoginLink: "سجل الدخول الآن",
+  },
+  contactScreen: {
+    subject: {
+      placeholder: "الموضوع",
+      required: "الموضوع مطلوب",
+    },
+    body: {
+      placeholder: "الرسالة",
+      required: "الرسالة مطلوبة",
+    },
+    submitBtnTitle: "إرسال",
+    submitSuccess: "تم إرسال رسالتك بنجاح",
   },
   signInScreen: {
     username: {

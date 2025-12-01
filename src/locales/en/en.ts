@@ -36,6 +36,7 @@ export default {
       shareLabel: "Share",
       contactProviderLabel: "Contact Provider",
       providerDetailsLabel: "Provider Details",
+      sendComplainLabel: "Send Complain",
     },
     picker: {
       pickerPlaceholder: "Select",
@@ -339,6 +340,18 @@ export default {
     passwordLink: "Forgot password?",
     haveAccountText: "Already have an account?",
     LoginLink: "Sign in now",
+  },
+  contactScreen: {
+    subject: {
+      placeholder: "Subject",
+      required: "Subject is required",
+    },
+    body: {
+      placeholder: "Message",
+      required: "Message is required",
+    },
+    submitBtnTitle: "Send",
+    submitSuccess: "Your message has been sent successfully",
   },
   signInScreen: {
     username: {
