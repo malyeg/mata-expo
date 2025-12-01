@@ -13,7 +13,7 @@ const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
   const { t } = useLocale("editProfileScreen");
 
   const openEditProfileScreen = () => {
-    router.navigate("/edit-profile");
+    router.navigate("/(main)/account/edit-profile");
   };
   return (
     <View style={[styles.container, style]}>
@@ -24,9 +24,7 @@ const UpdateProfileCard = ({ style }: UpdateProfileCardProps) => {
         bgColor={"red"}
       />
       <View style={styles.updateTextContainer}>
-        <Text style={styles.updateText}>
-          {t("common:dialogs.guestDialog.body")}
-        </Text>
+        <Text style={styles.updateText}>{t("updateProfileDialog.body")}</Text>
       </View>
       <View>
         <Button

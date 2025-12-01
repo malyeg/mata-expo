@@ -2,21 +2,16 @@ import { Item } from "@/api/itemsApi";
 import constants from "@/config/constants";
 import useLocation from "@/hooks/useLocation";
 import theme from "@/styles/theme";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, Platform, StyleSheet, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import Carousel from "react-native-reanimated-carousel";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapItem from "./MapItem";
 import MapItemCard, { MAP_CARD_HEIGHT } from "./MapItemCard";
 
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const EDGE_PADDING = {
-  top: 50,
-  right: 50,
-  bottom: 50,
-  left: 50,
-};
 
 interface ItemsMapViewProps {
   items: Item[];
@@ -29,33 +24,65 @@ const ItemsMapView = ({ items, onSelectItem }: ItemsMapViewProps) => {
   const { location } = useLocation();
   const [selectedItem, setSelectedItem] = useState<Item>(items[0]);
   const firstLoadRef = useRef(true);
+  const { bottom } = useSafeAreaInsets();
+
+  // Fit map to all item coordinates when component mounts
+  useEffect(() => {
+    if (!firstLoadRef.current || items.length === 0) return;
+
+    // Extract valid coordinates from items
+    const coordinates = items
+      .filter(
+        (item) =>
+          item.location?.coordinate?.latitude &&
+          item.location?.coordinate?.longitude
+      )
+      .map((item) => ({
+        latitude: item.location!.coordinate.latitude,
+        longitude: item.location!.coordinate.longitude,
+      }));
+
+    if (coordinates.length === 0) return;
+
+    // Use a timeout to ensure the map is ready
+    const timeoutId = setTimeout(() => {
+      if (firstLoadRef.current && mapRef.current) {
+        firstLoadRef.current = false;
+        mapRef.current.fitToCoordinates(coordinates, {
+          edgePadding: {
+            top: 100,
+            right: 50,
+            bottom: MAP_CARD_HEIGHT + 50,
+            left: 50,
+          },
+          animated: true,
+        });
+      }
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [items]);
 
   useEffect(() => {
     const region = selectedItem?.location?.coordinate;
-    console.log("animateToCoordinate;");
-    mapRef.current?.animateCamera({
-      altitude: region?.latitude!,
-      // center:
-      // alatitude: region?.latitude!,
-      // longitude: region?.longitude!,
-    });
-  }, [selectedItem]);
-
-  const fitToMarkers = useCallback(() => {
-    if (firstLoadRef.current) {
-      firstLoadRef.current = false;
-      mapRef.current?.fitToElements({
-        edgePadding: EDGE_PADDING,
+    if (region?.latitude && region?.longitude) {
+      mapRef.current?.animateCamera({
+        center: {
+          latitude: region.latitude,
+          longitude: region.longitude,
+        },
       });
     }
-  }, []);
+  }, [selectedItem]);
 
   const onSnapToItem = (index: number) => {
     setSelectedItem(items[index]);
   };
 
   const renderCard = (itemInfo: { item: Item; index: number }) => (
-    <MapItemCard item={itemInfo.item} onPress={onSelectItem} />
+    <View style={styles.cardContainer}>
+      <MapItemCard item={itemInfo.item} onPress={onSelectItem} />
+    </View>
   );
   return (
     <View style={styles.container}>
@@ -66,13 +93,12 @@ const ItemsMapView = ({ items, onSelectItem }: ItemsMapViewProps) => {
         provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
         style={styles.map}
         zoomEnabled={true}
-        maxZoomLevel={13}
+        maxZoomLevel={15}
         showsCompass={false}
         showsBuildings={false}
         showsIndoors={false}
         toolbarEnabled={false}
         showsUserLocation={false}
-        onMapLoaded={fitToMarkers}
         initialRegion={{
           ...constants.maps.DEFAULT_LOCATION,
           ...location?.coordinate,
@@ -103,16 +129,19 @@ const ItemsMapView = ({ items, onSelectItem }: ItemsMapViewProps) => {
       <View style={styles.itemsContainer}>
         <Carousel
           data={items}
-          enableSnap={true}
-          // enableMomentum={true}
+          mode="parallax"
+          loop={false}
+          modeConfig={{
+            parallaxScrollingScale: 0.9,
+            parallaxScrollingOffset: 80,
+          }}
+          containerStyle={{
+            paddingBottom: bottom,
+          }}
           width={SCREEN_WIDTH}
           height={MAP_CARD_HEIGHT}
-          // itemWidth={MAP_CARD_WIDTH}
-          // sliderHeight={MAP_CARD_HEIGHT}
-          // itemHeight={MAP_CARD_HEIGHT}
           renderItem={renderCard}
           onSnapToItem={onSnapToItem}
-          // slideStyle={styles.slideWrapper}
         />
       </View>
     </View>
@@ -129,6 +158,11 @@ const styles = StyleSheet.create({
   itemsContainer: {
     position: "absolute",
     bottom: 0,
+  },
+  cardContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   map: {
     flex: 1,

@@ -11,7 +11,7 @@ class ActivitiesApi extends DatabaseApi<Activity> {
   }
 
   connect = (userId: string) => {
-    this.update(userId, {
+    this.set(userId, {
       online: true,
       lastActivity: Date.now(),
     });
@@ -19,7 +19,7 @@ class ActivitiesApi extends DatabaseApi<Activity> {
 
   disconnect = (userId: string) => {
     if (userId) {
-      this.update(userId, {
+      this.set(userId, {
         online: false,
         lastActivity: Date.now(),
       });

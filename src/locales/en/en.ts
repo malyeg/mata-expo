@@ -273,6 +273,9 @@ export default {
   homeScreen: {
     title: "Home",
     profileBtnLabel: "My Profile",
+    updateProfileDialog: {
+      body: "Your profile is not complete, please update your profile to continue",
+    },
   },
   signUpScreen: {
     username: {
@@ -451,6 +454,9 @@ export default {
     },
   },
   editProfileScreen: {
+    updateProfileDialog: {
+      body: "Complete your profile for better experience",
+    },
     firstName: {
       placeholder: "First Name",
       required: "First Name is required",
@@ -637,6 +643,7 @@ export default {
       header: "Warning",
       body: "You have pending deals on this item, please close first ",
     },
+    addItemLinkTitle: "Add Item",
   },
   ItemsScreen: {
     filterIcon: {

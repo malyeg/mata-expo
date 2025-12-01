@@ -118,7 +118,6 @@ const Picker = forwardRef(function Picker<T extends Entity>(
   );
 
   const { locale } = useLocale();
-  console.log("locale", locale, items?.[0]?.localizedName);
 
   return (
     <>

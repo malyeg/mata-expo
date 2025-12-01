@@ -118,12 +118,17 @@ export class DatabaseApi<T extends object> extends Api {
   }
   /** Update specific fields of a document */
   async update(id: string, data: UpdateData<T>): Promise<void> {
-    const ref = doc(
-      db,
-      this.collectionName,
-      id
-    ) as unknown as FirebaseFirestoreTypes.DocumentReference<T>;
-    await updateDoc(ref, data);
+    try {
+      const ref = doc(
+        db,
+        this.collectionName,
+        id
+      ) as unknown as FirebaseFirestoreTypes.DocumentReference<T>;
+      await updateDoc(ref, data);
+    } catch (error) {
+      console.error("Error updating document:", error);
+      throw error;
+    }
   }
 
   /** Delete a document */
@@ -183,7 +188,6 @@ export class DatabaseApi<T extends object> extends Api {
       (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
-          console.log("data!!!", JSON.stringify((data as any)?.timestamp));
           const timestamp = (data as any)?.timestamp?.toDate?.();
           onNext({
             id: snapshot.id,

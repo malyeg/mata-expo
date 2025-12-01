@@ -442,6 +442,9 @@ export default {
     },
   },
   editProfileScreen: {
+    updateProfileDialog: {
+      body: "يرجى تحديث ملفك الشخصي للحصول على تجربة أفضل",
+    },
     firstName: {
       placeholder: "الاسم الأول",
       required: "الاسم الأول مطلوب",

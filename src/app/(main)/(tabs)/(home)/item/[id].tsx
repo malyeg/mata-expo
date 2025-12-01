@@ -3,12 +3,13 @@ import ItemDetailsMenu from "@/components/features/items/ItemDetailsMenu";
 import { useNavigation } from "@react-navigation/native";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import React, { useLayoutEffect } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeItemDetailsScreen = () => {
   const router = useRouter();
   const navigation = useNavigation();
   const { id: itemId } = useLocalSearchParams<{ id: string }>();
-
+  const { bottom } = useSafeAreaInsets();
   // Hide tab bar when this screen is focused
   useLayoutEffect(() => {
     const parent = navigation.getParent();

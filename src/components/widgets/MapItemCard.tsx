@@ -14,9 +14,9 @@ import { Icon, Image, Text } from "../core";
 import SwapIcon from "./SwapIcon";
 
 const CARD_BORDER = 2;
-const CARD_HEIGHT = 100;
+const CARD_HEIGHT = 130;
 export const MAP_CARD_HEIGHT = CARD_HEIGHT + CARD_BORDER;
-export const MAP_CARD_WIDTH = Dimensions.get("window").width - 60 + CARD_BORDER;
+export const MAP_CARD_WIDTH = Dimensions.get("window").width * 0.85;
 interface ItemCardProps extends ViewProps {
   item: Item;
   showActivityStatus?: boolean;
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     backgroundColor: theme.colors.white,
     flexDirection: "row",
+    paddingVertical: 15,
   },
   detailsContainer: {
     flex: 1,
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   image: {
-    width: 100,
+    width: 120,
     marginVertical: 5,
     marginRight: 10,
     borderRadius: 5,

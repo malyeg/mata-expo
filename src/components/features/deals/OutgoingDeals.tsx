@@ -1,4 +1,5 @@
 import { ApiResponse } from "@/api/Api";
+import categoriesApi from "@/api/categoriesApi";
 import dealsApi, { Deal } from "@/api/dealsApi";
 import itemsApi from "@/api/itemsApi";
 import { OutgoingDealsRoute } from "@/app/(main)/deals";
@@ -17,8 +18,7 @@ import { theme } from "@/styles/theme";
 import { Filter, Operation, QueryBuilder } from "@/types/DataTypes";
 import { formatDate } from "@/utils/DateUtils";
 import { useRoute } from "@react-navigation/core";
-import { Link } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
@@ -28,7 +28,7 @@ const OutgoingDeals = () => {
   const { loader } = useApi();
   const { user } = useAuth();
   const router = useRouter();
-  const { t } = useLocale(screens.OUTGOING_DEALS);
+  const { t, locale } = useLocale(screens.OUTGOING_DEALS);
 
   useEffect(() => {
     const filters: Filter<Deal>[] = [{ field: "userId", value: user?.id }];
@@ -62,6 +62,8 @@ const OutgoingDeals = () => {
 
   const renderItem = ({ item }: { item: Deal }) => {
     const dealNewMessagesCount = item?.newMessages?.[user?.id!]?.length ?? 0;
+    const categoryName = categoriesApi.getById(item.item?.category?.id)
+      ?.localizedName?.[locale];
     const onImagePress = () => {
       console.log("Navigating to deal id:", item.id);
       router.navigate({
@@ -77,7 +79,7 @@ const OutgoingDeals = () => {
           resizeMode="contain"
         />
         <View style={styles.content}>
-          <Text numberOfLines={1}>{item.item?.category?.name}</Text>
+          <Text numberOfLines={1}>{categoryName}</Text>
 
           {!!item.timestamp && (
             <Text style={styles.date}>
@@ -95,7 +97,10 @@ const OutgoingDeals = () => {
   const NoData = (
     <NoDataFound title={t("noData.body")}>
       <Link
-        to={{ screen: screens.ITEMS, params: { action: "OPEN_FILTER" } }}
+        href={{
+          pathname: "/(main)/items",
+          params: { action: "OPEN_FILTER" },
+        }}
         style={[sharedStyles.link]}
       >
         <Text style={styles.noDataLink}>{t("noData.searchItemsLink")}</Text>
@@ -129,13 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
   },
-  dealStatus: {
-    position: "absolute",
-    // marginLeft: 'auto',
-    top: 0,
-    right: 10,
-    // bottom: 0,
-  },
   datalist: { flex: 1 },
   separator: {
     height: 15,
@@ -156,14 +154,15 @@ const styles = StyleSheet.create({
   },
   content: {
     marginLeft: 10,
-    flex: 1,
+    gap: 5,
+    // flex: 1,
   },
   date: {
     color: theme.colors.grey,
     ...theme.styles.scale.body2,
   },
   dealStatusText: {
-    marginRight: "auto",
+    // marginRight: "auto",
     minWidth: 100,
     textAlign: "center",
     marginTop: 5,

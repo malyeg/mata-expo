@@ -1,4 +1,5 @@
 import { ApiResponse } from "@/api/Api";
+import categoriesApi from "@/api/categoriesApi";
 import dealsApi, { Deal } from "@/api/dealsApi";
 import itemsApi from "@/api/itemsApi";
 import { IngoingDealsRoute } from "@/app/(main)/deals";
@@ -16,16 +17,16 @@ import sharedStyles from "@/styles/SharedStyles";
 import { theme } from "@/styles/theme";
 import { Filter, Operation, QueryBuilder } from "@/types/DataTypes";
 import { useRoute } from "@react-navigation/core";
-import { Link } from "@react-navigation/native";
-import { format } from "date-fns";
-import { useRouter } from "expo-router";
+
+import { formatDate } from "date-fns";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 const IncomingDeals = () => {
   const [deals, setDeals] = useState<ApiResponse<Deal>>();
   const { loader } = useApi();
-  const { t } = useLocale(screens.INCOMING_DEALS);
+  const { t, locale } = useLocale(screens.INCOMING_DEALS);
   const { user } = useAuth();
   const route = useRoute<IngoingDealsRoute>();
   const router = useRouter();
@@ -62,6 +63,8 @@ const IncomingDeals = () => {
 
   const renderItem = ({ item }: { item: Deal }) => {
     const dealNewMessagesCount = item?.newMessages?.[user?.id!]?.length ?? 0;
+    const categoryName = categoriesApi.getById(item.item?.category?.id)
+      ?.localizedName?.[locale];
     const onCardPress = () =>
       router.navigate({
         pathname: "/deals",
@@ -76,10 +79,10 @@ const IncomingDeals = () => {
         />
 
         <View style={styles.content}>
-          <Text numberOfLines={1}>{item.item?.category?.name}</Text>
+          <Text numberOfLines={1}>{categoryName}</Text>
           {!!item.timestamp && (
             <Text style={styles.date}>
-              {format(item.timestamp, patterns.DATE)}
+              {formatDate(item.timestamp, patterns.DATE)}
             </Text>
           )}
           <DealStatus deal={item} style={styles.dealStatusText} />
@@ -92,7 +95,7 @@ const IncomingDeals = () => {
   const NoData = (
     <NoDataFound title={t("noData.body")}>
       <Link
-        to={{ screen: screens.ITEMS, params: { action: "OPEN_FILTER" } }}
+        href={{ pathname: "/(main)/items", params: { action: "OPEN_FILTER" } }}
         style={[sharedStyles.link]}
       >
         <Text style={styles.noDataLink}>{t("noData.searchItemsLink")}</Text>

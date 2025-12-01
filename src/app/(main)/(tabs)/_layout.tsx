@@ -3,21 +3,21 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@/components/core/Icon";
 import AddItemModal from "@/components/features/items/AddItemModal";
 import { headerBackIconSize } from "@/components/HeaderBack";
 import useLocale from "@/hooks/useLocale";
+import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
 import { FontAwesome } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
-import { useState } from "react";
 import { I18nManager, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const router = useRouter();
   const { t } = useLocale("common");
-  const [isAddItemModalVisible, setisAddItemModalVisible] = useState(false);
+  const { isAddItemModalVisible, openAddItemModal, closeAddItemModal } =
+    useAddItemStore();
   const IconComponent = I18nManager.isRTL ? ChevronRightIcon : ChevronLeftIcon;
 
   const onAddPress = () => {
-    setisAddItemModalVisible(true);
-    // router.navigate("/(main)/(tabs)/add-item");
+    openAddItemModal();
   };
   return (
     <>
@@ -133,7 +133,7 @@ export default function TabLayout() {
       </Tabs>
       <AddItemModal
         isVisible={isAddItemModalVisible}
-        onClose={() => setisAddItemModalVisible(false)}
+        onClose={closeAddItemModal}
       />
     </>
   );

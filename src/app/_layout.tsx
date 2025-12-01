@@ -73,7 +73,7 @@ const InitialLayout = () => {
   }
 
   // Hide splash screen once everything is initialized
-  // SplashScreen.hideAsync();
+  SplashScreen.hideAsync();
 
   return (
     <Stack

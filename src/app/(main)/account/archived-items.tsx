@@ -10,8 +10,7 @@ import useLocale from "@/hooks/useLocale";
 import sharedStyles from "@/styles/SharedStyles";
 import theme from "@/styles/theme";
 import { QueryBuilder } from "@/types/DataTypes";
-import { Link } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
 

@@ -2,18 +2,19 @@ import useLocale from "@/hooks/useLocale";
 import useScreenOptions from "@/hooks/useScreenOptions";
 import { Stack } from "expo-router";
 import React from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HomeStackLayout = () => {
   const screenOptions = useScreenOptions();
   const { t } = useLocale("common");
-
+  const { bottom } = useSafeAreaInsets();
   return (
     <Stack
       screenOptions={{
         ...screenOptions,
         contentStyle: {
           ...(screenOptions.contentStyle as object),
-          paddingBottom: 0,
+          paddingBottom: bottom,
         },
         headerShown: false,
       }}

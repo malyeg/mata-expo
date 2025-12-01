@@ -5,6 +5,7 @@ import authApi from "../api/authApi";
 import { LoggerFactory } from "../utils/logger";
 
 const logger = LoggerFactory.getLogger("useActivity");
+const ACTIVITY_INTERVAL = 10 * 60 * 1000;
 const useActivity = () => {
   useEffect(() => {
     const userId = authApi?.getUser()?.uid!;
@@ -20,7 +21,7 @@ const useActivity = () => {
 
     const interval = setInterval(() => {
       activitiesApi.connect(userId);
-    }, 10 * 60 * 1000);
+    }, ACTIVITY_INTERVAL);
     // Assuming user is logged in
     const appStateSub = AppState.addEventListener(
       "change",

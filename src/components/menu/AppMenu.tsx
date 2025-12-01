@@ -1,7 +1,7 @@
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { Modal, Separator } from "../core";
 
@@ -16,12 +16,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
   };
 
   const closeMenu = React.useCallback(() => {
-    console.log("close menu", visible);
     setVisible(false);
-  }, [visible]);
-
-  useEffect(() => {
-    console.log("menu visible", visible);
   }, [visible]);
 
   // Clone children and pass closeMenu function to each child

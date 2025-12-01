@@ -16,6 +16,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     googleServicesFile: "./firebase/GoogleService-Info.plist",
     infoPlist: {
       UIDesignRequiresCompatibility: true,
+      ITSAppUsesNonExemptEncryption: false,
+    },
+    config: {
+      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY,
     },
   },
   android: {
@@ -28,6 +32,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     predictiveBackGestureEnabled: false,
     permissions: ["android.permission.WRITE_EXTERNAL_STORAGE"],
     package: "com.mata.mataapp",
+    config: {
+      googleMaps: {
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY,
+      },
+    },
   },
   web: {
     output: "static",
@@ -85,5 +94,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   experiments: {
     typedRoutes: true,
     reactCompiler: true,
+  },
+  extra: {
+    eas: {
+      projectId: "16806ac8-5da8-453f-b0ed-a038010d6020",
+    },
   },
 });

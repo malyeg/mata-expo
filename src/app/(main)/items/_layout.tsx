@@ -12,6 +12,10 @@ const ItemsLayout = () => {
         name="index"
         options={{
           title: t("screens.items"),
+          contentStyle: {
+            ...(screenOptions.contentStyle as object),
+            paddingBottom: 0,
+          },
         }}
       />
       <Stack.Screen

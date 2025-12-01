@@ -1,23 +1,22 @@
-import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import * as yup from "yup";
 import { Button, CheckBox, Text } from "@/components/core";
 import FormScreen from "@/components/core/FormScreen";
 import Logo from "@/components/core/Logo";
 import TextInput from "@/components/form/TextInput";
 import PasswordMeter from "@/components/widgets/PasswordMeter";
-import constants, { screens } from "@/config/constants";
-import { ICredentials } from "@/contexts/AuthReducer";
+import constants from "@/config/constants";
 import useApi from "@/hooks/useApi";
 import useAuth from "@/hooks/useAuth";
 import useForm from "@/hooks/useForm";
 import useKeyboard from "@/hooks/useKeyboard";
 import useLocale from "@/hooks/useLocale";
 import useToast from "@/hooks/useToast";
+import { Profile } from "@/models/Profile.model";
 import sharedStyles from "@/styles/SharedStyles";
 import theme from "@/styles/theme";
-import { Profile } from "@/models/Profile.model";
 import { Link } from "expo-router";
+import React, { useCallback, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import * as yup from "yup";
 type SignUpFormValues = {
   username: string;
   password: string;
@@ -67,10 +66,6 @@ const SignUpScreen = () => {
 
   const onFormSuccess = async (data: SignUpFormValues) => {
     hideToast();
-    const credentials: ICredentials = {
-      username: data.username,
-      password: data.password,
-    };
     try {
       const profile: Omit<Profile, "id"> = {
         email: data.username,
@@ -79,7 +74,9 @@ const SignUpScreen = () => {
         acceptTermsFlag: data.terms ? true : false,
         acceptMarketingFlag: true,
       };
-      await request<Profile>(() => signUp(credentials, profile));
+      await request<Profile>(() =>
+        signUp(data.username, data.password, profile as Profile)
+      );
     } catch (err: any) {
       showToast({
         type: "error",

@@ -1,5 +1,5 @@
 import itemsApi, { Item } from "@/api/itemsApi";
-import { Loader, Screen, Text } from "@/components/core";
+import { Button, Loader, Screen } from "@/components/core";
 import DataList from "@/components/widgets/DataList";
 import ItemCard, { ITEM_CARD_HEIGHT } from "@/components/widgets/ItemCard";
 import NoDataFound from "@/components/widgets/NoDataFound";
@@ -7,9 +7,8 @@ import { screens } from "@/config/constants";
 import { useFirestoreQuery } from "@/hooks/db/useFirestoreQuery";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
-import sharedStyles from "@/styles/SharedStyles";
+import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
-import { Link } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo } from "react";
 import { StyleSheet } from "react-native";
@@ -17,6 +16,7 @@ import { StyleSheet } from "react-native";
 const MyItemsScreen = () => {
   const { user } = useAuth();
   const router = useRouter();
+  const { openAddItemModal } = useAddItemStore();
   const { data: items, loading } = useFirestoreQuery<Item>(
     itemsApi.collectionName,
     (ref) => {
@@ -39,7 +39,7 @@ const MyItemsScreen = () => {
       {
         label: t("menu.archivedLabel"),
         onPress: () => {
-          router.navigate("/profile/archived-items");
+          router.navigate("/(main)/account/archived-items");
         },
       },
     ];
@@ -54,9 +54,13 @@ const MyItemsScreen = () => {
   );
   const NoData = (
     <NoDataFound style={styles.card} title={t("noData.title")}>
-      <Link to={{ screen: screens.ADD_ITEM }} style={[sharedStyles.link]}>
-        <Text style={styles.noDataLink}>Add new Item</Text>
-      </Link>
+      <Button
+        type="link"
+        // style={[sharedStyles.link]}
+        onPress={openAddItemModal}
+      >
+        {/* <Text style={styles.noDataLink}>Add new Item</Text> */}
+      </Button>
     </NoDataFound>
   );
 

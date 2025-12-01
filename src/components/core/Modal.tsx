@@ -1,7 +1,6 @@
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import React, { FC, useCallback } from "react";
 import {
-  Platform,
   StatusBar,
   StyleProp,
   StyleSheet,
@@ -90,13 +89,10 @@ const Modal: FC<ModalProps> = ({
     >
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <View
-        // edges={{}}
         style={[
           styles.container,
           { paddingBottom: bottom },
-          Platform.OS === "ios" && position === "full"
-            ? { paddingTop: top }
-            : undefined,
+          position === "full" ? { paddingTop: top } : undefined,
           position === "bottom" ? styles.bottomStyle : styles.fullScreen,
           containerStyle,
         ]}

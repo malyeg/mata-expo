@@ -20,6 +20,7 @@ import { Operation, Query } from "@/types/DataTypes";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ItemsParams = {
   id?: string;
@@ -40,6 +41,7 @@ const ItemsScreen = () => {
   const { t } = useLocale(screens.ITEMS);
   const { t: tCommon } = useLocale("common");
   const { user } = useAuth();
+  const { bottom } = useSafeAreaInsets();
   const params = useLocalSearchParams<ItemsParams>();
   const [query, setQuery] = useState<Query<Item> | undefined>();
 
@@ -89,7 +91,6 @@ const ItemsScreen = () => {
   }, [totalItems, error, tCommon]);
 
   const onFilterChange = async (newQuery: Query) => {
-    console.log("onFilterChange", JSON.stringify(newQuery));
     hideToast();
     setQuery(newQuery);
     refetch();
@@ -137,7 +138,6 @@ const ItemsScreen = () => {
   };
 
   const openFilter = () => {
-    console.log("openFilter");
     setFilterVisible(true);
   };
 
@@ -161,8 +161,6 @@ const ItemsScreen = () => {
       </Screen>
     );
   }
-
-  console.log(data.items?.[0]?.category);
 
   return (
     <Screen scrollable={false} style={styles.screen}>
@@ -213,10 +211,12 @@ const ItemsScreen = () => {
       <Modal
         isVisible={isMapVisible}
         position="full"
-        title={`${totalItems} ${tCommon("screens.items")}`}
+        title={pageTitle ?? ""}
         showHeaderNav
         bodyStyle={styles.modal}
-        // containerStyle={styles.modal}
+        containerStyle={{
+          paddingBottom: 0,
+        }}
         onClose={closeModal}
       >
         <ItemsMapView

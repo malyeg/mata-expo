@@ -32,7 +32,6 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     const category = categoriesApi.getById(
       categoryFilter.id ?? categoryFilter.value
     );
-    console.log(filters, categoryFilter);
     categoryFilter.name = category?.localizedName?.[locale] ?? category?.name;
   }
   const swapTypesFilter = filters.find((f) => f.field === "swapOptionType");
