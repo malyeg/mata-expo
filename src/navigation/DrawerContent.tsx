@@ -9,10 +9,11 @@ import { screens } from "../config/constants";
 import useAuth from "../hooks/useAuth";
 import useLocale from "../hooks/useLocale";
 
+import LanguageSwitcher from "@/components/widgets/LanguageSwitcher";
 import { useNotificationStore } from "@/store/notification-store";
+import { useRouter } from "expo-router";
 import { theme } from "../styles/theme";
 import DrawerItem from "./DrawerItem";
-import LanguageSwitcher from "@/components/widgets/LanguageSwitcher";
 
 const DrawerContent = ({
   navigation,
@@ -22,10 +23,10 @@ const DrawerContent = ({
   // const [notificationCount, setNotificationCount] = useState(0);
   const { user, signOut } = useAuth();
   const { notificationsCount } = useNotificationStore();
-
+  const router = useRouter();
   const openEditProfile = useCallback(() => {
-    !user?.isAnonymous && navigation.navigate(screens.PROFILE);
-  }, [navigation, user?.isAnonymous]);
+    router.navigate("/(main)/account");
+  }, [router]);
 
   const signInLink = () => {
     signOut();

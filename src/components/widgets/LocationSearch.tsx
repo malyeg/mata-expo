@@ -1,7 +1,15 @@
 import locationApi, { Location } from "@/api/locationApi";
+import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
-import React, { FC, useEffect, useRef } from "react";
-import { Platform, StyleSheet, TextStyle, View, ViewProps } from "react-native";
+import React, { FC, useEffect, useRef, useState } from "react";
+import {
+  Keyboard,
+  Platform,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewProps,
+} from "react-native";
 import {
   GooglePlaceData,
   GooglePlaceDetail,
@@ -33,7 +41,15 @@ const LocationSearch: FC<LocationSearchProps> = ({
   query,
 }) => {
   const ref = useRef<any>(null);
-  // const [listViewDisplayed, setListViewDisplayed] = useState<boolean>(true);
+  const { t } = useLocale("common");
+  const [listViewDisplayed, setListViewDisplayed] = useState<boolean | "auto">(
+    "auto"
+  );
+  const apiKey =
+    Platform.OS === "ios"
+      ? process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY
+      : process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY;
+
   useEffect(() => {
     if (!!initialLocation && !!initialLocation.address?.name) {
       ref.current?.setAddressText(initialLocation.address.name);
@@ -41,25 +57,24 @@ const LocationSearch: FC<LocationSearchProps> = ({
   }, [initialLocation]);
 
   const setLocation = async (
-    data: GooglePlaceData,
+    _data: GooglePlaceData,
     detail: GooglePlaceDetail | null
   ) => {
     if (detail) {
       const newLoc = await locationApi.buildLocationFromPlace(detail);
       onChange(newLoc);
+      setListViewDisplayed(false);
+      Keyboard.dismiss();
     }
   };
 
   const onPressCurrentLocation = async () => {
     if (await locationApi.hasPermission()) {
-      // const position = await locationApi.getCurrentLocation();
       const location = await locationApi.getCurrentLocation();
       if (location) {
         ref.current?.setAddressText(location.address?.name);
         onChange(location);
       }
-    } else {
-      console.log("location permission denied");
     }
   };
 
@@ -95,14 +110,11 @@ const LocationSearch: FC<LocationSearchProps> = ({
           textInput: { ...styles.textInput, ...(textStyle as {}) },
           listView: styles.listView,
         }}
-        placeholder="Search"
+        placeholder={t("search")}
         fetchDetails={true}
         onPress={setLocation}
         query={{
-          key:
-            Platform.OS === "ios"
-              ? process.env.GOOGLE_MAPS_IOS_API_KEY
-              : process.env.GOOGLE_MAPS_ANDROID_API_KEY,
+          key: apiKey,
           components:
             "country:" +
             (query?.countryCode?.toLowerCase() ?? defaultQuery.components),
@@ -110,9 +122,12 @@ const LocationSearch: FC<LocationSearchProps> = ({
         }}
         debounce={1000}
         renderRightButton={IconsComponent}
-        // listViewDisplayed={listViewDisplayed ? 'auto' : false}
+        keyboardShouldPersistTaps="handled"
+        listViewDisplayed={listViewDisplayed}
         textInputProps={{
           clearButtonMode: "never",
+
+          onFocus: () => setListViewDisplayed("auto"),
         }}
       />
     </View>
@@ -157,6 +172,6 @@ const styles = StyleSheet.create({
     color: theme.colors.dark,
     borderRadius: 10,
     paddingHorizontal: 10,
-    paddingRight: 50,
+    paddingEnd: 60,
   },
 });

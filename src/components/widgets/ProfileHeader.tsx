@@ -1,6 +1,6 @@
 import ratingApi from "@/api/ratingApi";
 import { useAuthStore } from "@/store/auth-store";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { useRouter } from "expo-router";
 import React, { useCallback, useEffect, useState } from "react";
 import {

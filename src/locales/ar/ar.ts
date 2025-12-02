@@ -11,6 +11,7 @@ export default {
     },
   },
   common: {
+    search: "ابحث",
     timeAgo: {
       justNow: "الآن",
       seconds: "{{count}} ثانية",

@@ -55,6 +55,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     [
+      "react-native-maps",
+      {
+        iosGoogleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY,
+        androidGoogleMapsApiKey:
+          process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY,
+      },
+    ],
+    [
       "expo-splash-screen",
       {
         image: "./assets/images/logo.png",

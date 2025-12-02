@@ -7,11 +7,11 @@ import useAuth from "@/hooks/useAuth";
 import useForm from "@/hooks/useForm";
 import useLocale from "@/hooks/useLocale";
 import useToast from "@/hooks/useToast";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { useNavigation } from "@react-navigation/core";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { Platform, StyleSheet } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import * as yup from "yup";
 
 type FormValues = {
@@ -83,26 +83,28 @@ const ContactUsScreen = () => {
       scrollable
       keyboardShouldPersistTaps="handled"
     >
-      <TextInput
-        name="subject"
-        placeholder={t("subject.placeholder")}
-        returnKeyType="next"
-        control={control}
-        onSubmitEditing={focusToBody}
-      />
+      <View>
+        <TextInput
+          name="subject"
+          placeholder={t("subject.placeholder")}
+          returnKeyType="next"
+          control={control}
+          onSubmitEditing={focusToBody}
+        />
 
-      <TextInput
-        name="body"
-        multiline={true}
-        placeholder={t("body.placeholder")}
-        control={control}
-        numberOfLines={10}
-        inputStyle={styles.messageText}
-        returnKeyType="send"
-        submitBehavior="blurAndSubmit"
-        returnKeyLabel="Send"
-        onSubmitEditing={handleSubmit(onFormSuccess)}
-      />
+        <TextInput
+          name="body"
+          multiline={true}
+          placeholder={t("body.placeholder")}
+          control={control}
+          numberOfLines={10}
+          inputStyle={styles.messageText}
+          returnKeyType="send"
+          submitBehavior="blurAndSubmit"
+          returnKeyLabel="Send"
+          onSubmitEditing={handleSubmit(onFormSuccess)}
+        />
+      </View>
 
       <Button
         title={t("submitBtnTitle")}
@@ -121,7 +123,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   messageText: {
-    height: 200,
+    minHeight: 200,
+    maxHeight: 200,
     borderColor: theme.colors.lightGrey,
     borderWidth: 1,
     borderRadius: 5,
