@@ -18,7 +18,7 @@ const ItemDetailsScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerRight: ItemDetailsMenu,
+          headerRight: () => <ItemDetailsMenu itemId={itemId} />,
         }}
       />
       <ItemDetailsContent itemId={itemId} />

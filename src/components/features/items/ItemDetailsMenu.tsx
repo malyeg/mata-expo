@@ -1,5 +1,5 @@
 import AppMenu from "@/components/menu/AppMenu";
-import SendComplainItem from "@/components/menu/SendComplainItem";
+import SendComplainItem from "@/components/menu/SendComplainMenuItem";
 import ShareMenuItem from "@/components/menu/ShareMenuItem";
 import React from "react";
 import { StyleSheet } from "react-native";

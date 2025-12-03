@@ -63,6 +63,10 @@ export const ComplainIcon = (props: Omit<IconProps, "name">) => (
   <MaterialCommunityIcons name="alert-circle-outline" {...props} />
 );
 
+export const BlockIcon = (props: Omit<IconProps, "name">) => (
+  <MaterialCommunityIcons name="block-helper" {...props} />
+);
+
 /**
  * RTL-aware chevron icon that points in the "forward" direction
  * - LTR (English): chevron-right

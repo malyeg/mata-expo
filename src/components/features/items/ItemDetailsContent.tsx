@@ -1,20 +1,11 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { ApiResponse } from "@/api/Api";
 import dealsApi, { Deal } from "@/api/dealsApi";
-import itemsApi, { conditionList, Item, swapTypes } from "@/api/itemsApi";
-import listsApi, { ListItem } from "@/api/listsApi";
+import { conditionList, Item, swapTypes } from "@/api/itemsApi";
 import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
 import PressableOpacity from "@/components/core/PressableOpacity";
-import { ItemsFilterForm } from "@/components/widgets/data/ItemsFilter";
-import { MenuItem } from "@/components/widgets/Header";
 import ItemDealsTab from "@/components/widgets/ItemDealsTab";
 import ItemDetailsCard from "@/components/widgets/ItemDetailsCard";
 import ItemPicker from "@/components/widgets/ItemPicker";
@@ -30,195 +21,50 @@ import categoriesApi from "@/api/categoriesApi";
 import GuestModal from "@/components/modals/GuestModal";
 import ItemImagesCarousel from "@/components/widgets/ItemImagesCarousel";
 import useSheet from "@/hooks/useSheet";
-import useSocial from "@/hooks/useSocial";
 import useToast from "@/hooks/useToast";
 import { theme } from "@/styles/theme";
-import { QueryBuilder } from "@/types/DataTypes";
-import Analytics from "@/utils/Analytics";
 import { timeAgo } from "@/utils/DateUtils";
 import { useRouter } from "expo-router";
 import InactiveItemModal from "./InactiveItemModal";
 import ItemAd from "./ItemAd";
 
 interface ItemDetailsContentProps {
-  itemId: string;
+  item: Item | undefined;
+  loading?: boolean;
+  wishItemId: string | undefined;
+  isArchivedModalVisible: boolean;
+  isBlockedModalVisible: boolean;
+  setArchivedModalVisible: (visible: boolean) => void;
+  setBlockedModalVisible: (visible: boolean) => void;
+  toggleWishList: () => Promise<void>;
+  deleteItem: (id: string) => Promise<void>;
+  refreshItem: React.MutableRefObject<boolean>;
 }
 
-const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
+const ItemDetailsContent = ({
+  item,
+  loading = false,
+  wishItemId,
+  isArchivedModalVisible,
+  isBlockedModalVisible,
+  setArchivedModalVisible,
+  setBlockedModalVisible,
+  toggleWishList,
+  deleteItem,
+  refreshItem,
+}: ItemDetailsContentProps) => {
   const router = useRouter();
-  const [item, setItem] = useState<Item>();
-  const [wishItemId, setWishItemId] = useState<string | undefined>();
   const [showItemPicker, setShowItemPicker] = useState(false);
 
-  const refreshItem = useRef(false);
-
   const { request, loader } = useApi();
-  const { addTargetCategory } = useAuth();
-  const { user, sharedUser, getName } = useAuth();
+  const { user, getName } = useAuth();
   const { t, locale } = useLocale("itemDetailsScreen");
   const { show, sheetRef } = useSheet();
   const { showErrorToast, showToast } = useToast();
-  const [isArchivedModalVisible, setArchivedModalVisible] = useState(false);
-  const [isBlockedModalVisible, setBlockedModalVisible] = useState(false);
   const [isGuestModalVisible, setGuestModalVIsible] = useState(false);
-  const { shareItem } = useSocial();
-
-  const setHeader = (i: Item) => {
-    const shareMenuItem: MenuItem = {
-      label: t("menu.shareLabel"),
-      icon: { name: "share-variant", color: theme.colors.dark },
-      onPress: () => {
-        shareItem(i);
-      },
-    };
-    const editMenuItem: MenuItem = {
-      label: t("menu.editItemLabel"),
-      icon: { name: "pencil", color: theme.colors.dark },
-      onPress: () => {
-        if (i.status === "pending") {
-          showToast({
-            message: t("editPendingDialog.body"),
-            type: "error",
-            options: {
-              duration: 5000,
-              autoHide: true,
-            },
-          });
-        } else {
-          router.navigate({
-            pathname: "/items/edit",
-            params: { id: i.id },
-          });
-        }
-      },
-    };
-
-    const complainMenuItem: MenuItem = {
-      label: t("menu.complainItemLabel"),
-      icon: { name: "alert-circle-outline", color: theme.colors.dark },
-      onPress: () => {
-        router.navigate({
-          pathname: "/complains",
-          params: { itemId: i.id, type: "complain" },
-        });
-      },
-    };
-
-    const deleteMenuItem: MenuItem = {
-      label: t("menu.deleteLabel"),
-      icon: { name: "delete", color: theme.colors.salmon },
-      onPress: () => {
-        if (i.status === "pending") {
-          show({
-            header: t("pendingDialog.header"),
-            body: t("pendingDialog.body"),
-            cancelCallback: () => null,
-            confirmCallback: () => deleteItem(i.id),
-          });
-        } else {
-          show({
-            header: t("deleteConfirmationHeader"),
-            body: t("deleteConfirmationBody", { params: { itemName: i.name } }),
-            cancelCallback: () => null,
-            confirmCallback: () => deleteItem(i.id),
-          });
-        }
-      },
-    };
-
-    const menuItems: MenuItem[] = [];
-    if (i.status === "online") {
-      menuItems.push(shareMenuItem);
-    }
-
-    if (user?.id === i.userId) {
-      i.status !== "blocked" && menuItems.push(editMenuItem);
-      menuItems.push(deleteMenuItem);
-    } else {
-      menuItems.push(complainMenuItem);
-    }
-
-    if (user?.isAdmin && user.id !== i.userId) {
-      const blockItemMenuItem: MenuItem = {
-        label: t("menu.blockLabel"),
-        icon: { name: "block-helper", color: theme.colors.salmon, size: 15 },
-        onPress: () => {
-          show({
-            header: t("blockItemConfirmation.header"),
-            body: t("blockItemConfirmation.body", {
-              params: { itemName: i.name },
-            }),
-            confirmCallback: () => itemsApi.blockItem(i),
-          });
-        },
-      };
-      menuItems.push(blockItemMenuItem);
-    }
-  };
-
-  useEffect(() => {
-    if (!itemId) {
-      router.replace("/items");
-      return;
-    }
-    // Reset state when itemId changes
-    setItem(undefined);
-    setWishItemId(undefined);
-
-    const unsubscribe = itemsApi.onDocumentSnapshot(
-      itemId,
-      (snapshot) => {
-        if (snapshot) {
-          setHeader(snapshot);
-          setItem(snapshot);
-
-          if (snapshot.status === "blocked" && user?.isAdmin !== true) {
-            setBlockedModalVisible(true);
-          }
-          if (snapshot.archived && user?.id !== snapshot.user.id) {
-            unsubscribe();
-            setArchivedModalVisible(true);
-          }
-
-          const query = QueryBuilder.from({
-            filters: [
-              { field: "user.id", value: user?.id },
-              { field: "item.id", value: snapshot.id },
-            ],
-            limit: 1,
-          });
-          if (user?.id !== snapshot?.userId) {
-            listsApi.getAll(query).then((listItemResponse) => {
-              if (listItemResponse && listItemResponse.length > 0) {
-                setWishItemId(listItemResponse[0].id);
-              } else {
-                setWishItemId("");
-              }
-            });
-          }
-          Analytics.viewItem(snapshot);
-        }
-      },
-      (error) => console.log(error)
-    );
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemId]);
-
-  const deleteItem = useCallback(
-    async (id: string) => {
-      try {
-        await request(() => itemsApi.deleteById(id));
-        router.back();
-      } catch (error) {
-        showErrorToast(error);
-      }
-    },
-    [request, router, showErrorToast]
-  );
 
   const swapHandler = useCallback(async () => {
-    if (!user) return;
+    if (!user || !item) return;
     try {
       if (user.isAnonymous) {
         setGuestModalVIsible(true);
@@ -267,7 +113,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
                 toastType: "newOffer",
               },
             });
-          } catch (error) {}
+          } catch {}
         },
       });
     } else {
@@ -277,7 +123,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
   }, [item, user?.id]);
 
   const onItemPicker = (swapItem: Item) => {
-    if (!user) return;
+    if (!user || !item) return;
     setShowItemPicker(false);
     show({
       header: t("swapHeader"),
@@ -317,32 +163,13 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
     (i) => i.id === item?.condition?.type
   )?.name;
 
-  const toggleWishList = async () => {
+  const handleToggleWishList = async () => {
     if (!user) return;
-    try {
-      if (user?.isAnonymous) {
-        setGuestModalVIsible(true);
-        return;
-      }
-      if (wishItemId && wishItemId !== "") {
-        await request(() => listsApi.deleteById(wishItemId));
-        setWishItemId("");
-      } else {
-        const newWishItem = await request<ListItem>(() =>
-          listsApi.create({
-            userId: user.id,
-            type: "wish",
-            user: sharedUser,
-            item: item!,
-          })
-        );
-        setWishItemId(newWishItem.id);
-        !!item && Analytics.logAddItemToWishlist([item]);
-        addTargetCategory(item?.category?.id!);
-      }
-    } catch (error) {
-      console.log(error);
+    if (user?.isAnonymous) {
+      setGuestModalVIsible(true);
+      return;
     }
+    await toggleWishList();
   };
 
   const categoryName = useMemo(() => {
@@ -393,10 +220,8 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
   }, [item?.timestamp]);
 
   const showSimilarItems = () => {
-    const filters: ItemsFilterForm = {
-      category: item?.category,
-    };
     setArchivedModalVisible(false);
+    // TODO: Navigate to items list with category filter
   };
 
   const goBack = () => {
@@ -417,6 +242,10 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
 
   if (!user) {
     return null;
+  }
+
+  if (loading) {
+    return <Loader />;
   }
 
   return item ? (
@@ -443,7 +272,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
           {showWishIcon && (
             <PressableOpacity
               hitSlop={5}
-              onPress={toggleWishList}
+              onPress={handleToggleWishList}
               style={styles.wishListIcon}
             >
               <Icon
@@ -481,7 +310,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
           onPress={() =>
             router.navigate({
               pathname: "/items",
-              params: { category: JSON.stringify(item?.category) },
+              params: { categoryId: item.category.id.toString() },
             })
           }
         />
@@ -533,7 +362,7 @@ const ItemDetailsContent = ({ itemId }: ItemDetailsContentProps) => {
 
         <ItemAd style={styles.banner} />
 
-        {!!item && item.userId !== user.id && itemId === item.id && (
+        {!!item && item.userId !== user.id && (
           <OwnerItems item={item} style={styles.ownerItems} />
         )}
 
