@@ -35,7 +35,7 @@ const AppLayout = () => {
       screenOptions={drawerOptions}
       drawerContent={(props) => <DrawerContent {...props} />}
     >
-      <Drawer.Screen name="(tabs)" />
+      <Drawer.Screen name="(stack)" />
     </Drawer>
   );
 };

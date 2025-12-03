@@ -244,18 +244,14 @@ const DealDetailsScreen = () => {
   const onSwapItemPress = useCallback(() => {
     router.navigate({
       pathname: "/items/[id]",
-      params: {
-        id: deal?.swapItem?.id!,
-      },
+      params: { id: deal?.swapItem?.id! },
     });
   }, [deal, router]);
 
   const onItemPress = useCallback(() => {
     router.navigate({
       pathname: "/items/[id]",
-      params: {
-        id: deal?.item?.id!,
-      },
+      params: { id: deal?.item?.id! },
     });
   }, [deal, router]);
 

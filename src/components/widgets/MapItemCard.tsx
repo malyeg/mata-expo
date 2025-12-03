@@ -34,13 +34,9 @@ const MapItemCard = ({ item, style, onPress, sourceList }: ItemCardProps) => {
     }
     router.navigate({
       pathname: "/items/[id]",
-      params: {
-        id: item.id,
-      },
+      params: { id: item.id },
     });
-
     Analytics.logSelectItem(item, sourceList);
-    // linkTo('/items/' + item.id);
   }, [item, router, onPress, sourceList]);
 
   const itemImage = item?.images ? item?.images[0] : undefined;

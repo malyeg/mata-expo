@@ -10,17 +10,14 @@ import NoDataFound from "@/components/widgets/NoDataFound";
 import { screens } from "@/config/constants";
 import categories from "@/data/categories";
 import { useAlgoliaQuery } from "@/hooks/db/useAlgoliaQuery";
-import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
-import useLocation from "@/hooks/useLocation";
 import useToast from "@/hooks/useToast";
 import sharedStyles from "@/styles/SharedStyles";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { Operation, Query } from "@/types/DataTypes";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ItemsParams = {
   id?: string;
@@ -34,14 +31,11 @@ type ItemsParams = {
 };
 
 const ItemsScreen = () => {
-  const { location } = useLocation();
   const [isFilterVisible, setFilterVisible] = useState(false);
   const [isMapVisible, setMapVisible] = useState(false);
   const { showErrorToast, hideToast } = useToast();
   const { t } = useLocale(screens.ITEMS);
   const { t: tCommon } = useLocale("common");
-  const { user } = useAuth();
-  const { bottom } = useSafeAreaInsets();
   const params = useLocalSearchParams<ItemsParams>();
   const [query, setQuery] = useState<Query<Item> | undefined>();
 

@@ -46,13 +46,12 @@ const ItemCard = ({
     if (onPress) {
       onPress(item);
     } else {
-      router.push({
-        pathname: "/(main)/(tabs)/(home)/item/[id]",
+      router.navigate({
+        pathname: "/items/[id]",
         params: { id: item.id },
       });
     }
     Analytics.logSelectItem(item, sourceList);
-    // linkTo('/items/' + item.id);
   }, [item, onPress, router, sourceList]);
 
   const imageUrl = item.defaultImageURL ?? item?.images?.[0]?.downloadURL;
