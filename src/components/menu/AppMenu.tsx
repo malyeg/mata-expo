@@ -62,6 +62,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
       <Modal
         title={t("appMenu.modalOptionsTitle")}
         isVisible={visible}
+        onBackdropPress={closeMenu}
         onClose={closeMenu}
         containerStyle={[
           styles.modalContentContainer,

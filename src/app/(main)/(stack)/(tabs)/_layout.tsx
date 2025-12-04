@@ -22,7 +22,7 @@ export default function TabLayout() {
   return (
     <>
       <Tabs
-        initialRouteName="(home)"
+        initialRouteName="index"
         screenOptions={{
           headerTitleStyle: {
             fontSize: 25,
@@ -72,7 +72,7 @@ export default function TabLayout() {
         }}
       >
         <Tabs.Screen
-          name="(home)"
+          name="index"
           options={{
             title: t("tabBar.homeTitle"),
             headerShown: false,

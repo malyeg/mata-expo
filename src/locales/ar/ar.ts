@@ -32,6 +32,7 @@ export default {
       subTitle: "لم نجد أي نتائج، حاول مرة أخرى",
     },
     appMenu: {
+      modalOptionsTitle: "خيارات",
       reportIssueLabel: "الإبلاغ عن مشكلة",
       shareLabel: "مشاركة",
       contactProviderLabel: "الاتصال بالمزود",
