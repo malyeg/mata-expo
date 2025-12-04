@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 
 import { ApiResponse } from "@/api/Api";
 import dealsApi, { Deal } from "@/api/dealsApi";
-import { conditionList, Item, swapTypes } from "@/api/itemsApi";
+import { conditionList, Item, swapList } from "@/api/itemsApi";
 import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
 import PressableOpacity from "@/components/core/PressableOpacity";
 import ItemDealsTab from "@/components/widgets/ItemDealsTab";
@@ -161,7 +161,7 @@ const ItemDetailsContent = ({
 
   const conditionName = conditionList.find(
     (i) => i.id === item?.condition?.type
-  )?.name;
+  )?.localizedName?.[locale];
 
   const handleToggleWishList = async () => {
     if (!user) return;
@@ -344,8 +344,8 @@ const ItemDetailsContent = ({
             item.swapOption.type === "swapWithAnother"
               ? (item.swapOption?.category as any)?.name ??
                 item.swapOption.category
-              : swapTypes.find((type) => type.id === item.swapOption.type)
-                  ?.name ?? item.swapOption.type
+              : swapList.find((type) => type.id === item.swapOption.type)
+                  ?.localizedName?.[locale] ?? item.swapOption.type
           }
           icon="handshake"
           contentStyle={(styles as any)[item.swapOption.type]}

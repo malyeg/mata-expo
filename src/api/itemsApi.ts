@@ -74,7 +74,13 @@ export const swapTypes = [
     name: "Swap with specific category item",
   },
 ];
-export const swapList = [
+interface SwapOption {
+  id: SwapType;
+  name: string;
+  localizedName: { [key: string]: string };
+}
+
+export const swapList: SwapOption[] = [
   {
     id: "free",
     name: "For Free",
