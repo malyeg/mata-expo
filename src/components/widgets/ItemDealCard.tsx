@@ -2,7 +2,7 @@ import { Deal } from "@/api/dealsApi";
 import itemsApi from "@/api/itemsApi";
 import { patterns } from "@/config/constants";
 import theme from "@/styles/theme";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/DateUtils";
 import { useRouter } from "expo-router";
 import React, { useCallback } from "react";
 import {
@@ -64,7 +64,7 @@ const ItemDealCard = ({ deal, style, imageStyle, onPress }: DealCardProps) => {
         )}
         {!!deal.timestamp && (
           <Text style={styles.date}>
-            {format(deal.timestamp, patterns.DATE)}
+            {formatDate(deal.timestamp, patterns.DATE)}
           </Text>
         )}
       </View>

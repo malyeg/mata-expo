@@ -245,8 +245,8 @@ class ItemsApi extends DatabaseApi<Item> {
     return undefined;
   }
 
-  blockItem(item: Item) {
-    const prom = functions.httpsCallable("blockItem")({ itemId: item.id });
+  blockItem(itemId: string) {
+    const prom = functions.httpsCallable("blockItem")({ itemId });
     Analytics.logEvent("block_item");
     return prom;
   }

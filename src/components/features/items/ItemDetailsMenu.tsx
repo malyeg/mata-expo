@@ -1,16 +1,23 @@
 import AppMenu from "@/components/menu/AppMenu";
+import { BlockItemMenuItem } from "@/components/menu/BlockItemMenuItem";
 import SendComplainItem from "@/components/menu/SendComplainMenuItem";
 import ShareMenuItem from "@/components/menu/ShareMenuItem";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-const ItemDetailsMenu = ({ itemId }: { itemId: string }) => {
+type ItemDetailsMenuProps = {
+  itemId: string;
+  itemName?: string;
+};
+
+const ItemDetailsMenu = ({ itemId, itemName }: ItemDetailsMenuProps) => {
   return (
     <>
       {/* <Text selectionColor={theme.colors.primary}>Menu</Text> */}
       <AppMenu>
         <ShareMenuItem link={`items/itemId`} />
         <SendComplainItem itemId={itemId} />
+        <BlockItemMenuItem itemId={itemId} itemName={itemName} />
         {/* <ProviderDetailsMenuItem branch={order.branch} />
       <CallProviderMenuItem branch={order.branch} />
       <ReportIssueMenuItem order={order} /> */}

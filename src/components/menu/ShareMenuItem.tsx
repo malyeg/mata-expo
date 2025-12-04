@@ -24,7 +24,7 @@ const ShareMenuItem = ({ link, ...props }: ShareMenuItemProps) => {
       icon={() => (
         <View
           style={{
-            backgroundColor: theme.colors.secondary,
+            backgroundColor: theme.colors.blue,
             justifyContent: "center",
             alignItems: "center",
             borderRadius: 15,

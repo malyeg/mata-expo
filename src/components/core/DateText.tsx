@@ -1,5 +1,5 @@
 import { patterns } from "@/config/constants";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/DateUtils";
 import React from "react";
 import { StyleProp, TextStyle } from "react-native";
 import Text from "./Text";
@@ -9,7 +9,7 @@ interface DateTextProps {
   style?: StyleProp<TextStyle>;
 }
 const DateText = ({ pattern = patterns.DATE, date, style }: DateTextProps) => {
-  return <Text style={style}>{format(date, pattern)}</Text>;
+  return <Text style={style}>{formatDate(date, pattern)}</Text>;
 };
 
 export default React.memo(DateText);

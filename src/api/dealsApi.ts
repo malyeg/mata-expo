@@ -1,3 +1,4 @@
+import { functions } from "../firebase";
 import {
   DataSearchable,
   Entity,
@@ -10,7 +11,6 @@ import { PublicUser } from "./authApi";
 import { DatabaseApi } from "./DatabaseApi";
 import { Item } from "./itemsApi";
 import { RatingWeight } from "./ratingApi";
-
 export type DealStatus =
   | "new"
   | "accepted"
@@ -54,9 +54,10 @@ class DealsApi extends DatabaseApi<Deal> {
     return this.getAll(query);
   }
   async updateDealMessagesRecieved(dealId: string, messages: string[]) {
-    const prom = await this.functions.httpsCallable(
-      "updateDealMessagesRecieved"
-    )({ dealId, messages });
+    const prom = await functions.httpsCallable("updateDealMessagesRecieved")({
+      dealId,
+      messages,
+    });
     Analytics.logEvent("update_deal_messages");
     return prom;
   }
@@ -135,7 +136,7 @@ class DealsApi extends DatabaseApi<Deal> {
   };
 
   acceptOffer = async (dealId: string, rejectOtherOffers: boolean) => {
-    const prom = await this.functions.httpsCallable("acceptOffer")({
+    const prom = await functions.httpsCallable("acceptOffer")({
       dealId,
       rejectOtherOffers,
     });
@@ -144,7 +145,7 @@ class DealsApi extends DatabaseApi<Deal> {
   };
 
   rejectOffer = async (deal: Deal, reason: string) => {
-    const prom = await this.functions.httpsCallable("rejectOffer")({
+    const prom = await functions.httpsCallable("rejectOffer")({
       dealId: deal.id,
       reason,
     });
@@ -155,7 +156,7 @@ class DealsApi extends DatabaseApi<Deal> {
   };
 
   cancelOffer = async (deal: Deal, reason: string = "other") => {
-    const prom = await this.functions.httpsCallable("cancelOffer")({
+    const prom = await functions.httpsCallable("cancelOffer")({
       dealId: deal.id,
       reason,
     });
@@ -166,7 +167,7 @@ class DealsApi extends DatabaseApi<Deal> {
   };
   closeOffer = async (deal: Deal) => {
     // return this.closeOffer
-    const result = await this.functions.httpsCallable("closeOffer")({
+    const result = await functions.httpsCallable("closeOffer")({
       dealId: deal.id,
     });
     Analytics.logEvent("close_deal", {
@@ -177,7 +178,7 @@ class DealsApi extends DatabaseApi<Deal> {
   };
 
   rateDeal = (deal: Deal, targetUserId: string, dealRating: DealRating) => {
-    const prom = this.functions.httpsCallable("rateDeal")({
+    const prom = functions.httpsCallable("rateDeal")({
       dealId: deal.id,
       targetUserId,
       dealRating,

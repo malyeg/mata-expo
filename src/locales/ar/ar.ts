@@ -37,6 +37,7 @@ export default {
       contactProviderLabel: "الاتصال بالمزود",
       providerDetailsLabel: "تفاصيل المزود",
       sendComplainLabel: "إرسال شكوى",
+      blockItemLabel: "حظر المنتج",
     },
     picker: {
       pickerPlaceholder: "اختر",
@@ -539,6 +540,8 @@ export default {
     },
   },
   dealDetailsScreen: {
+    outgoingDealTitle: "صفقة صادرة",
+    incomingDealTitle: "صفقة واردة",
     approveBtnTitle: "متابعة",
     rejectBtnTitle: "رفض",
     closeBtnTitle: "تمت الصفقة",

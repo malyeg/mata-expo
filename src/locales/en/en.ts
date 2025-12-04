@@ -38,6 +38,7 @@ export default {
       contactProviderLabel: "Contact Provider",
       providerDetailsLabel: "Provider Details",
       sendComplainLabel: "Send Complain",
+      blockItemLabel: "Block Item",
     },
     picker: {
       pickerPlaceholder: "Select",
@@ -551,6 +552,8 @@ export default {
     },
   },
   dealDetailsScreen: {
+    outgoingDealTitle: "Outgoing deal",
+    incomingDealTitle: "Incoming deal",
     approveBtnTitle: "Proceed",
     rejectBtnTitle: "Reject",
     closeBtnTitle: "Deal Done",

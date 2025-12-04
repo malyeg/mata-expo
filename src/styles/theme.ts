@@ -29,6 +29,7 @@ const colors = {
   white: "white",
   yellow: "yellow",
   grey: "#b2b2b2",
+  darkGrey: "#727272",
   lightGrey: "#f3f3f4",
   salmon: "#EC6565",
   rose: "#ffe7e5",
@@ -40,6 +41,7 @@ const colors = {
   error: "#CC3333",
   pictonBlue: "#30c6e0",
   lightPictonBlue: "#b6f0fa",
+  blue: "#4CD964",
 };
 
 // // type ColorKeys = keyof typeof Color;

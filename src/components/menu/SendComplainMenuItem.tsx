@@ -27,7 +27,7 @@ const SendComplainItem = ({ itemId, ...props }: MenuItemProps) => {
       icon={() => (
         <View
           style={{
-            backgroundColor: theme.colors.secondary,
+            backgroundColor: theme.colors.orange,
             justifyContent: "center",
             alignItems: "center",
             borderRadius: 15,

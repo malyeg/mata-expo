@@ -53,7 +53,8 @@ const DealDetailsScreen = () => {
 
   const { requestInAppReview } = useAppReview();
 
-  const title = user.id === deal?.userId ? "Outgoing deal" : "Incoming deal";
+  const title =
+    user.id === deal?.userId ? t("outgoingDealTitle") : t("incomingDealTitle");
   useEffect(() => {
     const loadData = (d: Deal) => {
       if (!d) {
@@ -71,7 +72,8 @@ const DealDetailsScreen = () => {
         }
       }
       let menuItems: MenuItem[] = [];
-      const title = user.id === d.userId ? "Outgoing deal" : "Incoming deal";
+      const title =
+        user.id === d.userId ? t("outgoingDealTitle") : t("incomingDealTitle");
       if (d.status === "accepted") {
         menuItems = [
           {
