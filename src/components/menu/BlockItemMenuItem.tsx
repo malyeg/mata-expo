@@ -32,13 +32,16 @@ const BlockItemMenuItem = ({
   const router = useRouter();
 
   const handleBlockItem = async () => {
-    closeMenu?.();
     show({
       header: t("blockItemConfirmation.header"),
       body: t("blockItemConfirmation.body", {
         params: { itemName: itemName ?? "" },
       }),
+      cancelCallback: () => {
+        closeMenu?.();
+      },
       confirmCallback: async () => {
+        closeMenu?.();
         try {
           const item = await request(() => itemsApi.getById(itemId));
           if (item) {
@@ -89,4 +92,3 @@ const BlockItemMenuItem = ({
 };
 
 export { BlockItemMenuItem };
-

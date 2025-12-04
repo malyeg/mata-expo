@@ -649,6 +649,8 @@ export default {
       header: "تحذير",
       body: "لديك صفقات معلقة على هذا المنتج، يرجى إغلاقها أولاً",
     },
+    addItemLinkTitle: "إضافة منتج",
+    addNewItemLinkTitle: "إضافة منتج جديد",
   },
   ItemsScreen: {
     filterIcon: {

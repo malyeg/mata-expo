@@ -1,5 +1,4 @@
 import AppMenu from "@/components/menu/AppMenu";
-import { BlockItemMenuItem } from "@/components/menu/BlockItemMenuItem";
 import SendComplainItem from "@/components/menu/SendComplainMenuItem";
 import ShareMenuItem from "@/components/menu/ShareMenuItem";
 import React from "react";
@@ -17,7 +16,7 @@ const ItemDetailsMenu = ({ itemId, itemName }: ItemDetailsMenuProps) => {
       <AppMenu>
         <ShareMenuItem link={`items/itemId`} />
         <SendComplainItem itemId={itemId} />
-        <BlockItemMenuItem itemId={itemId} itemName={itemName} />
+        {/* <BlockItemMenuItem itemId={itemId} itemName={itemName} /> */}
         {/* <ProviderDetailsMenuItem branch={order.branch} />
       <CallProviderMenuItem branch={order.branch} />
       <ReportIssueMenuItem order={order} /> */}

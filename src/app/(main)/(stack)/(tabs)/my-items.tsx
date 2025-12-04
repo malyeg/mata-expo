@@ -48,12 +48,8 @@ const MyItemsScreen = () => {
   );
   const NoData = (
     <NoDataFound style={styles.card} title={t("noData.title")}>
-      <Button
-        type="link"
-        // style={[sharedStyles.link]}
-        onPress={openAddItemModal}
-      >
-        <Text style={styles.noDataLink}>Add new Item</Text>
+      <Button type="link" onPress={openAddItemModal}>
+        <Text style={styles.noDataLink}>{t("addNewItemLinkTitle")}</Text>
       </Button>
     </NoDataFound>
   );

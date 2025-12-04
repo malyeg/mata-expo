@@ -661,6 +661,7 @@ export default {
       body: "You have pending deals on this item, please close first ",
     },
     addItemLinkTitle: "Add Item",
+    addNewItemLinkTitle: "Add new Item",
   },
   ItemsScreen: {
     filterIcon: {
