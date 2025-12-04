@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingTop: 20,
+    backgroundColor: theme.colors.white,
   },
   datalist: {
     flex: 1,
