@@ -1,35 +1,23 @@
 import { Icon, Text } from "@/components/core";
 import Error from "@/components/form/Error";
+import { pickerInputStyles } from "@/components/form/pickerInputStyles";
 import useController from "@/hooks/useController";
 import useLocale from "@/hooks/useLocale";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { Entity } from "@/types/DataTypes";
-import { LoggerFactory } from "@/utils/logger";
 import React, {
   forwardRef,
   useCallback,
-  useEffect,
   useImperativeHandle,
+  useMemo,
+  useState,
 } from "react";
-import {
-  FlatListProps,
-  Pressable,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
-import { useImmerReducer } from "use-immer";
-import MultiSelectPickerModal, {
-  MultiSelectPickerModalProps,
-} from "./MultiSelectPickerModal";
-import MultiSelectPickerReducer, {
-  MultiSelectPickerState,
-} from "./MutliSelectPickerReducer";
+import { FlatListProps, Pressable, View, ViewStyle } from "react-native";
+import MultiSelectPickerModal from "./MultiSelectPickerModal";
 
 export interface MultiSelectPickerProps<T extends Entity> {
   name: string;
   items: T[];
-  position?: MultiSelectPickerModalProps<T>["position"];
   placeholder?: string;
   modalTitle?: string;
   label?: string;
@@ -37,247 +25,162 @@ export interface MultiSelectPickerProps<T extends Entity> {
   defaultValue?: string[];
   searchable?: boolean;
   searchPlaceholder?: string;
-  modalStyle?: ViewStyle;
-  showHeaderLeft?: boolean;
-  onSelectClose?: boolean;
   disabled?: boolean;
   control: any;
   showReset?: boolean;
-  renderItem?: (info: {
-    item: Entity;
-    index: number;
-    selectedValue?: string;
-
-    onCloseModal: () => void;
-    onItemChange: (value: Entity, selected?: boolean) => void;
-  }) => React.ReactElement | null;
-  multiLevel?: boolean;
   hideLabel?: boolean;
   keyboardShouldPersistTaps?: FlatListProps<Entity>["keyboardShouldPersistTaps"];
 }
 
-const logger = LoggerFactory.getLogger("MultiSelectPicker");
-const MultiSelectPicker = forwardRef(
-  <T extends Entity>(
-    {
-      name,
-      items,
-      placeholder,
-      label,
-      defaultValue,
-      disabled = false,
-      control,
-      modalTitle,
-      renderItem,
-      showReset,
-      multiLevel = false,
-      keyboardShouldPersistTaps,
-      hideLabel,
-      ...props
-    }: MultiSelectPickerProps<T>,
-    ref
-  ) => {
-    const { t } = useLocale("common");
+const MultiSelectPicker = forwardRef(function MultiSelectPicker<
+  T extends Entity
+>(
+  {
+    name,
+    items,
+    placeholder,
+    label,
+    defaultValue,
+    disabled = false,
+    control,
+    modalTitle,
+    showReset,
+    searchable,
+    searchPlaceholder,
+    keyboardShouldPersistTaps,
+    hideLabel,
+    style,
+  }: MultiSelectPickerProps<T>,
+  ref: React.Ref<{ open: () => void; close: () => void }>
+) {
+  const { t, locale } = useLocale("common");
+  const [isModalVisible, setModalVisible] = useState(false);
 
-    const { field, formState } = useController({
-      control,
-      defaultValue: defaultValue ?? [],
-      name,
-    });
+  const { field, formState } = useController({
+    control,
+    defaultValue: defaultValue ?? [],
+    name,
+  });
 
-    const [state, dispatch] = useImmerReducer(MultiSelectPickerReducer, {
-      items,
-      listItems: [...items],
-      defaultItems: defaultValue
-        ? items.filter((item) => defaultValue?.includes(item.id.toString()))
-        : undefined,
-      isModalVisible: false,
-    } as MultiSelectPickerState);
-    const { selectedItems, isModalVisible } = state;
+  // Derive selected items from field value
+  const selectedItems = useMemo(() => {
+    if (!field.value || !Array.isArray(field.value)) {
+      return [];
+    }
+    return items.filter((item) =>
+      (field.value as string[]).includes(item.id?.toString())
+    );
+  }, [field.value, items]);
 
-    useImperativeHandle(ref, () => ({
-      open() {
-        dispatch({ type: "SET_MODAL", isVisible: true });
-      },
-      close() {
-        dispatch({ type: "SET_MODAL", isVisible: true });
-      },
-    }));
+  useImperativeHandle(ref, () => ({
+    open() {
+      setModalVisible(true);
+    },
+    close() {
+      setModalVisible(false);
+    },
+  }));
 
-    useEffect(() => {
-      dispatch({
-        type: "LOAD_ITEMS",
-        items,
-        defaultValue,
-      });
-    }, [defaultValue, dispatch, items]);
+  const openModal = useCallback(() => {
+    if (!disabled) {
+      setModalVisible(true);
+    }
+  }, [disabled]);
 
-    useEffect(() => {
-      const updatedItems = items.filter(
-        (i) => !!field.value && field.value.includes(i?.id?.toString())
-      );
-      dispatch({
-        type: "SELECT_ITEMS",
-        items: updatedItems,
-      });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [field.value]);
+  const closeModal = useCallback(() => {
+    setModalVisible(false);
+  }, []);
 
-    const onSearch = (searchText: string) => {
-      dispatch({
-        type: "SEARCH_ITEMS",
-        searchText,
-      });
-    };
-
-    const onItemChange = useCallback((items: Entity[]) => {
+  const onSelectItems = useCallback(
+    (items: Entity[]) => {
       field.onChange(items.map((i) => i.id));
       closeModal();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    },
+    [field, closeModal]
+  );
 
-    const openModal = useCallback(() => {
-      !disabled && dispatch({ type: "SET_MODAL", isVisible: true });
-    }, [disabled, dispatch]);
+  const onResetHandler = useCallback(() => {
+    field.onChange([]);
+  }, [field]);
 
-    const closeModal = useCallback(() => {
-      dispatch({ type: "SET_MODAL", isVisible: false });
-    }, [dispatch]);
+  // Display text for selected items
+  const displayText = useMemo(() => {
+    if (selectedItems.length === 0) {
+      return placeholder ?? t("picker.pickerPlaceholder");
+    }
+    return selectedItems
+      .map((item) => item.localizedName?.[locale] ?? item.name ?? item.id)
+      .join(", ");
+  }, [selectedItems, placeholder, t, locale]);
 
-    const onResetHandler = useCallback(() => {
-      field.onChange([]);
-    }, [field]);
+  const hasError = !!formState.errors[name];
+  const hasValue = selectedItems.length > 0;
 
-    return (
-      <>
-        <View style={[styles.container, props.style]}>
-          {!hideLabel && (
-            <Text body3 style={styles.label}>
-              {field.value && field.value?.length > 0
-                ? label ?? placeholder
-                : ""}
-            </Text>
-          )}
-          <View
-            style={[
-              styles.pickerContainer,
-              styles.textInputBorder,
-              formState.errors[name]
-                ? styles.textInputBorderError
-                : styles.textInputBorder,
-            ]}
+  return (
+    <>
+      <View style={[pickerInputStyles.container, style]}>
+        {!hideLabel && (
+          <Text body3 style={pickerInputStyles.label}>
+            {hasValue ? label ?? placeholder : ""}
+          </Text>
+        )}
+        <View
+          style={[
+            pickerInputStyles.pickerContainer,
+            pickerInputStyles.textInputBorder,
+            hasError && pickerInputStyles.textInputBorderError,
+          ]}
+        >
+          <Pressable
+            onPress={openModal}
+            style={pickerInputStyles.inputContainer}
           >
-            <Pressable onPress={openModal} style={styles.inputContainer}>
-              <Text
-                style={[
-                  styles.inputText,
-                  selectedItems?.length! > 0 ? {} : styles.placeholderText,
-                ]}
-                numberOfLines={1}
-              >
-                {selectedItems && selectedItems.length > 0
-                  ? selectedItems?.map((s) => s.name).join(", ")
-                  : placeholder ?? t("picker.pickerPlaceholder")}
-              </Text>
-              {!disabled && (
-                <Icon
-                  name="chevron-down"
-                  size={30}
-                  color={theme.colors.green}
-                  style={styles.pickerIcon}
-                />
-              )}
-            </Pressable>
-            {showReset && field.value && field.value.length > 0 && (
+            <Text
+              style={[
+                pickerInputStyles.inputText,
+                !hasValue && pickerInputStyles.placeholderText,
+              ]}
+              numberOfLines={1}
+            >
+              {displayText}
+            </Text>
+            {!disabled && (
               <Icon
-                name="close"
-                size={20}
+                name="chevron-down"
+                size={30}
                 color={theme.colors.green}
-                style={styles.resetIcon}
-                onPress={onResetHandler}
+                style={pickerInputStyles.pickerIcon}
               />
             )}
-          </View>
-
-          {!!formState.errors[name] && <Error error={formState.errors[name]} />}
+          </Pressable>
+          {showReset && hasValue && (
+            <Icon
+              name="close"
+              size={20}
+              color={theme.colors.green}
+              style={pickerInputStyles.resetIcon}
+              onPress={onResetHandler}
+            />
+          )}
         </View>
-        <MultiSelectPickerModal
-          {...props}
-          headerTitle={modalTitle ?? placeholder}
-          items={items as Entity[]}
-          defaultValues={selectedItems?.map((i) => i.id)}
-          isModalVisible={isModalVisible ?? false}
-          onCloseModal={closeModal}
-          renderItem={renderItem}
-          multiLevel={multiLevel}
-          onSearch={onSearch}
-          onSelectItems={onItemChange}
-          keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-        />
-      </>
-    );
-  }
-);
+
+        {hasError && <Error error={formState.errors[name]} />}
+      </View>
+      <MultiSelectPickerModal
+        headerTitle={modalTitle ?? placeholder}
+        items={items}
+        defaultValues={selectedItems.map((i) => i.id)}
+        isModalVisible={isModalVisible}
+        onCloseModal={closeModal}
+        onSelectItems={onSelectItems}
+        searchable={searchable}
+        searchPlaceholder={searchPlaceholder}
+        keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+      />
+    </>
+  );
+});
 
 MultiSelectPicker.displayName = "MultiSelectPicker";
-
-const styles = StyleSheet.create({
-  container: {
-    // height: 100,
-  },
-  pickerContainer: {
-    // flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: 'grey',
-    // justifyContent: 'flex-start',
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    height: 40,
-    justifyContent: "space-between",
-    alignItems: "center",
-    // backgroundColor: 'red',
-  },
-
-  inputText: {
-    // flex: 1,
-  },
-  placeholderText: {
-    color: theme.colors.grey,
-  },
-  label: {
-    color: theme.colors.grey,
-  },
-
-  searchInput: {
-    marginHorizontal: -15,
-  },
-  noData: {
-    flex: 0.75,
-  },
-  separator: {
-    height: 2,
-    backgroundColor: theme.colors.lightGrey,
-  },
-  textInputBorder: {
-    ...theme.styles.inputBorder,
-  },
-  textInputBorderError: {
-    borderBottomColor: theme.colors.salmon,
-    borderBottomWidth: 1,
-  },
-  pickerIcon: {
-    marginRight: -6,
-    flexShrink: 1,
-    flexGrow: 0,
-  },
-  resetIcon: {
-    flexGrow: 0,
-    flexShrink: 1,
-    marginLeft: 10,
-  },
-});
 
 export default React.memo(MultiSelectPicker);

@@ -5,19 +5,14 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import {
-  FlatListProps,
-  Pressable,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
+import { FlatListProps, Pressable, View, ViewStyle } from "react-native";
 import useController from "../../hooks/useController";
 import useLocale from "../../hooks/useLocale";
 import { theme } from "../../styles/theme";
 import { Entity } from "../../types/DataTypes";
 import { Icon, Text } from "../core";
 import Error from "./Error";
+import { pickerInputStyles } from "./pickerInputStyles";
 import PickerModal, { PickerModalProps } from "./PickerModal";
 
 export interface PickerProps<T extends Entity> {
@@ -81,7 +76,7 @@ const Picker = forwardRef(function Picker<T extends Entity>(
       setModalVisible(false);
     },
   }));
-  const { t } = useLocale("common");
+  const { t, locale } = useLocale("common");
   const [isModalVisible, setModalVisible] = useState(false);
 
   const { field, formState } = useController({
@@ -117,30 +112,29 @@ const Picker = forwardRef(function Picker<T extends Entity>(
     [field.value, items]
   );
 
-  const { locale } = useLocale();
+  const hasError = !!formState.errors[name];
+  const hasValue = !!field.value;
 
   return (
     <>
-      <View style={[styles.container, props.style]}>
+      <View style={[pickerInputStyles.container, props.style]}>
         {!hideLabel && (
-          <Text body3 style={styles.label}>
-            {field.value ? label ?? placeholder : ""}
+          <Text body3 style={pickerInputStyles.label}>
+            {hasValue ? label ?? placeholder : ""}
           </Text>
         )}
         <View
           style={[
-            styles.pickerContainer,
-            styles.textInputBorder,
-            formState.errors[name]
-              ? styles.textInputBorderError
-              : styles.textInputBorder,
+            pickerInputStyles.pickerContainer,
+            pickerInputStyles.textInputBorder,
+            hasError && pickerInputStyles.textInputBorderError,
           ]}
         >
-          <Pressable onPress={openModal} style={styles.inputContainer}>
+          <Pressable onPress={openModal} style={pickerInputStyles.inputContainer}>
             <Text
               style={[
-                styles.inputText,
-                selectedItem?.name ? {} : styles.placeholderText,
+                pickerInputStyles.inputText,
+                !selectedItem?.name && pickerInputStyles.placeholderText,
               ]}
               numberOfLines={1}
             >
@@ -154,22 +148,22 @@ const Picker = forwardRef(function Picker<T extends Entity>(
                 name="chevron-down"
                 size={30}
                 color={theme.colors.green}
-                style={styles.pickerIcon}
+                style={pickerInputStyles.pickerIcon}
               />
             )}
           </Pressable>
-          {showReset && !!field.value && (
+          {showReset && hasValue && (
             <Icon
               name="close"
               size={20}
               color={theme.colors.green}
-              style={styles.resetIcon}
+              style={pickerInputStyles.resetIcon}
               onPress={onResetHandler}
             />
           )}
         </View>
 
-        {!!formState.errors[name] && <Error error={formState.errors[name]} />}
+        {hasError && <Error error={formState.errors[name]} />}
       </View>
       <PickerModal
         {...props}
@@ -185,67 +179,6 @@ const Picker = forwardRef(function Picker<T extends Entity>(
       />
     </>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    // height: 100,
-  },
-  pickerContainer: {
-    // flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    // backgroundColor: 'grey',
-    // justifyContent: 'flex-start',
-  },
-  inputContainer: {
-    flex: 1,
-    flexDirection: "row",
-    height: 40,
-    justifyContent: "space-between",
-    alignItems: "center",
-    // backgroundColor: 'red',
-  },
-
-  inputText: {
-    // flex: 1,
-    // flexGrow: 1,
-    // color: theme.colors.grey,
-  },
-  placeholderText: {
-    color: theme.colors.grey,
-  },
-  label: {
-    color: theme.colors.grey,
-  },
-
-  searchInput: {
-    marginHorizontal: -15,
-  },
-  noData: {
-    flex: 0.75,
-  },
-  separator: {
-    height: 2,
-    backgroundColor: theme.colors.lightGrey,
-  },
-  textInputBorder: {
-    ...theme.styles.inputBorder,
-  },
-  textInputBorderError: {
-    borderBottomColor: theme.colors.salmon,
-    borderBottomWidth: 1,
-  },
-  pickerIcon: {
-    marginRight: -6,
-    flexShrink: 1,
-    flexGrow: 0,
-  },
-  resetIcon: {
-    flexGrow: 0,
-    flexShrink: 1,
-    marginLeft: 10,
-  },
 });
 
 export default React.memo(Picker);

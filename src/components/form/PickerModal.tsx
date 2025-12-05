@@ -1,28 +1,20 @@
+import { usePickerSearch } from "@/hooks/usePickerSearch";
 import useLocale from "@/hooks/useLocale";
-import { theme } from "@/styles/theme";
 import { Entity, Nestable } from "@/types/DataTypes";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  FlatList,
-  FlatListProps,
-  StyleSheet,
-  View,
-  ViewStyle,
-} from "react-native";
+import { FlatList, FlatListProps, StyleSheet, View } from "react-native";
 import { Modal } from "../core";
 import SearchInput from "../form/SearchInput";
 import NoDataFound from "../widgets/NoDataFound";
 import PathList from "../widgets/PathList";
+import { pickerStyles } from "../widgets/picker/pickerStyles";
 import PickerItem from "./PickerItem";
 
 export interface PickerModalProps<T extends Entity & Nestable> {
   items: T[];
   isModalVisible: boolean;
-  style?: ViewStyle;
   onItemChange: (item: Entity) => void;
   onCloseModal: () => void;
-  position?: "bottom" | "full";
-  showHeaderLeft?: boolean;
   headerTitle?: string;
   defaultValue?: string;
   searchPlaceholder?: string;
@@ -37,6 +29,7 @@ export interface PickerModalProps<T extends Entity & Nestable> {
     onItemChange: (value: Entity, selected?: boolean) => void;
   }) => React.ReactElement | null;
 }
+
 const PickerModal = <T extends Entity & Nestable>({
   items,
   isModalVisible,
@@ -51,53 +44,37 @@ const PickerModal = <T extends Entity & Nestable>({
   renderItem,
 }: PickerModalProps<T>) => {
   const { t } = useLocale("common");
-
-  const [searchValue, setSearchValue] = useState("");
   const [path, setPath] = useState<T[]>([]);
 
-  // Reset state when items change
-  useEffect(() => {
-    setSearchValue("");
-    setPath([]);
-  }, [items]);
-
-  // Derive listItems from items, path, and searchValue
-  const listItems = useMemo(() => {
+  // Filter items by hierarchy level first (for multiLevel support)
+  const hierarchyItems = useMemo(() => {
+    if (!multiLevel) {
+      return items;
+    }
     const currentParent = path[path.length - 1];
+    return currentParent
+      ? items.filter((i) => i.parent === currentParent.id)
+      : items.filter((i) => i.level === 0);
+  }, [items, path, multiLevel]);
 
-    // Filter by hierarchy level
-    let filtered: T[];
-    if (multiLevel) {
-      filtered = currentParent
-        ? items.filter((i) => i.parent === currentParent.id)
-        : items.filter((i) => i.level === 0);
-    } else {
-      filtered = [...items];
+  // Use search hook for debounced search with localized name support
+  const { searchText, filteredItems, setSearchText, clearSearch } =
+    usePickerSearch({
+      items: hierarchyItems,
+      debounceMs: 300,
+    });
+
+  // Reset state when items change or modal closes
+  useEffect(() => {
+    clearSearch();
+    setPath([]);
+  }, [items, clearSearch]);
+
+  useEffect(() => {
+    if (!isModalVisible) {
+      clearSearch();
     }
-
-    // Apply search filter
-    if (searchValue.trim()) {
-      const search = searchValue.toLowerCase();
-      filtered = filtered.filter((item) => {
-        // Check all localized names
-        const localizedNames = item.localizedName
-          ? Object.values(item.localizedName)
-          : [];
-        const matchesLocalized = localizedNames.some((name) =>
-          name?.toLowerCase().includes(search)
-        );
-        // Check regular name
-        const matchesName = item.name?.toLowerCase().includes(search);
-        return matchesLocalized || matchesName;
-      });
-    }
-
-    return filtered;
-  }, [items, path, searchValue, multiLevel]);
-
-  const searchHandler = useCallback((value: string) => {
-    setSearchValue(value);
-  }, []);
+  }, [isModalVisible, clearSearch]);
 
   const onItemSelect = useCallback(
     (i: T) => {
@@ -109,10 +86,10 @@ const PickerModal = <T extends Entity & Nestable>({
       } else {
         // Drill into children
         setPath((prev) => [...prev, i]);
-        setSearchValue("");
+        clearSearch();
       }
     },
-    [multiLevel, onCloseModal, onItemChange, renderItem]
+    [multiLevel, onCloseModal, onItemChange, renderItem, clearSearch]
   );
 
   const handleItemChange = useCallback(
@@ -122,33 +99,41 @@ const PickerModal = <T extends Entity & Nestable>({
     [onItemSelect]
   );
 
-  const renderItemHandler = ({ item, index }: { item: T; index: number }) => {
-    if (renderItem) {
-      return renderItem({
-        item,
-        index,
-        onItemChange: handleItemChange,
-        onCloseModal,
-        selectedValue: defaultValue?.toString(),
-      });
-    }
-    return (
-      <PickerItem
-        item={item}
-        onChange={handleItemChange}
-        selected={item.id.toString() === defaultValue?.toString()}
-        chevronStyle={
-          multiLevel && item.level === 0 ? styles.chevron : undefined
-        }
-      />
-    );
-  };
+  const renderItemHandler = useCallback(
+    ({ item, index }: { item: T; index: number }) => {
+      if (renderItem) {
+        return renderItem({
+          item,
+          index,
+          onItemChange: handleItemChange,
+          onCloseModal,
+          selectedValue: defaultValue?.toString(),
+        });
+      }
+      return (
+        <PickerItem
+          item={item}
+          onChange={handleItemChange}
+          selected={item.id.toString() === defaultValue?.toString()}
+          chevronStyle={
+            multiLevel && item.level === 0 ? pickerStyles.chevron : undefined
+          }
+        />
+      );
+    },
+    [renderItem, handleItemChange, onCloseModal, defaultValue, multiLevel]
+  );
 
   const listEmptyComponent = useCallback(
-    () => <NoDataFound style={styles.noData} />,
+    () => <NoDataFound style={pickerStyles.noData} />,
     []
   );
-  const separatorComponent = () => <View style={styles.separator} />;
+
+  const separatorComponent = useCallback(
+    () => <View style={pickerStyles.separator} />,
+    []
+  );
+
   const getItemLayout = useCallback(
     (_data: ArrayLike<T> | null | undefined, index: number) => ({
       length: 60,
@@ -166,15 +151,22 @@ const PickerModal = <T extends Entity & Nestable>({
     }
   }, [onCloseModal, path.length]);
 
-  const keyExtractor = (i: T) => {
-    return i.id;
-  };
+  const keyExtractor = useCallback((i: T) => i.id, []);
 
-  const showPathList = !!items && !!multiLevel && !!searchValue;
+  const showPathList = !!items && !!multiLevel && !!searchText;
 
-  return items ? (
+  const contentContainerStyle = useMemo(
+    () => (filteredItems.length === 0 ? pickerStyles.noData : undefined),
+    [filteredItems.length]
+  );
+
+  if (!items) {
+    return null;
+  }
+
+  return (
     <Modal
-      style={styles.modal}
+      style={pickerStyles.modal}
       isVisible={isModalVisible}
       swipeDirection={["down"]}
       showHeaderNav
@@ -185,91 +177,42 @@ const PickerModal = <T extends Entity & Nestable>({
     >
       {searchable && (
         <SearchInput
-          style={styles.searchInput}
-          value={searchValue}
+          style={pickerStyles.searchInput}
+          value={searchText}
           placeholder={searchPlaceholder ?? t("picker.searchPlaceholder")}
-          onChangeText={searchHandler}
+          onChangeText={setSearchText}
         />
       )}
-      {showPathList && searchValue ? (
+      {showPathList ? (
         <PathList
           data={items}
-          searchText={searchValue}
+          searchText={searchText}
           onSelect={onItemSelect}
           ListEmptyComponent={listEmptyComponent}
         />
       ) : (
         <FlatList
-          data={listItems as T[]}
+          data={filteredItems as T[]}
           showsVerticalScrollIndicator={false}
           renderItem={renderItemHandler}
           keyExtractor={keyExtractor}
           ListEmptyComponent={listEmptyComponent}
           ItemSeparatorComponent={separatorComponent}
           keyboardShouldPersistTaps={keyboardShouldPersistTaps}
-          style={styles.flatList}
-          contentContainerStyle={
-            !!items && items.length === 0 ? styles.noData : undefined
-          }
+          style={pickerStyles.flatList}
+          contentContainerStyle={contentContainerStyle}
           getItemLayout={getItemLayout}
         />
       )}
     </Modal>
-  ) : null;
+  );
 };
 
+// Keep local styles reference for backward compatibility
 const styles = StyleSheet.create({
-  modal: {
-    // margin: 0,
-    // flex: 1,
-    // justifyContent: 'flex-end',
-  },
-  bottomModal: {
-    flex: 0.5,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: 30,
-    paddingTop: 30,
-    borderTopStartRadius: 50,
-    borderTopEndRadius: 50,
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalNav: {
-    left: 0,
-    position: "absolute",
-    marginHorizontal: -20,
-  },
-  modalTitle: {
-    ...theme.styles.scale.h6,
-    fontWeight: theme.fontWeight.semiBold,
-    color: theme.colors.salmon,
-    alignSelf: "center",
-    marginVertical: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.white,
-    paddingHorizontal: 30,
-  },
-  searchInput: {
-    // marginHorizontal: -15,
-  },
-  flatList: {
-    flex: 1,
-  },
-  noData: {
-    flex: 0.75,
-  },
-  separator: {
-    height: 2,
-    backgroundColor: theme.colors.lightGrey,
-  },
-  chevron: {
-    color: theme.colors.green,
-  },
+  ...pickerStyles,
 });
+
+export { styles };
 
 export default React.memo(PickerModal);
