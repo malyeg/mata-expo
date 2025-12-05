@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    // flexWrap: 'wrap',
+    gap: 3,
     alignItems: "center",
     marginLeft: 25,
   },

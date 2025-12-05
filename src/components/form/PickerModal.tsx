@@ -1,7 +1,7 @@
 import useLocale from "@/hooks/useLocale";
-import theme from "@/styles/theme";
+import { theme } from "@/styles/theme";
 import { Entity, Nestable } from "@/types/DataTypes";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   FlatListProps,
@@ -9,12 +9,10 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { useImmerReducer } from "use-immer";
 import { Modal } from "../core";
 import SearchInput from "../form/SearchInput";
 import NoDataFound from "../widgets/NoDataFound";
 import PathList from "../widgets/PathList";
-import pickerReducer, { PickerState } from "../widgets/picker/pickerReducer";
 import PickerItem from "./PickerItem";
 
 export interface PickerModalProps<T extends Entity & Nestable> {
@@ -39,7 +37,7 @@ export interface PickerModalProps<T extends Entity & Nestable> {
     onItemChange: (value: Entity, selected?: boolean) => void;
   }) => React.ReactElement | null;
 }
-const PickerModal = <T extends Entity>({
+const PickerModal = <T extends Entity & Nestable>({
   items,
   isModalVisible,
   headerTitle,
@@ -52,80 +50,76 @@ const PickerModal = <T extends Entity>({
   multiLevel = false,
   renderItem,
 }: PickerModalProps<T>) => {
-  const isFirstRun = useRef(true);
-
   const { t } = useLocale("common");
-  const foundItem = useMemo(
-    () =>
-      defaultValue
-        ? items.find((item) => {
-            return item.id.toString() === defaultValue?.toString();
-          })
-        : undefined,
-    [defaultValue, items]
-  );
 
-  const initialState: PickerState = {
-    items,
-    listItems: multiLevel
-      ? items.filter((i) => (i as unknown as Nestable).level === 0)
-      : [...items],
-    defaultItem: foundItem,
-    isModalVisible: isModalVisible,
-    path: [],
-    multiLevel,
-  };
+  const [searchValue, setSearchValue] = useState("");
+  const [path, setPath] = useState<T[]>([]);
 
-  const [state, dispatch] = useImmerReducer(pickerReducer, initialState);
-  const { listItems, path, searchValue } = state;
-
+  // Reset state when items change
   useEffect(() => {
-    // init();
-    if (isFirstRun.current) {
-      // if (false) {
-      isFirstRun.current = false;
-      return;
-    }
-
-    dispatch({
-      type: "LOAD_ITEMS",
-      items,
-      defaultValue,
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setSearchValue("");
+    setPath([]);
   }, [items]);
 
-  const searchHandler = useCallback(
-    (value: string) => {
-      dispatch({
-        type: "SEARCH_ITEMS",
-        search: value,
+  // Derive listItems from items, path, and searchValue
+  const listItems = useMemo(() => {
+    const currentParent = path[path.length - 1];
+
+    // Filter by hierarchy level
+    let filtered: T[];
+    if (multiLevel) {
+      filtered = currentParent
+        ? items.filter((i) => i.parent === currentParent.id)
+        : items.filter((i) => i.level === 0);
+    } else {
+      filtered = [...items];
+    }
+
+    // Apply search filter
+    if (searchValue.trim()) {
+      const search = searchValue.toLowerCase();
+      filtered = filtered.filter((item) => {
+        // Check all localized names
+        const localizedNames = item.localizedName
+          ? Object.values(item.localizedName)
+          : [];
+        const matchesLocalized = localizedNames.some((name) =>
+          name?.toLowerCase().includes(search)
+        );
+        // Check regular name
+        const matchesName = item.name?.toLowerCase().includes(search);
+        return matchesLocalized || matchesName;
       });
-    },
-    [dispatch]
-  );
+    }
+
+    return filtered;
+  }, [items, path, searchValue, multiLevel]);
+
+  const searchHandler = useCallback((value: string) => {
+    setSearchValue(value);
+  }, []);
 
   const onItemSelect = useCallback(
     (i: T) => {
-      const nestedEntity = i as unknown as Nestable;
-      if (
-        !multiLevel ||
-        nestedEntity.level === -1 ||
-        nestedEntity.hasChildren === false
-      ) {
+      if (!multiLevel || i.level === -1 || i.hasChildren === false) {
         onItemChange(i);
         if (!renderItem) {
           onCloseModal();
         }
       } else {
-        dispatch({
-          type: "SELECT_ITEM",
-          item: i,
-        });
+        // Drill into children
+        setPath((prev) => [...prev, i]);
+        setSearchValue("");
       }
     },
-    [dispatch, multiLevel, onCloseModal, onItemChange, renderItem]
+    [multiLevel, onCloseModal, onItemChange, renderItem]
+  );
+
+  const handleItemChange = useCallback(
+    (value: Entity) => {
+      onItemSelect(value as T);
+    },
+    [onItemSelect]
   );
 
   const renderItemHandler = ({ item, index }: { item: T; index: number }) => {
@@ -133,7 +127,7 @@ const PickerModal = <T extends Entity>({
       return renderItem({
         item,
         index,
-        onItemChange: onItemSelect,
+        onItemChange: handleItemChange,
         onCloseModal,
         selectedValue: defaultValue?.toString(),
       });
@@ -141,7 +135,7 @@ const PickerModal = <T extends Entity>({
     return (
       <PickerItem
         item={item}
-        onChange={onItemSelect}
+        onChange={handleItemChange}
         selected={item.id.toString() === defaultValue?.toString()}
         chevronStyle={
           multiLevel && item.level === 0 ? styles.chevron : undefined
@@ -156,7 +150,7 @@ const PickerModal = <T extends Entity>({
   );
   const separatorComponent = () => <View style={styles.separator} />;
   const getItemLayout = useCallback(
-    (data, index) => ({
+    (_data: ArrayLike<T> | null | undefined, index: number) => ({
       length: 60,
       offset: 60 * index,
       index,
@@ -165,14 +159,12 @@ const PickerModal = <T extends Entity>({
   );
 
   const onBackHandler = useCallback(() => {
-    if (path?.length === 0) {
+    if (path.length === 0) {
       onCloseModal();
     } else {
-      dispatch({
-        type: "BACK",
-      });
+      setPath((prev) => prev.slice(0, -1));
     }
-  }, [dispatch, onCloseModal, path]);
+  }, [onCloseModal, path.length]);
 
   const keyExtractor = (i: T) => {
     return i.id;
@@ -201,7 +193,7 @@ const PickerModal = <T extends Entity>({
       )}
       {showPathList && searchValue ? (
         <PathList
-          data={items as Nestable[]}
+          data={items}
           searchText={searchValue}
           onSelect={onItemSelect}
           ListEmptyComponent={listEmptyComponent}

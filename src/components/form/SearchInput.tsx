@@ -1,6 +1,7 @@
 import theme from "@/styles/theme";
 import React, { FC, useCallback, useRef } from "react";
 import {
+  I18nManager,
   Pressable,
   StyleSheet,
   TextInput,
@@ -75,8 +76,9 @@ const styles = StyleSheet.create({
     height: 45,
   },
   text: {
-    // flex: 1,
+    flex: 1,
     ...theme.styles.scale.body1,
+    textAlign: I18nManager.isRTL ? "right" : "left",
     color: theme.colors.dark,
     // backgroundColor: 'blue',
   },

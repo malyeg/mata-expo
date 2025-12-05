@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: "mata-app",
   slug: "mata-app",
-  version: "1.0.0",
+  version: "2.0.0",
   orientation: "portrait",
   icon: "./assets/images/logo.png",
   scheme: "mataapp",
@@ -21,6 +21,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: {
       googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY,
     },
+    associatedDomains: [
+      "applinks:www.mataup.com",
+      "applinks:mataup.com",
+      "applinks:mataapp.page.link",
+    ],
   },
   android: {
     adaptiveIcon: {
@@ -37,6 +42,51 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY,
       },
     },
+    intentFilters: [
+      {
+        action: "VIEW",
+        autoVerify: true,
+        data: [
+          // Primary domain (www)
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/items" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/deals" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/users" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/home" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/contact" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/account" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/add-item" },
+          // Non-www domain (redirects to www, but included for safety)
+          { scheme: "https", host: "mataup.com", pathPrefix: "/items" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/deals" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/users" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/home" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/contact" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/account" },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/add-item" },
+          // Legacy Firebase domain
+          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/items" },
+          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/deals" },
+          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/users" },
+          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/home" },
+          {
+            scheme: "https",
+            host: "mataapp.page.link",
+            pathPrefix: "/contact",
+          },
+          {
+            scheme: "https",
+            host: "mataapp.page.link",
+            pathPrefix: "/account",
+          },
+          {
+            scheme: "https",
+            host: "mataapp.page.link",
+            pathPrefix: "/add-item",
+          },
+        ],
+        category: ["BROWSABLE", "DEFAULT"],
+      },
+    ],
   },
   web: {
     output: "static",

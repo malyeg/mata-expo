@@ -4,7 +4,7 @@ import { Platform } from "react-native";
 import type { ShareOptions } from "react-native-share";
 import Share from "react-native-share";
 import * as Sharing from "expo-sharing";
-import * as Linking from "expo-linking";
+import constants from "@/config/constants";
 
 type ShareResult = {
   success: boolean;
@@ -49,8 +49,13 @@ export function useShare(): UseShareHook {
       text: string = ""
     ): Promise<ShareResult> => {
       try {
-        // Generate a URL using your app's scheme
-        const url = Linking.createURL(path, { queryParams });
+        // Generate a web URL for universal links
+        const baseUrl = constants.BASE_URL;
+        const queryString = new URLSearchParams(queryParams).toString();
+        const url = queryString
+          ? `${baseUrl}${path}?${queryString}`
+          : `${baseUrl}${path}`;
+
         const message = text ? `${text} ${url}` : url;
         await Share.open({ message });
         return { success: true };

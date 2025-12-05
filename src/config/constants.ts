@@ -1,7 +1,12 @@
 import { Platform } from "react-native";
 
-const BASE_URL = "https://mataapp.page.link";
-const SHARE_DOMAIN = `${BASE_URL}/home`;
+// Primary domain for new links (use www since mataup.com redirects to www.mataup.com)
+const BASE_URL = "https://www.mataup.com";
+const SHARE_DOMAIN = BASE_URL;
+
+// Legacy domain (kept for reference)
+const LEGACY_FIREBASE_URL = "https://mataapp.page.link";
+
 const PACKAGE_NAME = "com.mata.mataapp";
 
 const IOS_STORE_URL = "https://testflight.apple.com/join/yZfALhoK";
@@ -147,6 +152,7 @@ const constants = {
   maps,
   // AuthBgImage,
   BASE_URL,
+  LEGACY_FIREBASE_URL,
   locale,
   API_URI,
   REGEX,
