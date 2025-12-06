@@ -81,6 +81,11 @@ export default {
         confirmTitle: "Sign in",
       },
     },
+    myItems: {
+      menu: {
+        archivedItems: "Archived Items",
+      },
+    },
 
     drawer: {
       homeLabel: "Home",
@@ -646,8 +651,8 @@ export default {
   },
   MyItemsScreen: {
     menu: {
-      archivedLabel: "My Archived Items",
-      itemsLabel: "My Active Items",
+      archivedLabel: "Archived",
+      itemsLabel: "Available",
     },
     noData: {
       title: "No items available for swap",

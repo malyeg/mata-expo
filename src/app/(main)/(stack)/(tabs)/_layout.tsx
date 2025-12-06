@@ -1,6 +1,5 @@
 import { Icon } from "@/components/core";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/core/Icon";
-import AddItemModal from "@/components/features/items/AddItemModal";
 import { headerBackIconSize } from "@/components/HeaderBack";
 import useLocale from "@/hooks/useLocale";
 import { useAddItemStore } from "@/store/addItem-store";
@@ -12,8 +11,7 @@ import { I18nManager, StyleSheet, TouchableOpacity } from "react-native";
 export default function TabLayout() {
   const router = useRouter();
   const { t } = useLocale("common");
-  const { isAddItemModalVisible, openAddItemModal, closeAddItemModal } =
-    useAddItemStore();
+  const { openAddItemModal } = useAddItemStore();
   const IconComponent = I18nManager.isRTL ? ChevronRightIcon : ChevronLeftIcon;
 
   const onAddPress = () => {
@@ -131,10 +129,6 @@ export default function TabLayout() {
           }}
         />
       </Tabs>
-      <AddItemModal
-        isVisible={isAddItemModalVisible}
-        onClose={closeAddItemModal}
-      />
     </>
   );
 }

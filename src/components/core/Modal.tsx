@@ -27,6 +27,7 @@ export interface ModalProps {
   containerStyle?: StyleProp<ViewStyle>;
   bodyStyle?: StyleProp<ViewStyle>;
   onModalShow?: () => void;
+  onModalHide?: () => void;
   onBackdropPress?: () => void;
   propagateSwipe?: boolean;
   scrollHorizontal?: boolean;
@@ -48,6 +49,7 @@ const Modal: FC<ModalProps> = ({
   onClose,
   children,
   onModalShow,
+  onModalHide,
   onBackdropPress,
   containerStyle,
   bodyStyle,
@@ -80,6 +82,7 @@ const Modal: FC<ModalProps> = ({
       onBackdropPress={onBackdropPress ? onClose : undefined}
       onBackButtonPress={onClose}
       onModalShow={onModalShow}
+      onModalHide={onModalHide}
       scrollHorizontal={scrollHorizontal}
       backdropTransitionOutTiming={0}
       animationIn={animationIn}

@@ -34,6 +34,7 @@ You are an expert in React Native, Expo, TypeScript, and Firebase development.
 ## When Writing Code
 
 - Check for existing utilities in src/utils/ before creating new ones
+- as this is an expo project, don't edit any files under ios or android
 - Use the existing API patterns in src/api/
 - Follow the form patterns in src/components/form/
 - Use the existing type definitions in src/types/

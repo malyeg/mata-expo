@@ -6,6 +6,7 @@ import React from "react";
 const ItemsLayout = () => {
   const screenOptions = useScreenOptions();
   const { t } = useLocale("common");
+
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen

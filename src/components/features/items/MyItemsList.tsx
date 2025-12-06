@@ -1,5 +1,5 @@
-import itemsApi, { Item } from "@/api/itemsApi";
-import { Button, Loader, Screen } from "@/components/core";
+import itemsApi, { Item, ItemStatus } from "@/api/itemsApi";
+import { Button, Loader, Screen, Text } from "@/components/core";
 import DataList from "@/components/widgets/DataList";
 import ItemCard, { ITEM_CARD_HEIGHT } from "@/components/widgets/ItemCard";
 import NoDataFound from "@/components/widgets/NoDataFound";
@@ -9,64 +9,44 @@ import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
-import { useRouter } from "expo-router";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 
-const MyItemsScreen = () => {
+interface MyItemsListProps {
+  status: ItemStatus;
+}
+
+export const MyItemsList = ({ status }: MyItemsListProps) => {
   const { user } = useAuth();
-  const router = useRouter();
   const { openAddItemModal } = useAddItemStore();
+
   const { data: items, loading } = useFirestoreQuery<Item>(
     itemsApi.collectionName,
     (ref) => {
       return ref
         .where("user.id", "==", user?.id)
-        .where("status", "==", "online");
-    }
+        .where("status", "==", status);
+    },
+    [status, user?.id]
   );
 
-  // const { data, loading } = useFirestoreSnapshot({
-  //   collectionName: itemsApi.collectionName,
-  //   query: QueryBuilder.from({
-  //     filters: [{ field: "userId", value: user?.id }],
-  //   }),
-  // });
   const { t } = useLocale(screens.MY_ITEMS);
-
-  useEffect(() => {
-    const menuItems = [
-      {
-        label: t("menu.archivedLabel"),
-        onPress: () => {
-          router.navigate("/(main)/account/archived-items");
-        },
-      },
-    ];
-    // TODO fix menu items
-    // (navigation as any).setOptions({
-    //   header: (props: any) => <Header {...props} menu={{ items: menuItems }} />,
-    // });
-  }, [router, t]);
 
   const renderItem = ({ item }: any) => (
     <ItemCard style={styles.card} item={item as Item} showActivityStatus />
   );
+
   const NoData = (
     <NoDataFound style={styles.card} title={t("noData.title")}>
-      <Button
-        type="link"
-        // style={[sharedStyles.link]}
-        onPress={openAddItemModal}
-      >
-        {/* <Text style={styles.noDataLink}>Add new Item</Text> */}
+      <Button type="link" onPress={openAddItemModal}>
+        <Text style={styles.noDataLink}>{t("addNewItemLinkTitle")}</Text>
       </Button>
     </NoDataFound>
   );
 
   const listData = useMemo(
     () => ({
-      items: items?.filter((i: Item) => i.status !== "archived") ?? [],
+      items: items ?? [],
     }),
     [items]
   );
@@ -92,17 +72,12 @@ const MyItemsScreen = () => {
   );
 };
 
-export default React.memo(MyItemsScreen);
-
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     paddingTop: 20,
   },
   datalist: { flex: 1 },
-  categories: {
-    marginVertical: 20,
-  },
   columnWrapper: {
     justifyContent: "space-between",
   },
@@ -115,7 +90,7 @@ const styles = StyleSheet.create({
     ...theme.styles.scale.h5,
     textDecorationLine: "underline",
   },
-  addIcon: {
-    marginRight: 5,
-  },
 });
+
+export default MyItemsList;
+

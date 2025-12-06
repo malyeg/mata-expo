@@ -1,30 +1,36 @@
 import AppMenu from "@/components/menu/AppMenu";
+import { DeleteItemMenuItem } from "@/components/menu/DeleteItemMenuItem";
 import SendComplainItem from "@/components/menu/SendComplainMenuItem";
 import ShareMenuItem from "@/components/menu/ShareMenuItem";
+import useAuth from "@/hooks/useAuth";
 import React from "react";
-import { StyleSheet } from "react-native";
 
 type ItemDetailsMenuProps = {
   itemId: string;
   itemName?: string;
+  itemOwnerId?: string;
 };
 
-const ItemDetailsMenu = ({ itemId, itemName }: ItemDetailsMenuProps) => {
+const ItemDetailsMenu = ({
+  itemId,
+  itemName,
+  itemOwnerId,
+}: ItemDetailsMenuProps) => {
+  const { user } = useAuth();
+  const isOwnItem = user?.id === itemOwnerId;
+
   return (
-    <>
-      {/* <Text selectionColor={theme.colors.primary}>Menu</Text> */}
-      <AppMenu>
-        <ShareMenuItem link={`items/itemId`} />
-        <SendComplainItem itemId={itemId} />
-        {/* <BlockItemMenuItem itemId={itemId} itemName={itemName} /> */}
-        {/* <ProviderDetailsMenuItem branch={order.branch} />
-      <CallProviderMenuItem branch={order.branch} />
-      <ReportIssueMenuItem order={order} /> */}
-      </AppMenu>
-    </>
+    <AppMenu>
+      <ShareMenuItem link={`items/itemId`} />
+      {!isOwnItem && <SendComplainItem itemId={itemId} />}
+      {isOwnItem && (
+        <>
+          {/* <EditItemMenuItem itemId={itemId} /> */}
+          <DeleteItemMenuItem itemId={itemId} itemName={itemName} />
+        </>
+      )}
+    </AppMenu>
   );
 };
 
 export default ItemDetailsMenu;
-
-const styles = StyleSheet.create({});

@@ -19,7 +19,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
 
   const closeMenu = React.useCallback(() => {
     setVisible(false);
-  }, [visible]);
+  }, []);
 
   // Clone children and pass closeMenu function to each child
   const childrenWithProps = React.useMemo(() => {
@@ -62,8 +62,8 @@ const AppMenu = ({ children }: AppMenuProps) => {
       <Modal
         title={t("appMenu.modalOptionsTitle")}
         isVisible={visible}
-        onBackdropPress={closeMenu}
-        onClose={closeMenu}
+        onBackdropPress={() => closeMenu()}
+        onClose={() => closeMenu()}
         containerStyle={[
           styles.modalContentContainer,
           {

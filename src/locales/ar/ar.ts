@@ -81,6 +81,11 @@ export default {
         confirmTitle: "تسجيل الدخول",
       },
     },
+    myItems: {
+      menu: {
+        archivedItems: "المنتجات المؤرشفة",
+      },
+    },
     drawer: {
       homeLabel: "الرئيسية",
       profileLabel: "ملفي الشخصي",
@@ -635,8 +640,8 @@ export default {
   },
   MyItemsScreen: {
     menu: {
-      archivedLabel: "منتجاتي المؤرشفة",
-      itemsLabel: "منتجاتي النشطة",
+      archivedLabel: "مؤرشفة",
+      itemsLabel: "متاحة",
     },
     noData: {
       title: "لا توجد منتجات متاحة للمبادلة",
