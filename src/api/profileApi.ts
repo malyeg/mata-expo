@@ -1,6 +1,6 @@
 import { Profile } from "@/models/Profile.model";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import firestore from "@react-native-firebase/firestore";
+import { arrayUnion } from "@react-native-firebase/firestore";
 import { DatabaseApi } from "./DatabaseApi";
 
 class ProfilesApi extends DatabaseApi<Profile> {
@@ -49,7 +49,7 @@ class ProfilesApi extends DatabaseApi<Profile> {
 
   addTargetCategory = (userId: string, categoryId: string) => {
     return this.update(userId, {
-      targetCategories: firestore.FieldValue.arrayUnion(categoryId),
+      targetCategories: arrayUnion(categoryId),
     });
   };
 

@@ -1,11 +1,13 @@
 import { Config } from "@/utils/Config";
-import firebase from "@react-native-firebase/app";
-import crashlytics from "@react-native-firebase/crashlytics";
-import firestore, {
+import {
+  collection,
   FirebaseFirestoreTypes,
+  serverTimestamp,
+  Timestamp,
+  writeBatch,
 } from "@react-native-firebase/firestore";
-import { FirebaseFunctionsTypes } from "@react-native-firebase/functions";
 import constants from "../config/constants";
+import { crashlytics, db, functions } from "../firebase";
 import {
   DataCollection,
   Entity,
@@ -18,7 +20,7 @@ import Analytics, { ActionType, AnalyticsEvent } from "../utils/Analytics";
 import cache, { CacheConfig } from "../utils/cache/cacheManager";
 import { Api, APIOptions, ApiResponse } from "./Api";
 
-export interface WriteBatch<T> {
+export interface WriteBatchInterface<T> {
   set: (data: Map<string, T>) => Promise<void>;
   update: (data: Map<string, Partial<T>>) => Promise<void>;
   delete: (ids: string[]) => Promise<void>;
@@ -26,13 +28,12 @@ export interface WriteBatch<T> {
 export class DataApi<T extends Entity> extends Api {
   collection: DataCollection<T>;
   cacheStore: string;
-  functions: FirebaseFunctionsTypes.Module;
   constructor(readonly collectionName: string, public actionName?: string) {
     super();
-    this.functions = firebase.app().functions(constants.firebase.REGION);
-    this.collection = firestore().collection<T>(
+    this.collection = collection(
+      db,
       Config.SCHEMA_PREFIX + collectionName
-    );
+    ) as DataCollection<T>;
     this.cacheStore = collectionName;
     if (!actionName) {
       const cnLastIndex = collectionName.lastIndexOf("s");
@@ -43,9 +44,9 @@ export class DataApi<T extends Entity> extends Api {
     }
   }
 
-  writeBatch: WriteBatch<T> = {
+  writeBatchOps: WriteBatchInterface<T> = {
     set: (data: Map<string, T>) => {
-      const dbBatch = firestore().batch();
+      const dbBatch = writeBatch(db);
       data.forEach((item, key) => {
         const doc = this.collection.doc(key);
         dbBatch.set(doc, item);
@@ -53,7 +54,7 @@ export class DataApi<T extends Entity> extends Api {
       return dbBatch.commit();
     },
     update: (data: Map<string, Partial<T>>) => {
-      const dbBatch = firestore().batch();
+      const dbBatch = writeBatch(db);
       data.forEach((item, key) => {
         const doc = this.collection.doc(key);
         dbBatch.update(doc, item);
@@ -61,7 +62,7 @@ export class DataApi<T extends Entity> extends Api {
       return dbBatch.commit();
     },
     delete: (data: string[]) => {
-      const dbBatch = firestore().batch();
+      const dbBatch = writeBatch(db);
       data.forEach((id) => {
         const doc = this.collection.doc(id);
         dbBatch.delete(doc);
@@ -90,7 +91,7 @@ export class DataApi<T extends Entity> extends Api {
         }
       },
       (error) => {
-        crashlytics().recordError(error);
+        crashlytics.recordError(error);
         if (onError) {
           onError(error);
         }
@@ -123,7 +124,7 @@ export class DataApi<T extends Entity> extends Api {
         observerCallback({ ...snapshot, data });
       },
       (error) => {
-        crashlytics().recordError(error);
+        crashlytics.recordError(error);
         if (onError) {
           onError(error);
         }
@@ -155,7 +156,7 @@ export class DataApi<T extends Entity> extends Api {
       }
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "query", error as Error)?.then();
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       this.logger.error(error);
       throw error;
     }
@@ -176,7 +177,7 @@ export class DataApi<T extends Entity> extends Api {
       }
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "query", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       this.logger.error(error);
       throw error;
     }
@@ -186,7 +187,7 @@ export class DataApi<T extends Entity> extends Api {
     try {
       // this.logger.debug('add:', doc, options);
 
-      const timestamp = firestore.FieldValue.serverTimestamp();
+      const timestamp = serverTimestamp();
       const id = await this.collection.doc().id;
 
       const createdDoc: T = { ...this.removeEmpty(doc as T), timestamp };
@@ -198,7 +199,7 @@ export class DataApi<T extends Entity> extends Api {
       return createdDoc as T;
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "add", error as Error)?.then();
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       throw error;
     }
   };
@@ -206,14 +207,14 @@ export class DataApi<T extends Entity> extends Api {
   set = async (id: string, doc: T, options?: APIOptions) => {
     try {
       this.logger.debug("set:", id, options);
-      const timestamp = firestore.FieldValue.serverTimestamp();
+      const timestamp = serverTimestamp();
       const createdDoc: T = { id, ...this.removeEmpty(doc as T), timestamp };
       await this.collection.doc(id).set(createdDoc);
       this.logEvent(options?.analyticsEvent!, "add");
       return createdDoc;
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "add", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       this.logger.error("set", error);
       throw error;
     }
@@ -228,7 +229,7 @@ export class DataApi<T extends Entity> extends Api {
       this.logEvent(options?.analyticsEvent!, "update");
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "update", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       throw error;
     }
   };
@@ -240,7 +241,7 @@ export class DataApi<T extends Entity> extends Api {
       this.logEvent(options?.analyticsEvent!, "delete");
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "delete", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       throw error;
     }
   };
@@ -252,7 +253,7 @@ export class DataApi<T extends Entity> extends Api {
       this.logEvent(options?.analyticsEvent!, "delete");
     } catch (error) {
       this.logEvent(options?.analyticsEvent!, "delete", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       throw error;
     }
   };
@@ -333,7 +334,7 @@ export class DataApi<T extends Entity> extends Api {
 
   static toTimestamp(date: Date | number) {
     const convertedDate = date instanceof Date ? date : new Date(date);
-    return firebase.firestore.Timestamp.fromDate(convertedDate);
+    return Timestamp.fromDate(convertedDate);
   }
 
   static createFrom<R extends Entity>(collectionName: string) {
@@ -363,7 +364,7 @@ export class DataApi<T extends Entity> extends Api {
   }
 
   static getServerTimeStamp() {
-    return firestore.FieldValue.serverTimestamp();
+    return serverTimestamp();
   }
   static getServerDate() {
     // const timestamp = firestore.FieldValue.serverTimestamp();

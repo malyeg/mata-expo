@@ -1,4 +1,4 @@
-import firestore from "@react-native-firebase/firestore";
+import { serverTimestamp } from "@react-native-firebase/firestore";
 import { Entity } from "../types/DataTypes";
 import { DatabaseApi } from "./DatabaseApi";
 
@@ -25,7 +25,7 @@ class NotificationsApi extends DatabaseApi<Notification> {
   }
 
   updateDelivery = (id: string) => {
-    const deliveredAt = firestore.FieldValue.serverTimestamp();
+    const deliveredAt = serverTimestamp();
     this.update(id, {
       delivered: true,
       deliveredAt,

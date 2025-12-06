@@ -1,32 +1,32 @@
-import crashlytics from '@react-native-firebase/crashlytics';
-import {User} from '../contexts/user-model';
+import { crashlytics } from '../firebase';
+import { User } from '../contexts/user-model';
 
 class CrashlyticsApi {
   setUser = (user: User) => {
-    return crashlytics().setUserId(user.id);
+    return crashlytics.setUserId(user.id);
   };
 
   crash = () => {
-    crashlytics().crash();
+    crashlytics.crash();
   };
 
   log = (message: string) => {
-    crashlytics().log(message);
+    crashlytics.log(message);
   };
   recordError = (error: any) => {
     if (!error) {
       return;
     }
     if (error instanceof Error) {
-      crashlytics().recordError(error);
+      crashlytics.recordError(error);
     } else if (typeof error === 'string') {
-      crashlytics().recordError(new Error(error));
+      crashlytics.recordError(new Error(error));
     } else if (typeof error === 'object' && !!error.message) {
       const newError = new Error(error.message);
       (newError as any).code = error.code;
-      crashlytics().recordError(newError);
+      crashlytics.recordError(newError);
     } else {
-      crashlytics().recordError(new Error(JSON.stringify(error)));
+      crashlytics.recordError(new Error(JSON.stringify(error)));
     }
   };
 }

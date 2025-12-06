@@ -1,8 +1,23 @@
 import { ICartItem } from "@/models/card-model";
-import analytics, {
-  firebase,
+import {
   FirebaseAnalyticsTypes,
+  logLogin,
+  setUserId,
+  logSignUp,
+  logEvent as firebaseLogEvent,
+  resetAnalyticsData,
+  logAddToCart,
+  setAnalyticsCollectionEnabled,
+  logShare,
+  logScreenView,
+  logAddToWishlist,
+  logViewItemList,
+  logSearch,
+  logSelectItem as firebaseLogSelectItem,
+  logSelectContent,
+  logViewItem,
 } from "@react-native-firebase/analytics";
+import { app, analytics } from "../firebase";
 import { Item } from "../api/itemsApi";
 import constants from "../config/constants";
 import { User } from "../contexts/user-model";
@@ -30,54 +45,54 @@ export type ActionType = "add" | "update" | "delete" | "query";
 class Analytics {
   static logger = LoggerFactory.getLogger("Analytics");
   static init() {
-    if (firebase.app().utils().isRunningInTestLab) {
-      analytics().setAnalyticsCollectionEnabled(false);
+    if (app.utils().isRunningInTestLab) {
+      setAnalyticsCollectionEnabled(analytics, false);
     } else {
-      analytics().setAnalyticsCollectionEnabled(true);
+      setAnalyticsCollectionEnabled(analytics, true);
     }
   }
 
   static logLogin = (
     method: "FACEBOOK" | "APPLE" | "CREDENTIALS" | "GUEST"
   ) => {
-    return analytics().logLogin({ method });
+    return logLogin(analytics, { method });
   };
 
   static setUser = (user: User) => {
     return Promise.all([
-      analytics().setUserId(user.id),
-      // analytics().setUserProperty('email', user.email),
+      setUserId(analytics, user.id),
+      // setUserProperty(analytics, 'email', user.email),
     ]);
   };
 
   static logSignUp = (method: string, user: User) => {
     return Promise.all([
       Analytics.setUser(user),
-      analytics().logSignUp({ method }),
+      logSignUp(analytics, { method }),
     ]);
   };
 
   static logForgotPassword = (email: string) => {
-    return analytics().logEvent("forgotPassword", {
+    return firebaseLogEvent(analytics, "forgotPassword", {
       email,
     });
   };
 
   static logError = (eventName: string, error: Error, propertyObject = {}) => {
-    return analytics().logEvent(eventName + "_error", {
+    return firebaseLogEvent(analytics, eventName + "_error", {
       ...propertyObject,
       error,
     });
   };
 
   static logEvent = (eventName: string, propertyObject = {}) => {
-    return analytics().logEvent(eventName, propertyObject ?? {});
+    return firebaseLogEvent(analytics, eventName, propertyObject ?? {});
   };
 
   static logSignOut = () => {
     return Promise.all([
-      analytics().logEvent("logout"),
-      analytics().resetAnalyticsData(),
+      firebaseLogEvent(analytics, "logout"),
+      resetAnalyticsData(analytics),
     ]);
   };
 
@@ -96,29 +111,29 @@ class Analytics {
         item_category: item.category,
       };
     });
-    await analytics().logAddToCart({
+    await logAddToCart(analytics, {
       value,
       currency: constants.cart.DEFAULT_CURRENCY,
-      items: cartItems,
+      items: cartItems as FirebaseAnalyticsTypes.Item[],
     });
   };
 
   static setAnalyticsCollectionEnabled = (enabled: boolean) => {
-    return analytics().setAnalyticsCollectionEnabled(enabled);
+    return setAnalyticsCollectionEnabled(analytics, enabled);
   };
 
   static logScreen = (screenName: string) => {
-    return analytics().logEvent("screen_" + screenName, {});
+    return firebaseLogEvent(analytics, "screen_" + screenName, {});
   };
 
   static logShare = (params: any) => {
-    return analytics().logShare(params);
+    return logShare(analytics, params);
   };
 
   static trackScreen = async (screenName: string) => {
     try {
       await Promise.all([
-        analytics().logScreenView({
+        logScreenView(analytics, {
           screen_name: screenName,
           screen_class: screenName,
         }),
@@ -130,34 +145,34 @@ class Analytics {
   };
 
   static logAddToWishlist(params: any) {
-    analytics().logAddToWishlist(params);
+    logAddToWishlist(analytics, params);
   }
   static viewItemList(listId: string) {
-    analytics().logViewItemList({
+    logViewItemList(analytics, {
       item_list_id: listId,
       item_list_name: listId,
     });
   }
   static logAddItemToWishlist(items: Item[]) {
-    analytics().logAddToWishlist({
+    logAddToWishlist(analytics, {
       items: items.map((item) => ({
         item_id: item?.id,
         item_name: item?.name,
         item_category: item?.category?.name,
         item_location_id: item?.location?.placeId,
         item_category2: item.swapOption.type,
-      })),
+      })) as FirebaseAnalyticsTypes.Item[],
     });
   }
 
   static logSearch(searchTerm: string) {
-    analytics().logSearch({
+    logSearch(analytics, {
       search_term: searchTerm,
     });
   }
 
   static logSelectItem(item: Item, listName?: string) {
-    analytics().logSelectItem({
+    firebaseLogSelectItem(analytics, {
       content_type: "item_details",
       item_list_id: listName ?? item.category.name,
       item_list_name: listName ?? item.category.name,
@@ -165,7 +180,7 @@ class Analytics {
     });
   }
   static logSelectContent(id: string, type: string) {
-    analytics().logSelectContent({
+    logSelectContent(analytics, {
       item_id: id,
       content_type: type,
     });
@@ -182,7 +197,7 @@ class Analytics {
   }
 
   static viewItem(item: Item) {
-    analytics().logViewItem({
+    logViewItem(analytics, {
       items: [Analytics.toAnalyticsItem(item)],
     });
   }

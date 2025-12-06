@@ -1,5 +1,4 @@
-import { remoteConfig } from "@/firebase";
-import crashlytics from "@react-native-firebase/crashlytics";
+import { crashlytics, remoteConfig } from "@/firebase";
 import { FirebaseRemoteConfigTypes } from "@react-native-firebase/remote-config";
 import DeviceInfo from "react-native-device-info";
 import { LoggerFactory } from "../utils/logger";
@@ -77,7 +76,7 @@ class AppConfigApi {
       logger.log("configs fetched");
     } catch (error) {
       logger.error("Error fetching configs", error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
     }
   };
 
@@ -117,7 +116,7 @@ class AppConfigApi {
         return versioningJson;
       }
     } catch (error) {
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
     }
   };
 

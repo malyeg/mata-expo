@@ -1,6 +1,8 @@
-import firestore, {
+import {
+  collection,
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
+import { db } from "@/firebase";
 import { useEffect, useRef, useState } from "react";
 
 /**
@@ -92,7 +94,7 @@ export const useFirestoreQuery = <T = any>(
     setError(null);
 
     try {
-      const collectionRef = firestore().collection(collectionPath);
+      const collectionRef = collection(db, collectionPath) as FirebaseFirestoreTypes.CollectionReference;
       const query = queryBuilder ? queryBuilder(collectionRef) : collectionRef;
 
       const unsubscribe = query.onSnapshot(

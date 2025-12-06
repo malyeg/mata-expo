@@ -1,15 +1,22 @@
 import { Profile } from "@/models/Profile.model";
-import auth, { firebase, FirebaseAuthTypes } from "@react-native-firebase/auth";
-import { FirebaseFunctionsTypes } from "@react-native-firebase/functions";
-import constants from "../config/constants";
+import {
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  FirebaseAuthTypes,
+  sendPasswordResetEmail as firebaseSendPasswordResetEmail,
+  signOut as firebaseSignOut,
+  reauthenticateWithCredential,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  updatePassword,
+} from "@react-native-firebase/auth";
 import { ICredentials } from "../contexts/AuthReducer";
 import { fromFirebaseUser, User } from "../contexts/user-model";
+import { auth, functions } from "../firebase";
 import Analytics from "../utils/Analytics";
-import { LoggerFactory } from "../utils/logger";
 import { Api } from "./Api";
 import locationApi from "./locationApi";
 import profilesApi from "./profileApi";
-const logger = LoggerFactory.getLogger("authApi");
 
 export interface PublicUser {
   id: string;
@@ -19,15 +26,10 @@ export interface PublicUser {
   isProfilePublic?: boolean;
 }
 class AuthApi extends Api {
-  functions: FirebaseFunctionsTypes.Module;
-  constructor() {
-    super();
-    this.functions = firebase.app().functions(constants.firebase.REGION);
-  }
-
   signIn = async (credentials: ICredentials) => {
     try {
-      const userCredentials = await auth().signInWithEmailAndPassword(
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
         credentials.username,
         credentials.password
       );
@@ -44,7 +46,7 @@ class AuthApi extends Api {
   };
   guestSignIn = async () => {
     try {
-      const userCredentials = await auth().signInAnonymously();
+      const userCredentials = await signInAnonymously(auth);
       const userRules = await this.getUserRules();
       if (userCredentials) {
         Analytics.logLogin("GUEST");
@@ -62,7 +64,8 @@ class AuthApi extends Api {
     newProfile: Omit<Profile, "id">
   ) => {
     try {
-      const userCredentials = await auth().createUserWithEmailAndPassword(
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
         credentials.username,
         credentials.password
       );
@@ -86,20 +89,23 @@ class AuthApi extends Api {
   };
 
   sendPasswordResetEmail = async (email: string) => {
-    await auth().sendPasswordResetEmail(email);
+    await firebaseSendPasswordResetEmail(auth, email);
     Analytics.logForgotPassword(email);
   };
 
   changePassword = async (crednetials: ICredentials, newPassword: string) => {
     try {
-      const user = auth().currentUser;
-      const provider = firebase.auth.EmailAuthProvider;
+      const user = auth.currentUser;
       const authCredential: FirebaseAuthTypes.AuthCredential =
-        provider.credential(crednetials.username, crednetials.password);
-      const userCredential = await user!.reauthenticateWithCredential(
+        EmailAuthProvider.credential(
+          crednetials.username,
+          crednetials.password
+        );
+      const userCredential = await reauthenticateWithCredential(
+        user!,
         authCredential
       );
-      await userCredential.user.updatePassword(newPassword);
+      await updatePassword(userCredential.user, newPassword);
       Analytics.logEvent("change_password");
     } catch (error) {
       const err = (error as any).code ?? (error as any).message;
@@ -109,32 +115,32 @@ class AuthApi extends Api {
   };
 
   getUser = () => {
-    return auth().currentUser;
+    return auth.currentUser;
   };
 
   signOut = async () => {
     const promises: Promise<void>[] = [
       profilesApi.removeFromStorage(),
       locationApi.removeLastKnownLocation(),
-      auth().signOut(),
+      firebaseSignOut(auth),
     ];
     await Promise.all(promises);
     Analytics.logSignOut();
   };
   deleteAccount = async () => {
-    await this.functions.httpsCallable("deleteAccount")();
+    await functions.httpsCallable("deleteAccount")();
     Analytics.logEvent("delete_account");
   };
 
   onAuthStateChanged = (
     listnerCallback: (user: FirebaseAuthTypes.User | null) => void
   ) => {
-    return auth().onAuthStateChanged(listnerCallback);
+    return auth.onAuthStateChanged(listnerCallback);
   };
 
   getUserRules = async () => {
     const rules = ["user"];
-    const idTokenResult = await auth().currentUser?.getIdTokenResult();
+    const idTokenResult = await auth.currentUser?.getIdTokenResult();
     if (idTokenResult) {
       const claims = idTokenResult.claims;
       if (claims.admin && claims.admin === true) {

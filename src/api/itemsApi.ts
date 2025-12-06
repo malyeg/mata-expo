@@ -1,8 +1,7 @@
-import crashlytics from "@react-native-firebase/crashlytics";
-import storage from "@react-native-firebase/storage";
+import { ref, deleteObject, putFile, TaskEvent } from "@react-native-firebase/storage";
+import { crashlytics, storage, functions } from "../firebase";
 import constants from "../config/constants";
 import invalidContent from "../data/invalidContent";
-import { functions } from "../firebase";
 import { DataSearchable, Entity } from "../types/DataTypes";
 import Analytics, { AnalyticsEvent } from "../utils/Analytics";
 import { PublicUser } from "./authApi";
@@ -173,11 +172,12 @@ class ItemsApi extends DatabaseApi<Item> {
   };
 
   deleteImage = async (uid: string, image: ImageSource, item?: Item) => {
-    const reference = storage().ref(
+    const reference = ref(
+      storage,
       `${constants.firebase.ITEM_UPLOAD_PATH}/${uid}/${image.name}`
     );
     try {
-      await reference.delete();
+      await deleteObject(reference);
       if (item) {
         const updatedImages = item.images?.filter(
           (i) => i.downloadURL !== image.downloadURL
@@ -195,17 +195,17 @@ class ItemsApi extends DatabaseApi<Item> {
       }
     } catch (error) {
       super.logEvent({} as AnalyticsEvent, "delete", error as Error);
-      crashlytics().recordError(error as Error);
+      crashlytics.recordError(error as Error);
       throw error;
     }
   };
 
   upload = (uid: string, image: ImageSource) => {
     const path = `${constants.firebase.ITEM_UPLOAD_PATH}/${uid}/${image.name}`;
-    const reference = storage().ref(path);
+    const reference = ref(storage, path);
     const pathToFile = image.uri!;
     // uploads file
-    const task = reference.putFile(pathToFile);
+    const task = putFile(reference, pathToFile);
     return task;
   };
 

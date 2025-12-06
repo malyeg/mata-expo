@@ -8,7 +8,6 @@ import {
 } from "@/types/DataTypes";
 import { QuerySnapshot } from "@/types/UtilityTypes";
 import Analytics, { ActionType, AnalyticsEvent } from "@/utils/Analytics";
-import crashlytics from "@react-native-firebase/crashlytics";
 import type {
   FirebaseFirestoreTypes,
   UpdateData,
@@ -26,7 +25,7 @@ import {
   setDoc,
   updateDoc,
 } from "@react-native-firebase/firestore";
-import { db } from "../firebase";
+import { crashlytics, db } from "../firebase";
 import { Api } from "./Api";
 
 export type WithId<T> = T & { id: string };
@@ -88,7 +87,7 @@ export class DatabaseApi<T extends object> extends Api {
   async getAll(query?: Query): Promise<WithId<T>[]> {
     const coll = query ? this.getQuery(query) : this.collection;
     const snap = await getDocs(coll);
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as T) }));
+    return snap.docs.map((d: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({ id: d.id, ...(d.data() as T) }));
   }
 
   /** Fetch a single document by its ID */
@@ -165,7 +164,7 @@ export class DatabaseApi<T extends object> extends Api {
         observerCallback({ ...snapshot, data });
       },
       (error) => {
-        crashlytics().recordError(error);
+        crashlytics.recordError(error);
         if (onError) {
           onError(error);
         }
@@ -214,7 +213,7 @@ export class DatabaseApi<T extends object> extends Api {
     const unsubscribe = onSnapshot(
       this.collection,
       (snapshot) => {
-        const items = snapshot.docs.map((docSnap) => ({
+        const items = snapshot.docs.map((docSnap: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
           id: docSnap.id,
           ...(docSnap.data() as T),
         }));

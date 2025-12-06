@@ -4,7 +4,7 @@ import useController from "@/hooks/useController";
 import useLocale from "@/hooks/useLocale";
 import useMountedRef from "@/hooks/useMountRef";
 import { theme } from "@/styles/theme";
-import storage from "@react-native-firebase/storage";
+import { TaskEvent } from "@react-native-firebase/storage";
 import React, { FC, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, View, ViewProps } from "react-native";
 import * as ImagePickerBase from "react-native-image-picker";
@@ -118,7 +118,7 @@ const ImagePicker: FC<ItemImageProps> = ({
     const task = itemsApi.upload(user.id, resizedImage!);
     let bytesTransferred = 0;
     task.on(
-      storage.TaskEvent.STATE_CHANGED,
+      TaskEvent.STATE_CHANGED,
       (snapshot) => {
         if (bytesTransferred !== snapshot.bytesTransferred) {
           console.debug("bytesTransferred", snapshot.bytesTransferred);
