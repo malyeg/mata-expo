@@ -39,8 +39,9 @@ const ItemPicker = ({
     ]);
     !!categoryId && query.filter("category.id", categoryId);
     itemsApi.getAll(query.build()).then((itemResp) => {
+      console.log("itemResp", itemResp.length);
       if (itemResp && itemResp.length > 0) {
-        setItems(itemResp);
+        setItems({ items: itemResp });
       } else {
         setItems({ items: [] });
       }
@@ -65,7 +66,7 @@ const ItemPicker = ({
       <Link
         onPress={onClose}
         style={sharedStyles.link}
-        to={{
+        href={{
           screen: screens.ADD_ITEM,
           params: {
             categoryId: categoryId,

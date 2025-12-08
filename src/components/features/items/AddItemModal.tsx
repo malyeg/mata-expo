@@ -22,10 +22,17 @@ import useLocale from "@/hooks/useLocale";
 import useLocation from "@/hooks/useLocation";
 import useSheet from "@/hooks/useSheet";
 import useToast from "@/hooks/useToast";
+import { useAddItemStore } from "@/store/addItem-store";
 import { Entity } from "@/types/DataTypes";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { StyleSheet } from "react-native";
 import * as yup from "yup";
 
@@ -49,6 +56,8 @@ type AddItemModalProps = {
 
 const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   const { t } = useLocale("addItemScreen");
+  const { editItem } = useAddItemStore();
+  const isEditMode = !!editItem?.id;
 
   const [swapType, setSwapType] = useState<SwapType | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -94,6 +103,46 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         mode: "onBlur",
       }
     );
+
+  // Load item data when in edit mode
+  useEffect(() => {
+    const loadEditItem = async () => {
+      if (editItem?.id && isVisible) {
+        try {
+          setLoading(true);
+          const item = await itemsApi.getById(editItem.id);
+          if (item) {
+            itemIdRef.current = item.id;
+            setValue("name", item.name);
+            setValue("description", item.description || "");
+            setValue("category", item.category?.id || "");
+            setValue("conditionType", item.condition?.type);
+            setValue("usedWithIssuesDesc", item.condition?.desc || "");
+            setValue("swapType", item.swapOption?.type);
+            setValue("swapCategory", item.swapOption?.category?.id || "");
+            setValue("location", item.location);
+            setValue("images", item.images || []);
+            setValue("status", item.status === "draft");
+            setSwapType(item.swapOption?.type || null);
+          }
+        } catch (error) {
+          console.error("Error loading item for edit:", error);
+          showErrorToast(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    loadEditItem();
+  }, [editItem?.id, isVisible, setValue, showErrorToast]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isVisible) {
+      reset();
+      setSwapType(null);
+    }
+  }, [isVisible, reset]);
 
   const onFormError = async (data: any) => {
     console.log("onFormError", data);
@@ -161,14 +210,26 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         },
       };
       console.log("Submitting item", item.userId);
-      // const savedItem = await request<Item>(() => {
-      //   return itemsApi.set(itemIdRef.current!, item as Item, options);
-      // });
-      const savedItem = (await itemsApi.create(item)) as unknown as Item;
-      console.log("Submitted item", savedItem.id);
-      Analytics.logEvent("add_item", {
-        category: item.category.name,
-      });
+
+      let savedItem: Item;
+      if (isEditMode && editItem.id) {
+        // Update existing item
+        await itemsApi.update(editItem.id, item as Item, options);
+        savedItem = { ...item, id: editItem.id } as Item;
+        console.log("Updated item", savedItem.id);
+        Analytics.logEvent("edit_item", {
+          category: item.category.name,
+        });
+      } else {
+        // Create new item
+        savedItem = (await itemsApi.create(item)) as unknown as Item;
+        console.log("Submitted item", savedItem.id);
+        Analytics.logEvent("add_item", {
+          category: item.category.name,
+        });
+        appreview.requestInAppReview();
+      }
+
       !!item?.swapOption.category &&
         addTargetCategory(item?.swapOption.category.id!);
 
@@ -179,8 +240,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         params: { id: savedItem.id },
       });
 
-      appreview.requestInAppReview();
-      showSuccessToast(t("addItemSuccess"));
+      showSuccessToast(isEditMode ? t("editItemSuccess") : t("addItemSuccess"));
     } catch (err: any) {
       console.log("AddItemModal:onFormSuccess:error", err);
       showErrorToast(err);
@@ -209,7 +269,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
     <Modal
       isVisible={isVisible}
       position="full"
-      title={t("title")}
+      title={isEditMode ? t("editItemTitle") : t("title")}
       showHeaderNav
       onClose={onClose}
       hideCloseIcon={false}
@@ -225,6 +285,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         onUpload={onUploadHandler}
         control={control}
         docId={itemIdRef.current!}
+        item={editItem ?? undefined}
         onError={setImagesError}
       />
       {formState.errors.images && (
@@ -293,6 +354,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       <LocationSelector
         style={styles.location}
         control={control}
+        defaultValue={editItem?.location}
         onModalChange={onLocationModalChange}
       />
       <CheckBox
@@ -303,8 +365,8 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       />
 
       <Button
-        title={t("addBtnTitle")}
-        disabled={uploading}
+        title={isEditMode ? t("updateBtnTitle") : t("addBtnTitle")}
+        disabled={uploading || loading}
         onPress={handleSubmit(onFormSuccess, onFormError)}
       />
 

@@ -8,12 +8,15 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import {
   Bubble,
+  BubbleProps,
   Message as CMessage,
   Composer,
+  ComposerProps,
   GiftedChat,
   IMessage,
   InputToolbar,
   Send,
+  SendProps,
   SystemMessage,
 } from "react-native-gifted-chat";
 import { Icon } from "../core";
@@ -29,7 +32,7 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   const { data } = useCollectionSnapshot<Message>({
     collectionName: messagesApi.collectionName,
     query: (ref) => {
-      return ref.where("dealId", "==", deal.id).orderBy("timestamp", "asc");
+      return ref.where("dealId", "==", deal.id).orderBy("timestamp", "desc");
     },
   });
   const { profile, user } = useAuth();
@@ -41,10 +44,10 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
     getNonRecievedMessages,
   } = useChat();
   const [chatMessages, setChatMessages] = useState<IMessage[]>([]);
-
   useEffect(() => {
     if (data && data.length > 0) {
       const nonRecievedMessages = getNonRecievedMessages(data);
+      console.log("nonRecievedMessages", nonRecievedMessages.length);
       if (nonRecievedMessages && nonRecievedMessages.length > 0) {
         updateMessagesRecieved(nonRecievedMessages);
       }
@@ -74,7 +77,7 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   }, [data]);
 
   const renderSend = useCallback(
-    (props) => (
+    (props: SendProps<IMessage>) => (
       <Send {...props} containerStyle={styles.sendContainer}>
         <Icon name="send-circle" color={theme.colors.salmon} size={35} />
       </Send>
@@ -99,7 +102,7 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   );
 
   const renderBubble = useCallback(
-    (props) => (
+    (props: BubbleProps<IMessage>) => (
       <Bubble
         {...props}
         textStyle={{ right: styles.rightText, left: styles.leftText }}
@@ -120,14 +123,15 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   };
 
   const renderComposer = useCallback(
-    (props) =>
-      disableComposer ? (
-        <></>
-      ) : (
+    (props: ComposerProps) =>
+      disableComposer ? null : (
         <Composer
           {...props}
-          textInputStyle={styles.textInput}
-          multiline={true}
+          textInputProps={{
+            returnKeyType: "send",
+            style: styles.textInput,
+            multiline: true,
+          }}
         />
       ),
     [disableComposer]
@@ -163,30 +167,20 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
           renderSend={renderSend}
           renderMessage={renderMessage}
           messages={chatMessages}
+          textInputProps={{
+            returnKeyType: "send",
+          }}
           renderInputToolbar={(props) =>
             !disableComposer ? (
-              <InputToolbar
-                {...props}
-                containerStyle={styles.toolbar}
-                //@ts-ignore
-                textInputProps={{
-                  returnKeyType: "send",
-                  // onSubmitEditing: (event: any) => {
-                  //   // props.onSend({text: event.nativeEvent.text.trim()}, true);
-                  // },
-                }}
-              />
-            ) : (
-              <></>
-            )
+              <InputToolbar {...props} containerStyle={styles.toolbar} />
+            ) : null
           }
           renderSystemMessage={renderSystemMessage}
           onSend={onSend}
           user={{
             _id: profile.id,
           }}
-          disableComposer={disableComposer}
-          alwaysShowSend={alwaysShowSend}
+          isSendButtonAlwaysVisible={!disableComposer}
           renderComposer={renderComposer}
         />
       )}

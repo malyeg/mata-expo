@@ -93,7 +93,7 @@ class DealsApi extends DatabaseApi<Deal> {
         },
       },
     };
-    return await this.add(deal, options);
+    return await this.create(deal);
   };
 
   getUserDeals = async (userId: string, item: Item) => {

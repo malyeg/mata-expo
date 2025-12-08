@@ -1,21 +1,20 @@
+import { Item } from "@/api/itemsApi";
 import AppMenu from "@/components/menu/AppMenu";
 import { DeleteItemMenuItem } from "@/components/menu/DeleteItemMenuItem";
+import { EditItemMenuItem } from "@/components/menu/EditItemMenuItem";
 import SendComplainItem from "@/components/menu/SendComplainMenuItem";
 import ShareMenuItem from "@/components/menu/ShareMenuItem";
 import useAuth from "@/hooks/useAuth";
 import React from "react";
 
 type ItemDetailsMenuProps = {
-  itemId: string;
-  itemName?: string;
-  itemOwnerId?: string;
+  item: Item;
 };
 
-const ItemDetailsMenu = ({
-  itemId,
-  itemName,
-  itemOwnerId,
-}: ItemDetailsMenuProps) => {
+const ItemDetailsMenu = ({ item }: ItemDetailsMenuProps) => {
+  const itemId = item.id;
+  const itemOwnerId = item.userId;
+  const itemName = item.name;
   const { user } = useAuth();
   const isOwnItem = user?.id === itemOwnerId;
 
@@ -23,12 +22,9 @@ const ItemDetailsMenu = ({
     <AppMenu>
       <ShareMenuItem link={`items/itemId`} />
       {!isOwnItem && <SendComplainItem itemId={itemId} />}
-      {isOwnItem && (
-        <>
-          {/* <EditItemMenuItem itemId={itemId} /> */}
-          <DeleteItemMenuItem itemId={itemId} itemName={itemName} />
-        </>
-      )}
+
+      {isOwnItem && <EditItemMenuItem item={item} />}
+      {isOwnItem && <DeleteItemMenuItem itemId={itemId} itemName={itemName} />}
     </AppMenu>
   );
 };

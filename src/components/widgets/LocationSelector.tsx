@@ -18,8 +18,8 @@ const summaryDelta = {
   longitudeDelta: 1,
 };
 const detailsDelta = {
-  latitudeDelta: 0.01,
-  longitudeDelta: 0.01,
+  latitudeDelta: 0.1,
+  longitudeDelta: 0.1,
 };
 
 interface LocationSelectorProps extends ViewProps {
@@ -150,7 +150,7 @@ const LocationSelector = ({
           initialRegion={
             initialRegion
               ? { ...constants.maps.DEFAULT_LOCATION, ...initialRegion }
-              : constants.maps.DEFAULT_LOCATION
+              : undefined
           }
         >
           {!!location?.coordinate && (

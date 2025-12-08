@@ -1,3 +1,4 @@
+import { Loader } from "@/components/core";
 import { ItemDetailsContent } from "@/components/features/items/ItemDetailsContent";
 import ItemDetailsMenu from "@/components/features/items/ItemDetailsMenu";
 import { useItemDetails } from "@/hooks/useItemDetails";
@@ -26,17 +27,15 @@ const ItemDetailsScreen = () => {
     return null;
   }
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <ItemDetailsMenu
-              itemId={itemId}
-              itemOwnerId={item?.userId}
-              itemName={item?.name}
-            />
-          ),
+          headerRight: () => <ItemDetailsMenu item={item} />,
         }}
       />
       <ItemDetailsContent
