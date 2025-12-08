@@ -243,7 +243,7 @@ const EditProfileScreen = () => {
         <Picker
           style={styles.location}
           searchable
-          // disabled={!!states && states.length > 0}
+          disabled={!states || states.length === 0 || !selectedCountry}
           placeholder={t("state.placeholder")}
           defaultValue={profile?.state?.id.toString()}
           onChange={onStateChange}
@@ -254,6 +254,7 @@ const EditProfileScreen = () => {
         <Picker
           style={styles.location}
           searchable
+          disabled={!cities || cities.length === 0 || !values.state}
           placeholder={t("city.placeholder")}
           defaultValue={profile?.city?.id.toString()}
           name="city"
