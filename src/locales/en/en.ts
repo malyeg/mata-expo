@@ -378,6 +378,8 @@ export default {
     facebookLoginButtonTitle: "Sign in with Facebook",
     appleLoginButtonTitle: "Sign in with Apple",
     passwordLink: "Forgot password?",
+    guestLoginText: "or login",
+    guestLoginLink: "as guest",
   },
   forgotPasswordScreen: {
     title: "Forgot password",

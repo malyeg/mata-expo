@@ -1,11 +1,11 @@
 import categoriesApi from "@/api/categoriesApi";
 import countriesApi from "@/api/countriesApi";
-import { Item, swapList } from "@/api/itemsApi";
+import { conditionList, Item, swapList } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import { Query } from "@/types/DataTypes";
-import React from "react";
+import React, { useMemo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 
 interface FilterLabelProps {
@@ -21,8 +21,6 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     }
   };
 
-  console.log("query", query);
-
   // Extract filter values from the filters array
   const statesFilter = filters.find((f) => f.field === "stateId");
   const searchText = query?.searchText; // Search is stored in query.searchText, not filters
@@ -36,13 +34,52 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     );
     categoryFilter.name = category?.localizedName?.[locale] ?? category?.name;
   }
-  const swapTypesFilter = filters.filter((f) => f.field === "swapOptionType");
 
   // Get state names from IDs
   const getStateNames = (stateIds: string[]) => {
     const states = countriesApi.getStatesByIds(stateIds);
     return states.map((s) => s.name).join(", ");
   };
+  const swapTypesFilter = filters.filter((f) => f.field === "swapOptionType");
+
+  const swapOptionLabel = useMemo(() => {
+    return swapTypesFilter
+      .map((f) => {
+        if (Array.isArray(f.value)) {
+          return f.value
+            .map((v) => {
+              const swapOption = swapList.find((s) => s.id === v);
+              return (
+                swapOption?.localizedName?.[locale] ?? swapOption?.name ?? v
+              );
+            })
+            .join(", ");
+        }
+        const swapOption = swapList.find((s) => s.id === f.value);
+        return (
+          swapOption?.localizedName?.[locale] ?? swapOption?.name ?? f.value
+        );
+      })
+      .join(", ");
+  }, [swapTypesFilter]);
+
+  const conditionTypeLabel = useMemo(() => {
+    if (!conditionTypesFilter) return "";
+    let labels = [];
+    if (Array.isArray(conditionTypesFilter.value)) {
+      labels = conditionTypesFilter.value;
+    } else {
+      labels = [conditionTypesFilter.value];
+    }
+    return labels
+      .map((v) => {
+        const conditionType = conditionList.find((c) => c.id === v);
+        return (
+          conditionType?.localizedName?.[locale] ?? conditionType?.name ?? v
+        );
+      })
+      .join(", ");
+  }, [conditionTypesFilter]);
 
   return (
     <View style={styles.container}>
@@ -69,9 +106,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
           <FilterComponent
             field="conditionType"
             value={conditionTypesFilter.value.join(",")}
-            label={
-              conditionTypesFilter.name || conditionTypesFilter.value.join(", ")
-            }
+            label={conditionTypeLabel}
             onDelete={deleteItem}
           />
         )}
@@ -89,16 +124,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
           <FilterComponent
             field="swapOptionType"
             value={swapTypesFilter.map((f) => f.value).join(",")}
-            label={swapTypesFilter
-              .map((f) => {
-                const swapOption = swapList.find((s) => s.id === f.value);
-                return (
-                  swapOption?.localizedName?.[locale] ??
-                  swapOption?.name ??
-                  f.value
-                );
-              })
-              .join(", ")}
+            label={swapOptionLabel}
             onDelete={deleteItem}
           />
         )}

@@ -5,9 +5,11 @@ import theme from "@/styles/theme";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  StyleProp,
   StyleSheet,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from "react-native";
 
 type LanguageOption = {
@@ -23,10 +25,14 @@ const languages: LanguageOption[] = [
 
 type LanguageSwitcherProps = {
   showLabel?: boolean;
+  showIcon?: boolean;
+  style?: StyleProp<ViewStyle>;
 };
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   showLabel = true,
+  showIcon = true,
+  style,
 }) => {
   const { currentLanguage, changeLanguage, isChanging } = useLanguage();
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,7 +60,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   return (
     <>
       <TouchableOpacity
-        style={styles.container}
+        style={[styles.container, style]}
         onPress={openModal}
         activeOpacity={0.7}
       >
@@ -62,7 +68,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         {showLabel && (
           <Text style={styles.label}>{currentLang?.nativeLabel}</Text>
         )}
-        <ChevronIcon size={20} color={theme.colors.grey} />
+        {showIcon && <ChevronIcon size={20} color={theme.colors.grey} />}
       </TouchableOpacity>
 
       <Modal

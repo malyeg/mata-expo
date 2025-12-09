@@ -2,6 +2,7 @@ import { Button, Text } from "@/components/core";
 import FormScreen from "@/components/core/FormScreen";
 import Logo from "@/components/core/Logo";
 import TextInput from "@/components/form/TextInput";
+import LanguageSwitcher from "@/components/widgets/LanguageSwitcher";
 import { ICredentials } from "@/contexts/AuthReducer";
 import useApi from "@/hooks/useApi";
 import useAuth from "@/hooks/useAuth";
@@ -89,10 +90,14 @@ const SignInScreen = () => {
       keyboardShouldPersistTaps="handled"
     >
       <View style={styles.logoContainer}>
+        <LanguageSwitcher
+          showLabel={false}
+          showIcon={false}
+          style={styles.languageSwitcher}
+        />
         <Logo style={styles.logo} />
       </View>
 
-      {/* <View style={styles.form}> */}
       <TextInput
         keyboardType="email-address"
         name="username"
@@ -103,7 +108,6 @@ const SignInScreen = () => {
         style={styles.usernameInput}
       />
       <TextInput
-        // style={styles.password}
         secureTextEntry
         name="password"
         placeholder={t("password.placeholder")}
@@ -159,14 +163,15 @@ const SignInScreen = () => {
         </View>
       )}
       {guestLoginEnabled && (
-        <Button
-          // style={styles.guestButton}
-          // body1
-          textStyle={styles.guestLink}
-          themeType="white"
-          title={t("loginGuestBtnTitle")}
-          onPress={signInAsGuest}
-        />
+        <View style={styles.guestLogin}>
+          <Text body1>{t("guestLoginText")}</Text>
+          <Button
+            type="link"
+            textStyle={styles.guestLink}
+            title={t("guestLoginLink")}
+            onPress={signInAsGuest}
+          />
+        </View>
       )}
       {loader}
     </FormScreen>
@@ -182,6 +187,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     justifyContent: "center",
     alignItems: "center",
+    position: "relative",
   },
   logo: {
     justifyContent: "center",
@@ -226,11 +232,24 @@ const styles = StyleSheet.create({
   footer: {
     // flex: 2,
     // flexShrink: 0,
+    gap: 5,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
   fbButton: {
     backgroundColor: "#4267B2",
+  },
+  guestLogin: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+  },
+  languageSwitcher: {
+    position: "absolute",
+    left: 0,
+    top: 0,
   },
 });
 

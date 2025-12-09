@@ -363,10 +363,12 @@ export default {
     signUpLink: "سجل الآن",
     forgotPasswordLink: "هل نسيت كلمة المرور؟",
     loginBtnTitle: "تسجيل الدخول",
-    loginGuestBtnTitle: "تسجيل الدخول كزائر",
-    facebookLoginButtonTitle: "تسجيل الدخول باستخدام فيسبوك",
-    appleLoginButtonTitle: "تسجيل الدخول باستخدام أبل",
+    loginGuestBtnTitle: "الدخول كزائر",
+    facebookLoginButtonTitle: "الدخول باستخدام فيسبوك",
+    appleLoginButtonTitle: "الدخول باستخدام أبل",
     passwordLink: "هل نسيت كلمة المرور؟",
+    guestLoginText: "او الدخول",
+    guestLoginLink: "كزائر",
   },
   forgotPasswordScreen: {
     title: "هل نسيت كلمة المرور",
@@ -464,7 +466,7 @@ export default {
   },
   editProfileScreen: {
     updateProfileDialog: {
-      body: "يرجى تحديث ملفك الشخصي للحصول على تجربة أفضل",
+      body: "يرجى تحديث ملفك الشخصي لتجربة أفضل",
     },
     firstName: {
       placeholder: "الاسم الأول",
