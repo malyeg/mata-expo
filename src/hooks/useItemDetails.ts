@@ -135,7 +135,7 @@ export function useItemDetails({
         );
         setWishItemId(newWishItem.id);
         Analytics.logAddItemToWishlist([item]);
-        addTargetCategory(item?.category?.id!);
+        await addTargetCategory(item?.category?.id!);
       }
     } catch (error) {
       console.log(error);
