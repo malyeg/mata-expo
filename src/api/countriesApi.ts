@@ -55,7 +55,7 @@ class CountriesApi {
   getStatesByIds = (ids: string[]) => {
     return (states as any).filter((state: State) =>
       ids.includes(state.id.toString())
-    );
+    ) as State[];
   };
 
   getByCode(countryCode: string) {

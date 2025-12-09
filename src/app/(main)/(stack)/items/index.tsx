@@ -1,5 +1,4 @@
-import { Category } from "@/api/categoriesApi";
-import itemsApi, { Item, swapList } from "@/api/itemsApi";
+import itemsApi, { Item } from "@/api/itemsApi";
 import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
 import ItemsFilter from "@/components/widgets/data/ItemsFilter";
 import SelectedFilters from "@/components/widgets/data/SelectedFilters";
@@ -8,27 +7,18 @@ import ItemsList from "@/components/widgets/ItemsList";
 import ItemsMapView from "@/components/widgets/ItemsMapView";
 import NoDataFound from "@/components/widgets/NoDataFound";
 import { screens } from "@/config/constants";
-import categories from "@/data/categories";
+
 import { useAlgoliaQuery } from "@/hooks/db/useAlgoliaQuery";
 import useLocale from "@/hooks/useLocale";
 import useToast from "@/hooks/useToast";
+import useLocationStore from "@/store/location-store";
 import sharedStyles from "@/styles/SharedStyles";
 import { theme } from "@/styles/theme";
-import { Operation, Query } from "@/types/DataTypes";
+import { Query } from "@/types/DataTypes";
+import { getQueryFromParams, ItemsParams } from "@/utils/ItemsSearchUtils";
 import { Stack, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-
-type ItemsParams = {
-  id?: string;
-  action?: "OPEN_FILTER";
-  categoryId?: string;
-  countryId?: string;
-  stateId?: string;
-  swapType?: string;
-  conditionType?: string;
-  // filters?: ItemsFilterForm;
-};
 
 const ItemsScreen = () => {
   const [isFilterVisible, setFilterVisible] = useState(false);
@@ -42,7 +32,7 @@ const ItemsScreen = () => {
   const {
     data,
     error,
-    pagination: { hasMore, totalPages, totalItems },
+    pagination: { hasMore, totalItems },
     loadMore,
     isFetching,
     refetch,
@@ -61,6 +51,10 @@ const ItemsScreen = () => {
   }, [error]);
 
   useEffect(() => {
+    if (!params.countryId) {
+      const countryId = useLocationStore.getState().location?.country?.id;
+      params.countryId = countryId;
+    }
     const newQuery = getQueryFromParams(params);
     setQuery(newQuery);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +63,7 @@ const ItemsScreen = () => {
     params.conditionType,
     params.countryId,
     params.stateId,
-    params.swapType,
+    params.swapOptionType,
   ]);
 
   useEffect(() => {
@@ -270,98 +264,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-// const toQueryFilter = (filtersForm: ItemsFilterForm) => {
-//   const newFilters: Filter[] = [];
-//   !!filtersForm.country &&
-//     newFilters.push({
-//       name: "countryId",
-//       field: "location.country.id",
-//       value: filtersForm?.country.id,
-//     });
-//   !!filtersForm.states &&
-//     newFilters.push({
-//       field: "stateId",
-//       operation: Operation.IN,
-//       value: filtersForm?.states.map((s) => s.id.toString()),
-//     });
-
-//   !!filtersForm.category &&
-//     newFilters.push({
-//       field: "catLevel1,catLevel2,catLevel3",
-//       value: filtersForm.category.name,
-//     });
-
-//   !!filtersForm.swapTypes &&
-//     newFilters.push({
-//       field: "swapOptionType",
-//       operation: Operation.IN,
-//       value: filtersForm.swapTypes.map((s) => s.id),
-//     });
-//   !!filtersForm.conditionTypes &&
-//     newFilters.push({
-//       field: "conditionType",
-//       operation: Operation.IN,
-//       value: filtersForm.conditionTypes.map((s) => s.id),
-//     });
-//   !!filtersForm.swapCategory &&
-//     newFilters.push({
-//       field: "swapCategory",
-//       value: filtersForm.swapCategory.name,
-//     });
-
-//   return newFilters;
-// };
-
-const getQueryFromParams = (params: ItemsParams) => {
-  const query: Query = { filters: [] };
-
-  if (params.categoryId) {
-    const category = categories.find(
-      (c) => c.id === params.categoryId
-    ) as Category;
-
-    query.filters?.push({
-      id: category.id,
-      field: "catLevel1,catLevel2,catLevel3",
-      value: category.name,
-      operation: Operation.EQUAL,
-    });
-  }
-
-  if (params?.conditionType) {
-    query.filters?.push({
-      field: "conditionType",
-      value: params.conditionType,
-      operation: Operation.EQUAL,
-    });
-  }
-
-  if (params.countryId) {
-    query.filters?.push({
-      field: "countryId",
-      value: params.countryId,
-      operation: Operation.EQUAL,
-    });
-  }
-
-  if (params?.stateId) {
-    query.filters?.push({
-      field: "location.state.id",
-      value: JSON.parse(params.stateId)?.id,
-      operation: Operation.EQUAL,
-    });
-  }
-  if (params?.swapType) {
-    const swapType = swapList.filter(
-      (c) => c.id === params.swapType?.toString()
-    );
-    query.filters?.push({
-      field: "swapOptionType",
-      value: swapType[0].id,
-      operation: Operation.EQUAL,
-    });
-  }
-
-  return query;
-};

@@ -1,7 +1,7 @@
-import { ref, deleteObject, putFile, TaskEvent } from "@react-native-firebase/storage";
-import { crashlytics, storage, functions } from "../firebase";
+import { deleteObject, putFile, ref } from "@react-native-firebase/storage";
 import constants from "../config/constants";
 import invalidContent from "../data/invalidContent";
+import { crashlytics, functions, storage } from "../firebase";
 import { DataSearchable, Entity } from "../types/DataTypes";
 import Analytics, { AnalyticsEvent } from "../utils/Analytics";
 import { PublicUser } from "./authApi";
@@ -16,7 +16,7 @@ export type ItemStatus =
   | "archived"
   | "blocked";
 export type ConditionType = "new" | "goodAsNew" | "used" | "usedWithIssues";
-export type SwapType = "free" | "swapWithAnother" | "swapWithAny";
+export type SwapOptionType = "free" | "swapWithAnother" | "swapWithAny";
 
 interface ItemCondition {
   id: ConditionType;
@@ -63,18 +63,30 @@ export const swapTypes = [
   {
     id: "free",
     name: "For Free",
+    localizedName: {
+      en: "For Free",
+      ar: "مجانا",
+    },
   },
   {
     id: "swapWithAny",
     name: "swap with ANY item",
+    localizedName: {
+      en: "swap with ANY item",
+      ar: "مبادلة مع أي عنصر",
+    },
   },
   {
     id: "swapWithAnother",
     name: "Swap with specific category item",
+    localizedName: {
+      en: "Swap with specific category item",
+      ar: "مبادلة مع عنصر من نفس الفئة",
+    },
   },
 ];
 interface SwapOption {
-  id: SwapType;
+  id: SwapOptionType;
   name: string;
   localizedName: { [key: string]: string };
 }
@@ -144,7 +156,7 @@ export interface Item extends DataSearchable, Entity {
   timestamp?: Date;
   status: ItemStatus;
   swapOption: {
-    type: SwapType;
+    type: SwapOptionType;
     category?: Category;
   };
   swapOptionType?: string; // deprecated

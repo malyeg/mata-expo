@@ -1,8 +1,6 @@
-import { swapList } from "@/api/itemsApi";
 import { Image, Screen } from "@/components/core";
 import SignUpCard from "@/components/features/auth/SignUpCard";
 import ItemsFilter, {
-  ItemsFilterForm,
   ItemsFilterProps,
 } from "@/components/widgets/data/ItemsFilter";
 import ItemsSearch from "@/components/widgets/ItemsSearch";
@@ -14,6 +12,8 @@ import UpdateProfileCard from "@/components/widgets/UpdateProfileCard";
 import useAuth from "@/hooks/useAuth";
 import useLocationStore from "@/store/location-store";
 import { theme } from "@/styles/theme";
+import { Query } from "@/types/DataTypes";
+import { ItemsParams } from "@/utils/ItemsSearchUtils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation, useRouter } from "expo-router";
@@ -46,22 +46,68 @@ const HomeScreen = () => {
   }, []);
 
   const onFilterChange = useCallback(
-    (filters: ItemsFilterForm) => {
+    (query: Query) => {
       setItemsFilterVisible(false);
-      router.navigate("/(main)/items", {
-        filters,
+      const params: ItemsParams = {};
+      const categoryFilter = query.filters?.find(
+        (f) => f.field === "catLevel1,catLevel2,catLevel3"
+      );
+      if (categoryFilter?.id) {
+        params.categoryId = categoryFilter.id;
+      }
+
+      const countryFilter = query.filters?.find((f) => f.field === "countryId");
+      if (countryFilter?.value) {
+        params.countryId = countryFilter.value;
+      }
+
+      const stateFilter = query.filters?.find((f) => f.field === "stateId");
+      if (
+        stateFilter?.value &&
+        Array.isArray(stateFilter.value) &&
+        stateFilter.value.length > 0
+      ) {
+        params.stateId = JSON.stringify({ id: stateFilter.value[0] });
+      }
+
+      const swapTypeFilter = query.filters?.find(
+        (f) => f.field === "swapOptionType"
+      );
+      if (
+        swapTypeFilter?.value &&
+        Array.isArray(swapTypeFilter.value) &&
+        swapTypeFilter.value.length > 0
+      ) {
+        params.swapOptionType = swapTypeFilter.value[0];
+      }
+
+      const conditionFilter = query.filters?.find(
+        (f) => f.field === "conditionType"
+      );
+      if (
+        conditionFilter?.value &&
+        Array.isArray(conditionFilter.value) &&
+        conditionFilter.value.length > 0
+      ) {
+        params.conditionType = conditionFilter.value[0];
+      }
+
+      router.navigate({
+        pathname: "/(main)/(stack)/items",
+        params,
       });
     },
     [router]
   );
 
   const openFreeItems = useCallback(() => {
-    const filters: ItemsFilterForm = {
-      swapTypes: swapList.filter((s) => s.id === "free"),
+    const params: ItemsParams = {
+      swapOptionType: "free",
     };
     setItemsFilterVisible(false);
-    router.navigate("/(main)/items", {
-      filters,
+    router.navigate({
+      pathname: "/(main)/(stack)/items",
+      params,
     });
   }, [router]);
 
@@ -125,7 +171,9 @@ const HomeScreen = () => {
         openOnLoad={isItemsFilterVisible}
         onClose={closeFilter}
         focusOn={itemsFilterFocusField}
-        defaultValues={{ country: location?.country }}
+        defaultValues={
+          location?.country ? { country: location?.country } : undefined
+        }
       />
     </Screen>
   );

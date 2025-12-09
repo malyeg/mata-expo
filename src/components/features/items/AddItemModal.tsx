@@ -4,7 +4,7 @@ import itemsApi, {
   ConditionType,
   ImageSource,
   Item,
-  SwapType,
+  SwapOptionType,
   swapTypes,
 } from "@/api/itemsApi";
 import { Location } from "@/api/locationApi";
@@ -45,7 +45,7 @@ type AddItemFormValues = {
   location?: Location;
   images: ImageSource[];
 
-  swapType: SwapType;
+  swapOptionType: SwapOptionType;
   swapCategory: string;
   status: boolean;
 };
@@ -59,7 +59,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   const { editItem } = useAddItemStore();
   const isEditMode = !!editItem?.id;
 
-  const [swapType, setSwapType] = useState<SwapType | null>(null);
+  const [swapType, setSwapType] = useState<SwapOptionType | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [locationSelectorOpen, setLocationSelectorOpen] =
     useState<boolean>(false);
@@ -92,7 +92,9 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         swapCategory: yup
           .string()
           .test("swapCategory", t("swapCategory.required"), function (value) {
-            if (this.parent.swapType === ("swapWithAnother" as SwapType)) {
+            if (
+              this.parent.swapType === ("swapWithAnother" as SwapOptionType)
+            ) {
               return !!value;
             }
             return true;
@@ -118,7 +120,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
             setValue("category", item.category?.id || "");
             setValue("conditionType", item.condition?.type);
             setValue("usedWithIssuesDesc", item.condition?.desc || "");
-            setValue("swapType", item.swapOption?.type);
+            setValue("swapOptionType", item.swapOption?.type);
             setValue("swapCategory", item.swapOption?.category?.id || "");
             setValue("location", item.location);
             setValue("images", item.images || []);
@@ -194,7 +196,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         },
         status: data.status === true ? "draft" : "online",
         swapOption: {
-          type: data.swapType,
+          type: data.swapOptionType,
         },
       };
       !!data.swapCategory &&
@@ -252,7 +254,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   }, []);
 
   const onSwapChange = useCallback((value: string) => {
-    setSwapType(value as SwapType);
+    setSwapType(value as SwapOptionType);
   }, []);
   const onLocationModalChange = useCallback((status: "opened" | "closed") => {
     // setSwapType(value as SwapType);

@@ -1,6 +1,6 @@
 import categoriesApi from "@/api/categoriesApi";
 import countriesApi from "@/api/countriesApi";
-import { Item } from "@/api/itemsApi";
+import { Item, swapList } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
@@ -21,6 +21,8 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     }
   };
 
+  console.log("query", query);
+
   // Extract filter values from the filters array
   const statesFilter = filters.find((f) => f.field === "stateId");
   const searchText = query?.searchText; // Search is stored in query.searchText, not filters
@@ -34,7 +36,7 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     );
     categoryFilter.name = category?.localizedName?.[locale] ?? category?.name;
   }
-  const swapTypesFilter = filters.find((f) => f.field === "swapOptionType");
+  const swapTypesFilter = filters.filter((f) => f.field === "swapOptionType");
 
   // Get state names from IDs
   const getStateNames = (stateIds: string[]) => {
@@ -82,12 +84,21 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
         />
       )}
       {swapTypesFilter &&
-        Array.isArray(swapTypesFilter.value) &&
-        swapTypesFilter.value.length > 0 && (
+        Array.isArray(swapTypesFilter) &&
+        swapTypesFilter.length > 0 && (
           <FilterComponent
             field="swapOptionType"
-            value={swapTypesFilter.value.join(",")}
-            label={swapTypesFilter.name || swapTypesFilter.value.join(", ")}
+            value={swapTypesFilter.map((f) => f.value).join(",")}
+            label={swapTypesFilter
+              .map((f) => {
+                const swapOption = swapList.find((s) => s.id === f.value);
+                return (
+                  swapOption?.localizedName?.[locale] ??
+                  swapOption?.name ??
+                  f.value
+                );
+              })
+              .join(", ")}
             onDelete={deleteItem}
           />
         )}
