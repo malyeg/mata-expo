@@ -20,7 +20,6 @@ import { Profile } from "@/models/Profile.model";
 import { Country } from "@/models/place.model";
 import { theme } from "@/styles/theme";
 import { useRouter } from "expo-router";
-import { produce } from "immer";
 import React, {
   useCallback,
   useEffect,
@@ -136,7 +135,6 @@ const EditProfileScreen = () => {
   );
 
   const onFormSuccess = async (data: EditProfileFormValues) => {
-    //
     hideToast();
     try {
       const dirtyFields = formState.dirtyFields;
@@ -149,25 +147,20 @@ const EditProfileScreen = () => {
             .find((s) => s.id.toString() === data.state.toString())
         : profile?.state!;
       const city = cities.find((c) => c.id === data.city);
-      const newProfile = produce(profile, (draft) => {
-        if (draft) {
-          draft.id = user?.id!;
 
-          !!data.firstName && (draft.firstName = data.firstName);
-          !!data.lastName && (draft.lastName = data.lastName);
-          draft.fullName =
-            draft.fullName ?? draft.firstName + " " + draft.lastName;
-          !!country && (draft.country = country);
-          !!state && (draft.state = state);
-          !!city && (draft.city = city);
-          draft.acceptMarketingFlag = data.acceptMarketingFlag ?? true;
-          draft.updated = true;
-        }
-      });
+      const newProfile: Partial<Profile> = { id: user?.id!, userId: user?.id! };
+      !!data.firstName && (newProfile.firstName = data.firstName);
+      !!data.lastName && (newProfile.lastName = data.lastName);
+      !!country && (newProfile.country = country);
+      !!state && (newProfile.state = state);
+      !!city && (newProfile.city = city);
+      !!data.acceptMarketingFlag &&
+        (newProfile.acceptMarketingFlag = data.acceptMarketingFlag);
+      newProfile.updated = true;
+      console.log(user.id, profile.id);
 
-      await request<Profile>(() => updateProfile(newProfile!));
+      await request<Profile>(() => updateProfile(newProfile as Profile));
 
-      // reset(undefined, {keepValues: true});
       router.back();
       showToast({
         type: "success",
@@ -184,12 +177,14 @@ const EditProfileScreen = () => {
       });
     }
   };
+
   const focusToLastname = () => secondNameRef.current.focus();
 
   const values = useWatch({ control });
 
   const showMarketingTip = !profile?.updated && !values.acceptMarketingFlag;
 
+  console.log(values.state);
   // return loader;
   return profile ? (
     <FormScreen style={styles.screen}>
@@ -286,7 +281,7 @@ const EditProfileScreen = () => {
         )}
       </View>
       <Button
-        disabled={!formState.isDirty}
+        // disabled={!formState.isDirty}
         title={t("submitBtnTitle")}
         onPress={handleSubmit(onFormSuccess)}
       />

@@ -57,7 +57,7 @@ const ContactUsScreen = () => {
       };
 
       await request<Email>(() =>
-        emailsApi.add(email, {
+        emailsApi.create(email, {
           analyticsEvent: {
             name: "contact_us",
           },

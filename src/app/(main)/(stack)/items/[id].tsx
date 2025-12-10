@@ -35,7 +35,7 @@ const ItemDetailsScreen = () => {
     <>
       <Stack.Screen
         options={{
-          headerRight: () => <ItemDetailsMenu item={item} />,
+          headerRight: () => <ItemDetailsMenu item={item!} />,
         }}
       />
       <ItemDetailsContent

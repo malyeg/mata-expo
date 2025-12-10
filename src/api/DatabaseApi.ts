@@ -26,7 +26,7 @@ import {
   updateDoc,
 } from "@react-native-firebase/firestore";
 import { crashlytics, db } from "../firebase";
-import { Api } from "./Api";
+import { Api, APIOptions } from "./Api";
 
 export type WithId<T> = T & { id: string };
 
@@ -87,7 +87,10 @@ export class DatabaseApi<T extends object> extends Api {
   async getAll(query?: Query): Promise<WithId<T>[]> {
     const coll = query ? this.getQuery(query) : this.collection;
     const snap = await getDocs(coll);
-    return snap.docs.map((d: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({ id: d.id, ...(d.data() as T) }));
+    return snap.docs.map((d: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
+      id: d.id,
+      ...(d.data() as T),
+    }));
   }
 
   /** Fetch a single document by its ID */
@@ -99,13 +102,17 @@ export class DatabaseApi<T extends object> extends Api {
   }
 
   /** Add a new document (Firestore auto‑generates the ID) */
-  async create(data: Omit<T, "id">): Promise<T> {
+  async create(data: Omit<T, "id">, options?: APIOptions): Promise<T> {
     // add timestamp
+    const cleanedData = removeUndefinedValues(data);
     const ref = await addDoc(this.collection, {
-      ...data,
+      ...cleanedData,
       timestamp: serverTimestamp(),
     });
-    return { id: ref.id, ...data } as T;
+    if (options?.analyticsEvent) {
+      this.logEvent(options?.analyticsEvent, "add");
+    }
+    return { id: ref.id, ...cleanedData } as T;
   }
 
   /** Overwrite (or create) a document with a known ID */
@@ -123,7 +130,8 @@ export class DatabaseApi<T extends object> extends Api {
         this.collectionName,
         id
       ) as unknown as FirebaseFirestoreTypes.DocumentReference<T>;
-      await updateDoc(ref, data);
+      const cleanedData = removeUndefinedValues(data) as UpdateData<T>;
+      await updateDoc(ref, cleanedData);
     } catch (error) {
       console.error("Error updating document:", error);
       throw error;
@@ -213,10 +221,12 @@ export class DatabaseApi<T extends object> extends Api {
     const unsubscribe = onSnapshot(
       this.collection,
       (snapshot) => {
-        const items = snapshot.docs.map((docSnap: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
-          id: docSnap.id,
-          ...(docSnap.data() as T),
-        }));
+        const items = snapshot.docs.map(
+          (docSnap: FirebaseFirestoreTypes.QueryDocumentSnapshot) => ({
+            id: docSnap.id,
+            ...(docSnap.data() as T),
+          })
+        );
         onNext(items);
       },
       onError

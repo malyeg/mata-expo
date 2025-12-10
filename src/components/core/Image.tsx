@@ -7,7 +7,6 @@ export interface ImageProps {
   source?: any;
   cache?: "immutable" | "web" | "cacheOnly";
   style?: StyleProp<ImageStyle>;
-  resizeMode?: ExpoImageProps["resizeMode"];
   contentFit?: ExpoImageProps["contentFit"];
   onPress?: () => void;
   onPressViewInFullScreen?: boolean;
@@ -20,7 +19,7 @@ export interface ImageProps {
 const Image = ({
   style,
   source,
-  resizeMode,
+  contentFit,
   uri,
   onPress,
   onPressViewInFullScreen = false,

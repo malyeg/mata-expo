@@ -183,6 +183,7 @@ const DealDetailsScreen = () => {
         await request(() => dealsApi.rejectOffer(d ?? deal!, "other"));
         router.navigate("/deals");
       } catch (error) {
+        // console.error(error);
         showErrorToast(error);
       }
     },
@@ -315,7 +316,7 @@ const DealDetailsScreen = () => {
                 <Image
                   uri={swapImageUrl}
                   style={styles.swapImage}
-                  resizeMode="stretch"
+                  cotentFit="cover"
                 />
               </Pressable>
             </>

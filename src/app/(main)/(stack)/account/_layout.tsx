@@ -26,12 +26,7 @@ const ProfileLayout = () => {
           title: t("screens.myArchivedItems"),
         }}
       />
-      <Stack.Screen
-        name="my-items"
-        options={{
-          title: t("screens.myItems"),
-        }}
-      />
+
       <Stack.Screen
         name="wish-list"
         options={{

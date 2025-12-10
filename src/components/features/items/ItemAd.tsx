@@ -54,7 +54,7 @@ const CustomAd = ({ ad }: CustomAdProps) => {
       <Image
         uri={ad.image?.url}
         style={styles.adImage}
-        resizeMode="stretch"
+        contentFit="cover"
         onPress={openAdLink}
       />
     </View>

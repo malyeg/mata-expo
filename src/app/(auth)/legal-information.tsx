@@ -1,35 +1,31 @@
 import { Screen, Text } from "@/components/core";
 import Card from "@/components/core/Card";
-import { screens } from "@/config/constants";
+import constants from "@/config/constants";
 import useLocale from "@/hooks/useLocale";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Linking, StyleSheet } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const LegalInformationScreen = () => {
   const router = useRouter();
-  const { t } = useLocale(screens.LEGAL_INFORMATION);
+  const { t } = useLocale("LegalInformationScreen");
 
-  const openPrivacyModal = () => {
-    router.navigate({
-      pathname: "/(auth)/privacy-policy",
-    });
+  const openPrivacy = () => {
+    Linking.openURL(constants.legalInfo.PRIVACY_URL);
   };
-  const openTermsModal = () => {
-    router.navigate({
-      pathname: "/(auth)/terms",
-    });
+  const openTerms = () => {
+    Linking.openURL(constants.legalInfo.TERMS_URL);
   };
 
   return (
     <Screen style={styles.screen}>
       <Text style={[styles.header, styles.header1]}>{t("header1")}</Text>
       <Text style={[styles.header, styles.header2]}>{t("header2")}</Text>
-      <Card style={styles.card} onPress={openPrivacyModal}>
+      <Card style={styles.card} onPress={openPrivacy}>
         <Text style={styles.cardLabel}>{t("privacyTitle")}</Text>
       </Card>
-      <Card style={styles.card} onPress={openTermsModal}>
+      <Card style={styles.card} onPress={openTerms}>
         <Text style={styles.cardLabel}>{t("termsTitle")}</Text>
       </Card>
     </Screen>
@@ -44,8 +40,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 16,
-    textAlign: "justify",
-    // paddingHorizontal: 10,
+    textAlign: "left",
   },
   header1: {
     fontWeight: "bold",

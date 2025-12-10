@@ -18,7 +18,7 @@ type ItemImagesCarouselProps = Omit<
   "data" | "renderItem"
 > & {
   item: Item;
-  resizeMode?: ImageProps["resizeMode"];
+  contentFit?: ImageProps["contentFit"];
 };
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
@@ -27,7 +27,7 @@ const itemWidth = windowWidth - theme.defaults.SCREEN_PADDING * 6;
 
 const ItemImagesCarousel = ({
   item,
-  resizeMode = "contain",
+  contentFit = "contain",
   style,
   ...props
 }: ItemImagesCarouselProps) => {
@@ -118,6 +118,7 @@ const ItemImagesCarousel = ({
           {...props}
           data={data ?? []}
           snapEnabled={true}
+          loop={false}
           width={itemWidth}
           height={250}
           renderItem={renderItem}

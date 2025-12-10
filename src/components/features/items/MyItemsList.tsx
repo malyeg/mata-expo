@@ -13,7 +13,7 @@ import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 
 interface MyItemsListProps {
-  status: ItemStatus;
+  status: ItemStatus[];
 }
 
 export const MyItemsList = ({ status }: MyItemsListProps) => {
@@ -23,11 +23,8 @@ export const MyItemsList = ({ status }: MyItemsListProps) => {
   const { data: items, loading } = useFirestoreQuery<Item>(
     itemsApi.collectionName,
     (ref) => {
-      return ref
-        .where("user.id", "==", user?.id)
-        .where("status", "==", status);
-    },
-    [status, user?.id]
+      return ref.where("user.id", "==", user?.id).where("status", "in", status);
+    }
   );
 
   const { t } = useLocale(screens.MY_ITEMS);
@@ -93,5 +90,3 @@ const styles = StyleSheet.create({
 });
 
 export default MyItemsList;
-
-

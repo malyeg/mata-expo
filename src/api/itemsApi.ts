@@ -65,7 +65,7 @@ export const swapTypes = [
     name: "For Free",
     localizedName: {
       en: "For Free",
-      ar: "مجانا",
+      ar: "مجاني",
     },
   },
   {

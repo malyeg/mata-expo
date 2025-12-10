@@ -1,25 +1,18 @@
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import React, { useCallback, useState } from "react";
-import {
-  StyleProp,
-  StyleSheet,
-  TextProps,
-  TextStyle,
-  ViewStyle,
-} from "react-native";
+import { StyleProp, StyleSheet, TextProps, TextStyle } from "react-native";
 import { Text } from "../core";
 
 interface TextDescriptionProps extends TextProps {
   maxLines?: number;
   children: any;
   textStyle?: StyleProp<TextStyle>;
-  style?: StyleProp<ViewStyle>;
 }
 const TextDescription = ({
   children,
   maxLines = 2,
-  style,
+  textStyle,
 }: TextDescriptionProps) => {
   const { t } = useLocale("components");
   const [textShown, setTextShown] = useState(false);
@@ -38,7 +31,7 @@ const TextDescription = ({
   return (
     <>
       <Text
-        style={[styles.text, style]}
+        style={[styles.text, textStyle]}
         onTextLayout={onTextLayout}
         numberOfLines={textShown ? undefined : maxLines}
       >

@@ -1,7 +1,8 @@
 import React, { FC, useEffect } from "react";
-import { Image, ImageBackground, ImageStyle, StyleProp } from "react-native";
+import { ImageBackground, ImageStyle, StyleProp } from "react-native";
 import create from "../../styles/EStyleSheet";
 import theme from "../../styles/theme";
+import Image from "./Image";
 
 const logo = require("@/assets/images/logo.png");
 const bgImage = require("@/assets/images/bg.png");
@@ -39,7 +40,7 @@ const Logo: FC<LogoProps> = ({
           },
           style,
         ]}
-        resizeMode={"contain"}
+        contentFit={"contain"}
         source={logo}
       />
     </ImageBackground>
@@ -53,7 +54,7 @@ const Logo: FC<LogoProps> = ({
         },
         style,
       ]}
-      resizeMode={"contain"}
+      contentFit={"contain"}
       source={logo}
     />
   );

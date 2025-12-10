@@ -91,7 +91,7 @@ const DealsList = ({ type, archived = false }: DealsListProps) => {
         <Image
           uri={itemsApi.getImageUrl(item?.item)}
           style={styles.image}
-          resizeMode="contain"
+          contentFit="contain"
         />
         <View style={styles.content}>
           <Text numberOfLines={1}>{categoryName}</Text>

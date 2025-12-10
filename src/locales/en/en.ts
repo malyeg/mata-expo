@@ -381,6 +381,11 @@ export default {
     guestLoginText: "or login",
     guestLoginLink: "as guest",
   },
+  legalInfoScreen: {
+    title: "Legal Information",
+    termsAndConditions: "Terms and Conditions",
+    privacyPolicy: "Privacy Policy",
+  },
   forgotPasswordScreen: {
     title: "Forgot password",
     username: {

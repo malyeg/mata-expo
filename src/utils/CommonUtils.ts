@@ -18,8 +18,8 @@
 
 const isEmpty = (obj: string | Array<any>) => {
   if (obj && obj !== undefined && obj !== null) {
-    if (typeof obj === 'string') {
-      return obj.trim() === '';
+    if (typeof obj === "string") {
+      return obj.trim() === "";
     } else if (Array.isArray(obj) && obj.length > 0) {
       return false;
     }
@@ -45,7 +45,7 @@ const isEqual = (obj1: object | undefined, obj2: object | undefined) => {
 };
 
 function timeout(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const getKeyValue =
@@ -59,20 +59,20 @@ const allCombinations = (str1: string) => {
     arr[x] = str1.substring(x, y);
   }
   const combination = [];
-  let temp = '';
+  let temp = "";
   let len = Math.pow(2, arr.length);
   for (let i = 0; i < len; i++) {
-    temp = '';
+    temp = "";
     for (let j = 0; j < arr.length; j++) {
       if (i & Math.pow(2, j)) {
         temp += arr[j];
       }
     }
-    if (temp !== '' && str1.includes(temp)) {
+    if (temp !== "" && str1.includes(temp)) {
       combination.push(temp.toLowerCase());
     }
   }
   return combination;
 };
 
-export {isEmpty, isNull, timeout, isEqual, getKeyValue, allCombinations};
+export { allCombinations, getKeyValue, isEmpty, isEqual, isNull, timeout };

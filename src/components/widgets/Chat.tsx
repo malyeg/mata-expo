@@ -167,9 +167,9 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
           renderSend={renderSend}
           renderMessage={renderMessage}
           messages={chatMessages}
-          textInputProps={{
-            returnKeyType: "send",
-          }}
+          // textInputProps={{
+          //   returnKeyType: "send",
+          // }}
           renderInputToolbar={(props) =>
             !disableComposer ? (
               <InputToolbar {...props} containerStyle={styles.toolbar} />

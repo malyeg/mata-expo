@@ -15,7 +15,7 @@ import Error from "./Error";
 import { pickerInputStyles } from "./pickerInputStyles";
 import PickerModal, { PickerModalProps } from "./PickerModal";
 
-export interface PickerProps<T extends Entity> {
+export interface PickerProps<T> {
   name: string;
   items: T[];
   position?: PickerModalProps<T>["position"];
@@ -130,7 +130,10 @@ const Picker = forwardRef(function Picker<T extends Entity>(
             hasError && pickerInputStyles.textInputBorderError,
           ]}
         >
-          <Pressable onPress={openModal} style={pickerInputStyles.inputContainer}>
+          <Pressable
+            onPress={openModal}
+            style={pickerInputStyles.inputContainer}
+          >
             <Text
               style={[
                 pickerInputStyles.inputText,

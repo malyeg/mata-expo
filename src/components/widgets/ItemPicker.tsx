@@ -1,16 +1,14 @@
 import { ApiResponse } from "@/api/Api";
 import categoriesApi from "@/api/categoriesApi";
 import itemsApi, { Item, ItemStatus } from "@/api/itemsApi";
-import { screens } from "@/config/constants";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
-import sharedStyles from "@/styles/SharedStyles";
+import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
 import { QueryBuilder } from "@/types/DataTypes";
-import { Link } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { Loader, Modal, Text } from "../core";
+import { Button, Loader, Modal, Text } from "../core";
 import DataList from "./DataList";
 import ItemCard from "./ItemCard";
 import NoDataFound from "./NoDataFound";
@@ -32,11 +30,13 @@ const ItemPicker = ({
   const [items, setItems] = useState<ApiResponse<Item>>();
   const { user } = useAuth();
   const { t } = useLocale("widgets");
+  const { openAddItemModal } = useAddItemStore();
   useEffect(() => {
     const query = new QueryBuilder<Item>().filters([
       { field: "userId", value: user?.id },
       { field: "status", value: "online" as ItemStatus },
     ]);
+
     !!categoryId && query.filter("category.id", categoryId);
     itemsApi.getAll(query.build()).then((itemResp) => {
       console.log("itemResp", itemResp.length);
@@ -63,20 +63,12 @@ const ItemPicker = ({
             })
           : t("itemPicker.noData")}
       </Text>
-      <Link
-        onPress={onClose}
-        style={sharedStyles.link}
-        href={{
-          screen: screens.ADD_ITEM,
-          params: {
-            categoryId: categoryId,
-          },
-        }}
-      >
-        <Text style={styles.addLink}>
-          {t("itemPicker.noCategoryLinkTitle")}
-        </Text>
-      </Link>
+      <Button
+        type="link"
+        title={t("itemPicker.noCategoryLinkTitle")}
+        onPress={() => openAddItemModal()}
+        // style={sharedStyles.link}
+      />
     </NoDataFound>
   );
 

@@ -23,7 +23,6 @@ import useLocation from "@/hooks/useLocation";
 import useSheet from "@/hooks/useSheet";
 import useToast from "@/hooks/useToast";
 import { useAddItemStore } from "@/store/addItem-store";
-import { Entity } from "@/types/DataTypes";
 import Analytics from "@/utils/Analytics";
 import { useRouter } from "expo-router";
 import React, {
@@ -88,7 +87,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         location: yup.object().required(t("location.required")),
 
         usedWithIssuesDesc: yup.string().max(200),
-        swapType: yup.string().required(t("swapType.required")),
+        swapOptionType: yup.string().required(t("swapType.required")),
         swapCategory: yup
           .string()
           .test("swapCategory", t("swapCategory.required"), function (value) {
@@ -152,6 +151,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
 
   const onFormSuccess = async (data: AddItemFormValues) => {
     try {
+      console.log("onFormSuccess");
       hideToast();
       const invalidContent = itemsApi.getInvalidContent(
         data.name,
@@ -267,6 +267,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
 
   const categories = useMemo(() => categoriesApi.getAll(), []);
   const focusToDiscription = () => setFocus("description");
+  console.log(swapType);
   return (
     <Modal
       isVisible={isVisible}
@@ -331,8 +332,8 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
 
       <Picker
         position="bottom"
-        name="swapType"
-        items={swapTypes as Entity[]}
+        name="swapOptionType"
+        items={swapTypes}
         placeholder={t("swapType.placeholder")}
         modalTitle={t("swapType.modalTitle")}
         control={control}

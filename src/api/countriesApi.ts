@@ -30,6 +30,7 @@ class CountriesApi {
     const state: State = {
       id: s.id.toString(),
       name: s.name,
+      localizedName: s.localizedName,
     };
     return state;
   }

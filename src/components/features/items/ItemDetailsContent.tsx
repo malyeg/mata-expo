@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { I18nManager, StyleSheet, View } from "react-native";
 
 import { ApiResponse } from "@/api/Api";
 import dealsApi, { Deal } from "@/api/dealsApi";
@@ -53,6 +53,7 @@ const ItemDetailsContent = ({
   deleteItem,
   refreshItem,
 }: ItemDetailsContentProps) => {
+  console.log(item?.swapOption);
   const router = useRouter();
   const [showItemPicker, setShowItemPicker] = useState(false);
 
@@ -285,7 +286,9 @@ const ItemDetailsContent = ({
         </View>
         {timeAgoString && (
           <View style={styles.sinceContainer}>
-            <Text>{t("sinceLabel", { params: { time: timeAgoString } })}</Text>
+            <Text style={styles.sinceText}>
+              {t("sinceLabel", { params: { time: timeAgoString } })}
+            </Text>
           </View>
         )}
 
@@ -442,7 +445,7 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     marginBottom: 10,
-    textAlign: "justify",
+    textAlign: I18nManager.isRTL ? "left" : "justify",
   },
   greenText: {
     color: theme.colors.green,
@@ -565,7 +568,7 @@ const styles = StyleSheet.create({
   },
   sinceContainer: {
     marginVertical: 5,
-    alignItems: "flex-end",
+    alignItems: "flex-start",
   },
   archivedButtonsContainer: {
     flexDirection: "row",
@@ -578,4 +581,5 @@ const styles = StyleSheet.create({
   blockedModalText: {
     paddingVertical: 20,
   },
+  sinceText: {},
 });
