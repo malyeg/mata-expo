@@ -3,9 +3,16 @@ import messagesApi, { Message } from "@/api/messagesApi";
 import { useCollectionSnapshot } from "@/hooks/db/useCollectionSnapshot";
 import useAuth from "@/hooks/useAuth";
 import useChat from "@/hooks/useChat";
+import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
 import React, { useCallback, useEffect, useState } from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import {
+  I18nManager,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 import {
   Bubble,
   BubbleProps,
@@ -29,6 +36,7 @@ interface ChatProps {
 }
 
 const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
+  const { t } = useLocale("widgets");
   const { data } = useCollectionSnapshot<Message>({
     collectionName: messagesApi.collectionName,
     query: (ref) => {
@@ -79,7 +87,14 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   const renderSend = useCallback(
     (props: SendProps<IMessage>) => (
       <Send {...props} containerStyle={styles.sendContainer}>
-        <Icon name="send-circle" color={theme.colors.salmon} size={35} />
+        <Icon
+          name="send-circle"
+          color={theme.colors.salmon}
+          size={35}
+          style={
+            I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined
+          }
+        />
       </Send>
     ),
     []
@@ -129,12 +144,16 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
           {...props}
           textInputProps={{
             returnKeyType: "send",
-            style: styles.textInput,
+            style: [
+              styles.textInput,
+              { textAlign: I18nManager.isRTL ? "right" : "left" },
+            ],
             multiline: true,
+            placeholder: t("chat.placeholder"),
           }}
         />
       ),
-    [disableComposer]
+    [disableComposer, t]
   );
 
   // const chatMessages: IMessage[] | undefined = useMemo(

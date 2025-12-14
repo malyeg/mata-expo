@@ -296,6 +296,9 @@ export default {
       acceptBtnTitle: "بدء",
       cancelBtnTitle: "إلغاء",
     },
+    chat: {
+      placeholder: "اكتب رسالة...",
+    },
   },
   homeScreen: {
     title: "الرئيسية",

@@ -302,6 +302,9 @@ export default {
       acceptBtnTitle: "Start",
       cancelBtnTitle: "Cancel",
     },
+    chat: {
+      placeholder: "Type a message...",
+    },
   },
   /////////////////////// start screens
   homeScreen: {

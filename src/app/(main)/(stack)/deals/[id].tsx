@@ -4,12 +4,12 @@ import { RatingWeight } from "@/api/ratingApi";
 import { Button, Image, Loader, Screen, Text } from "@/components/core";
 import Card from "@/components/core/Card";
 import DateText from "@/components/core/DateText";
+import DealDetailsMenu from "@/components/features/deals/DealDetailsMenu";
 import { KeyboardView } from "@/components/form";
 import SwapIcon from "@/components/icons/SwapIcon";
 import AcceptOfferModal from "@/components/widgets/AcceptOfferModal";
 import Chat from "@/components/widgets/Chat";
 import DealStatus from "@/components/widgets/DealStatus";
-import { MenuItem } from "@/components/widgets/Header";
 import Sheet from "@/components/widgets/Sheet";
 import constants from "@/config/constants";
 import useApi from "@/hooks/useApi";
@@ -71,60 +71,6 @@ const DealDetailsScreen = () => {
           setDefaultValue(d.rating[ratedUserId].rate);
         }
       }
-      let menuItems: MenuItem[] = [];
-      const title =
-        user.id === d.userId ? t("outgoingDealTitle") : t("incomingDealTitle");
-      if (d.status === "accepted") {
-        menuItems = [
-          {
-            label: t("menu.cancelLabel"),
-            icon: { name: "close-circle-outline", color: theme.colors.dark },
-            onPress: () => {
-              show({
-                header: t("cancelOfferConfirmationHeader"),
-                body: t("cancelOfferConfirmationBody"),
-                confirmCallback: () => cancelHandler(d),
-              });
-            },
-          },
-        ];
-      } else if (d.status === "new") {
-        if (d.userId !== user.id) {
-          menuItems = [
-            {
-              label: t("menu.rejectLabel"),
-              icon: { name: "close-circle-outline", color: theme.colors.dark },
-              onPress: () => {
-                show({
-                  header: t("rejectOfferConfirmationHeader"),
-                  body: t("rejectOfferConfirmationBody"),
-                  confirmCallback: () => rejectHandler(d),
-                });
-              },
-            },
-          ];
-        } else {
-          menuItems = [
-            {
-              label: t("menu.cancelLabel"),
-              icon: { name: "close-circle-outline", color: theme.colors.dark },
-              onPress: () => {
-                show({
-                  header: t("cancelOfferConfirmationHeader"),
-                  body: t("cancelOfferConfirmationBody"),
-                  confirmCallback: () => cancelHandler(d),
-                });
-              },
-            },
-          ];
-        }
-      }
-      // TODO set header menu
-      // (navigation as any).setOptions({
-      //   header: (props: any) => (
-      //     <Header {...props} title={title} menu={{ items: menuItems }} />
-      //   ),
-      // });
     };
 
     return dealsApi.onDocumentSnapshot(
@@ -290,6 +236,7 @@ const DealDetailsScreen = () => {
       <Stack.Screen
         options={{
           title,
+          headerRight: () => <DealDetailsMenu deal={deal} />,
         }}
       />
       <KeyboardView>
