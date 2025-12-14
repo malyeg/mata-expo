@@ -11,6 +11,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
+    icon: "./assets/images/ios-icon.png", // Add this
     supportsTablet: true,
     bundleIdentifier: "com.mata.mataapp",
     googleServicesFile: "./firebase/GoogleService-Info.plist",

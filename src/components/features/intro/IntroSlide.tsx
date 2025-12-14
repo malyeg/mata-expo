@@ -1,25 +1,18 @@
+import { Text } from "@/components/core";
+import theme from "@/styles/theme";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
-// import {Source} from 'react-native-fast-image';
-import Images from "@/assets/images/intro";
-import useLocale from "@/hooks/useLocale";
-import theme from "@/styles/theme";
-import { Text } from "../core";
-
+import images from "./images";
 interface IntroSlideProps {
   index: number;
 }
-
 const IntroSlide = ({ index = 1 }: IntroSlideProps) => {
-  const slide = Images[index];
-  const { t } = useLocale("app");
-  const slideKey = `intro.slides.slide${index + 1}` as const;
-
+  const slide = images[index];
   return (
     <View style={styles.container}>
       <Image source={slide.source} style={styles.image} />
-      <Text style={styles.title}>{t(`${slideKey}.title`)}</Text>
-      <Text style={styles.body}>{t(`${slideKey}.body`)}</Text>
+      <Text style={styles.title}>{slide.title}</Text>
+      <Text style={styles.body}>{slide.body}</Text>
     </View>
   );
 };

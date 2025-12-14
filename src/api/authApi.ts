@@ -12,7 +12,7 @@ import {
 } from "@react-native-firebase/auth";
 import { ICredentials } from "../contexts/AuthReducer";
 import { fromFirebaseUser, User } from "../contexts/user-model";
-import { auth, functions } from "../firebase";
+import { auth, callFunction } from "../firebase";
 import Analytics from "../utils/Analytics";
 import { Api } from "./Api";
 import locationApi from "./locationApi";
@@ -128,7 +128,7 @@ class AuthApi extends Api {
     Analytics.logSignOut();
   };
   deleteAccount = async () => {
-    await functions.httpsCallable("deleteAccount")();
+    await callFunction("deleteAccount")();
     Analytics.logEvent("delete_account");
   };
 

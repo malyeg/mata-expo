@@ -43,6 +43,7 @@ const Image = ({
       <ExpoImage
         {...props}
         style={[styleList]}
+        contentFit={contentFit ?? "contain"}
         source={
           source ?? {
             uri,

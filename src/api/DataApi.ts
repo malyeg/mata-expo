@@ -7,7 +7,7 @@ import {
   writeBatch,
 } from "@react-native-firebase/firestore";
 import constants from "../config/constants";
-import { crashlytics, db, functions } from "../firebase";
+import { crashlytics, db } from "../firebase";
 import {
   DataCollection,
   Entity,
@@ -25,6 +25,8 @@ export interface WriteBatchInterface<T> {
   update: (data: Map<string, Partial<T>>) => Promise<void>;
   delete: (ids: string[]) => Promise<void>;
 }
+
+export const FUNCTIONS_PREFIX = "new_";
 export class DataApi<T extends Entity> extends Api {
   collection: DataCollection<T>;
   cacheStore: string;

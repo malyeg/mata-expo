@@ -9,6 +9,32 @@ export default {
     connectionCheck: {
       noInternetMessage: "No connection, working offline",
     },
+    intro: {
+      skipBtn: "Skip",
+      closeBtn: "Close",
+      slides: {
+        slide1: {
+          title: "Ancient trade in contemporary style",
+          body: "Mata renovates ancient trade in a contemporary BOUNDLESS form of stuff SWAPPING",
+        },
+        slide2: {
+          title: "Let's reuse stuff & save earth resources",
+          body: "Mata supports environment by upgrading the concept of stuff RECYCLING into stuff REUSING",
+        },
+        slide3: {
+          title: "You can trade value for value",
+          body: "Mata promotes trading on the basis of VALUE FOR VALUE instead of VALUE FOR MONEY",
+        },
+        slide4: {
+          title: "A value added social life",
+          body: "Mata motivates SOCIAL RELATIONSHIPS through MONEY-FREE / VALUE-ADDED deals",
+        },
+        slide5: {
+          title: "Mutual benefit = win-win",
+          body: "Mata addresses the notion of MUTUALLY BENEFICIAL SWAP-DEAL so all are SATISFIED",
+        },
+      },
+    },
   },
   common: {
     search: "Search",
