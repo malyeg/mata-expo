@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   updateText: {
-    // textAlign: 'center',
+    textAlign: "left",
     color: theme.colors.white,
     fontSize: 12,
   },

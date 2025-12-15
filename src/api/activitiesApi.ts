@@ -11,10 +11,12 @@ class ActivitiesApi extends DatabaseApi<Activity> {
   }
 
   connect = (userId: string) => {
-    this.set(userId, {
-      online: true,
-      lastActivity: Date.now(),
-    });
+    if (userId) {
+      this.set(userId, {
+        online: true,
+        lastActivity: Date.now(),
+      });
+    }
   };
 
   disconnect = (userId: string) => {

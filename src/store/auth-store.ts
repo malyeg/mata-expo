@@ -32,6 +32,9 @@ interface AuthActions {
     newProfile: Profile
   ) => Promise<void>;
   signOut: () => Promise<void>;
+  appleSignIn: () => Promise<void>;
+  fbSignIn: () => Promise<void>;
+  guestSignIn: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   // Auto-initialization for Expo Router
   _initializeOnFirstAccess: () => void;
@@ -129,6 +132,65 @@ export const useAuthStore = create<AuthStore>()(
         });
       } catch (err: any) {
         console.error("Error signing out:", err);
+        throw err;
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
+    appleSignIn: async () => {
+      set({ isLoading: true });
+      try {
+        const result = await authApi.appleSignIn();
+        if (result) {
+          const { user, profile } = result;
+          set({
+            user,
+            profile,
+            isAuthenticated: true,
+          });
+        }
+      } catch (err: any) {
+        console.error("Error signing in with Apple:", err);
+        throw err;
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
+    fbSignIn: async () => {
+      set({ isLoading: true });
+      try {
+        const result = await authApi.facebookSignIn();
+        if (result) {
+          const { user, profile } = result;
+          set({
+            user,
+            profile,
+            isAuthenticated: true,
+          });
+        }
+      } catch (err: any) {
+        console.error("Error signing in with Facebook:", err);
+        throw err;
+      } finally {
+        set({ isLoading: false });
+      }
+    },
+
+    guestSignIn: async () => {
+      set({ isLoading: true });
+      try {
+        const user = await authApi.guestSignIn();
+        if (user) {
+          set({
+            user,
+            profile: null,
+            isAuthenticated: true,
+          });
+        }
+      } catch (err: any) {
+        console.error("Error signing in as guest:", err);
         throw err;
       } finally {
         set({ isLoading: false });

@@ -72,9 +72,9 @@ const useAuth = () => {
     deleteAccount: session.deleteAccount,
     addTargetCategory,
     getName,
-    // fbSignIn: session.fbSignIn,
-    // appleSignIn: session.appleSignIn,
-    // guestSignIn: session.guestSignIn,
+    fbSignIn: session.fbSignIn,
+    appleSignIn: session.appleSignIn,
+    guestSignIn: session.guestSignIn,
   };
 };
 

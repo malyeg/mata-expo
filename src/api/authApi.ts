@@ -1,15 +1,20 @@
 import { Profile } from "@/models/Profile.model";
+import { appleAuth } from "@invertase/react-native-apple-authentication";
 import {
+  AppleAuthProvider,
   createUserWithEmailAndPassword,
   EmailAuthProvider,
+  FacebookAuthProvider,
   FirebaseAuthTypes,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   signOut as firebaseSignOut,
   reauthenticateWithCredential,
   signInAnonymously,
+  signInWithCredential,
   signInWithEmailAndPassword,
   updatePassword,
 } from "@react-native-firebase/auth";
+import { AccessToken, LoginManager } from "react-native-fbsdk-next";
 import { ICredentials } from "../contexts/AuthReducer";
 import { fromFirebaseUser, User } from "../contexts/user-model";
 import { auth, callFunction } from "../firebase";
@@ -150,43 +155,103 @@ class AuthApi extends Api {
     return rules;
   };
 
+  facebookSignIn = async () => {
+    try {
+      // Request login permissions
+      const result = await LoginManager.logInWithPermissions([
+        "public_profile",
+        "email",
+      ]);
+
+      if (result.isCancelled) {
+        throw {
+          code: "auth/facebook/loginCanceled",
+          message: "Login was cancelled",
+        };
+      }
+
+      // Get the access token
+      const data = await AccessToken.getCurrentAccessToken();
+      if (!data) {
+        throw new Error("Something went wrong obtaining access token");
+      }
+
+      // Create Firebase credential
+      const facebookCredential = FacebookAuthProvider.credential(
+        data.accessToken
+      );
+
+      // Sign in with Firebase
+      const userCredential = await signInWithCredential(
+        auth,
+        facebookCredential
+      );
+      const userRules = await this.getUserRules();
+      const { user, profile } = this.fromFaceBook(userCredential, userRules);
+
+      // Check if profile exists, create if new user
+      let existingProfile = await profilesApi.getById(user.id);
+      if (!existingProfile) {
+        await profilesApi.set(user.id, profile);
+        existingProfile = profile;
+      }
+
+      Analytics.logLogin("FACEBOOK");
+      return { user, profile: existingProfile };
+    } catch (error) {
+      const err = (error as any).code ?? (error as any).message;
+      Analytics.logEvent("login_error", { error: err });
+      throw error;
+    }
+  };
+
   appleSignIn = async () => {
-    // try {
-    //   const appleAuthRequestResponse = await appleAuth.performRequest({
-    //     requestedOperation: appleAuth.Operation.LOGIN,
-    //     requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
-    //   });
-    //   const {identityToken, nonce, fullName} = appleAuthRequestResponse;
-    //   if (identityToken) {
-    //     const appleCredential = firebase.auth.AppleAuthProvider.credential(
-    //       identityToken,
-    //       nonce,
-    //     );
-    //     const userCredential = await firebase
-    //       .auth()
-    //       .signInWithCredential(appleCredential);
-    //     const user = this.fromApple(userCredential);
-    //     let profile = await profilesApi.getById(user.id);
-    //     if (profile) {
-    //       logger.debug('profile found', profile.id);
-    //     } else {
-    //       profile = {
-    //         email: user.email,
-    //         id: user.id,
-    //       } as Profile;
-    //       !!fullName?.givenName && (profile.firstName = fullName?.givenName);
-    //       !!fullName?.familyName && (profile.lastName = fullName?.familyName);
-    //       profilesApi.set(user.id, profile);
-    //     }
-    //     Analytics.logLogin('APPLE');
-    //     return {user, profile};
-    //   } else {
-    //     // handle this - retry?
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   throw error;
-    // }
+    try {
+      // Perform the Apple auth request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+      });
+
+      const { identityToken, nonce, fullName } = appleAuthRequestResponse;
+
+      if (!identityToken) {
+        throw new Error("Apple Sign-In failed - no identity token returned");
+      }
+
+      // Create Firebase credential using modular API
+      const appleCredential = AppleAuthProvider.credential(
+        identityToken,
+        nonce!
+      );
+
+      // Sign in with credential using modular API
+      const userCredential = await signInWithCredential(auth, appleCredential);
+      const user = this.fromApple(userCredential);
+
+      // Check if profile exists, create if new user
+      let profile = await profilesApi.getById(user.id);
+      if (!profile) {
+        profile = {
+          email: user.email,
+          id: user.id,
+        } as Profile;
+        if (fullName?.givenName) {
+          profile.firstName = fullName.givenName;
+        }
+        if (fullName?.familyName) {
+          profile.lastName = fullName.familyName;
+        }
+        await profilesApi.set(user.id, profile);
+      }
+
+      Analytics.logLogin("APPLE");
+      return { user, profile };
+    } catch (error) {
+      const err = (error as any).code ?? (error as any).message;
+      Analytics.logEvent("login_error", { error: err });
+      throw error;
+    }
   };
 
   fromFaceBook = (

@@ -1,20 +1,41 @@
 import { Icon } from "@/components/core";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/core/Icon";
 import { headerBackIconSize } from "@/components/HeaderBack";
+import GuestModal from "@/components/modals/GuestModal";
+import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
 import { FontAwesome } from "@expo/vector-icons";
+import { EventArg } from "@react-navigation/native";
 import { Tabs, useRouter } from "expo-router";
+import { useState } from "react";
 import { I18nManager, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function TabLayout() {
   const router = useRouter();
   const { t } = useLocale("common");
+  const { user } = useAuth();
   const { openAddItemModal } = useAddItemStore();
   const IconComponent = I18nManager.isRTL ? ChevronRightIcon : ChevronLeftIcon;
+  const [isGuestModalVisible, setGuestModalVisible] = useState(false);
+
+  const handleTabPress = (e: EventArg<"tabPress", true, undefined>) => {
+    if (user?.isAnonymous) {
+      e.preventDefault();
+      setGuestModalVisible(true);
+    }
+  };
+
+  const closeGuestModal = () => {
+    setGuestModalVisible(false);
+  };
 
   const onAddPress = () => {
+    if (user?.isAnonymous) {
+      setGuestModalVisible(true);
+      return;
+    }
     openAddItemModal();
   };
   return (
@@ -88,6 +109,9 @@ export default function TabLayout() {
               <Icon name="view-list-outline" size={20} color={color} />
             ),
           }}
+          listeners={{
+            tabPress: handleTabPress,
+          }}
         />
         <Tabs.Screen
           name="add-item"
@@ -118,6 +142,9 @@ export default function TabLayout() {
               <Icon name="bell-outline" size={20} color={color} />
             ),
           }}
+          listeners={{
+            tabPress: handleTabPress,
+          }}
         />
         <Tabs.Screen
           name="my-deals"
@@ -127,8 +154,12 @@ export default function TabLayout() {
               <Icon name="handshake" size={20} color={color} />
             ),
           }}
+          listeners={{
+            tabPress: handleTabPress,
+          }}
         />
       </Tabs>
+      <GuestModal isVisible={isGuestModalVisible} onCancel={closeGuestModal} />
     </>
   );
 }

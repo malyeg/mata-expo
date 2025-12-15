@@ -1,23 +1,34 @@
 import { ConfigContext, ExpoConfig } from "expo/config";
 
+const BUILD_NUMBER = 200; // <--- Update this one number
+const APP_VERSION = "2.0.0";
+
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "mata-app",
+  name: "Mata",
   slug: "mata-app",
-  version: "2.0.0",
+  version: APP_VERSION,
   orientation: "portrait",
   icon: "./assets/images/logo.png",
   scheme: "mataapp",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   ios: {
+    buildNumber: String(BUILD_NUMBER),
     icon: "./assets/images/ios-icon.png", // Add this
     supportsTablet: true,
     bundleIdentifier: "com.mata.mataapp",
+    appleTeamId: "VX43W4S7M9", // Mata Aotearoa Limited - for automatic code signing
     googleServicesFile: "./firebase/GoogleService-Info.plist",
     infoPlist: {
       UIDesignRequiresCompatibility: true,
       ITSAppUsesNonExemptEncryption: false,
+      NSCameraUsageDescription:
+        "This app requires access to the camera for user to be able to upload item images.",
+      NSPhotoLibraryUsageDescription:
+        "This app requires access to the photo library for user to be able to upload item images.",
+      NSUserTrackingUsageDescription:
+        "This app uses device identifiers to track marketing attribution and app usage. Your data is kept confidential and is not shared with any 3rd parties or advertising partners.",
     },
     config: {
       googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY,
@@ -27,8 +38,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "applinks:mataup.com",
       "applinks:mataapp.page.link",
     ],
+    entitlements: {
+      "com.apple.developer.applesignin": ["Default"],
+    },
   },
   android: {
+    versionCode: BUILD_NUMBER,
     adaptiveIcon: {
       backgroundColor: "#E6F4FE",
       foregroundImage: "./assets/bootsplash_logo.png",
@@ -99,6 +114,20 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     "@react-native-firebase/auth",
     "@react-native-firebase/crashlytics",
     [
+      "react-native-fbsdk-next",
+      {
+        appID: process.env.EXPO_PUBLIC_FACEBOOK_APP_ID,
+        clientToken: process.env.EXPO_PUBLIC_FACEBOOK_CLIENT_TOKEN,
+        displayName: "mata-app",
+        scheme: `fb${process.env.EXPO_PUBLIC_FACEBOOK_APP_ID}`,
+        advertiserIDCollectionEnabled: false,
+        autoLogAppEventsEnabled: false,
+        isAutoInitEnabled: true,
+        iosUserTrackingPermission:
+          "This app uses device identifiers to track marketing attribution and app usage.",
+      },
+    ],
+    [
       "expo-location",
       {
         NSLocationWhenInUseUsageDescription:
@@ -129,6 +158,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-build-properties",
       {
         ios: {
+          deploymentTarget: "15.1",
           useFrameworks: "static",
           forceStaticLinking: ["RNFBApp"],
         },

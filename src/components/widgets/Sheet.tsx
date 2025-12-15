@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     color: theme.colors.salmon,
   },
   confirmBody: {
+    textAlign: "left",
     ...theme.styles.scale.h6,
   },
 });

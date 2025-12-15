@@ -1854,6 +1854,11 @@
   resolved "https://registry.yarnpkg.com/@ide/backoff/-/backoff-1.0.0.tgz#466842c25bd4a4833e0642fab41ccff064010176"
   integrity sha512-F0YfUDjvT+Mtt/R4xdl2X0EYCHMMiJqNLdxHD++jDT5ydEFIyqbCHh51Qx2E211dgZprPKhV7sHmnXKpLuvc5g==
 
+"@invertase/react-native-apple-authentication@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@invertase/react-native-apple-authentication/-/react-native-apple-authentication-2.5.0.tgz#04626e2fd35e13724fad70621bffa62939895ed4"
+  integrity sha512-PL5tUd1WCw365L2fWlkB4HXy7QjZHCU9o6qi8osMvftBIlynSpi76YStJCeJcwU6aYXB09+iV/V5g+8lwafNwQ==
+
 "@isaacs/balanced-match@^4.0.1":
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@isaacs/balanced-match/-/balanced-match-4.0.1.tgz#3081dadbc3460661b751e7591d7faea5df39dd29"
@@ -7269,6 +7274,11 @@ react-native-drawer-layout@^4.2.0:
   dependencies:
     color "^4.2.3"
     use-latest-callback "^0.2.4"
+
+react-native-fbsdk-next@^13.4.1:
+  version "13.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-fbsdk-next/-/react-native-fbsdk-next-13.4.1.tgz#e2cb0d0c40ac00abcecceb2ee24473e74c9d8e18"
+  integrity sha512-Cto+oF0FJyvxKDjKyLKI5DgnLCeeRlXvVQb8qw0XesT1Xune1ijDWAnvt9fy6wXJ4G7K510xKkcSUsbK/KyPhg==
 
 react-native-fetch-api@^3.0.0:
   version "3.0.0"

@@ -131,6 +131,7 @@ export class DatabaseApi<T extends object> extends Api {
         id
       ) as unknown as FirebaseFirestoreTypes.DocumentReference<T>;
       const cleanedData = removeUndefinedValues(data) as UpdateData<T>;
+      console.log("collectionName", this.collectionName);
       await updateDoc(ref, cleanedData);
     } catch (error) {
       console.error("Error updating document:", error);
