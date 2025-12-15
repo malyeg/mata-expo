@@ -11,28 +11,33 @@ const useChat = () => {
     () => ({
       addMessage: async (message: Message, deal: Deal) => {
         // TODO move to firebase function
-        message.deliveries = [
-          {
-            userId: profile.id,
-            received: true,
-            sent: true,
-          },
-          {
-            userId: profile.id === deal.userId ? deal.item.userId : deal.userId,
-            received: false,
-          },
-        ];
-        console.log(profile);
-        if (message.user) {
-          const updatedMessage: Message = {
-            ...message,
-            user: {
-              ...message.user,
-              displayName: profile.fullName ?? profile.email,
+        try {
+          message.deliveries = [
+            {
+              userId: profile.id,
+              received: true,
+              sent: true,
             },
-          };
-          await messagesApi.set(message.id, updatedMessage);
-          return message;
+            {
+              userId:
+                profile.id === deal.userId ? deal.item.userId : deal.userId,
+              received: false,
+            },
+          ];
+          if (message.user) {
+            const updatedMessage: Message = {
+              ...message,
+              user: {
+                ...message.user,
+                displayName: profile.fullName ?? profile.email,
+              },
+            };
+            console.log("updatedMessage", message.id);
+            await messagesApi.set(message.id, updatedMessage);
+            return message;
+          }
+        } catch (error) {
+          console.error(error);
         }
       },
       toChatMessage: (message: Message) => {

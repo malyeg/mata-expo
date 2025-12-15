@@ -26,7 +26,8 @@ export interface WriteBatchInterface<T> {
   delete: (ids: string[]) => Promise<void>;
 }
 
-export const FUNCTIONS_PREFIX = "new_";
+// export const FUNCTIONS_PREFIX = "new_";
+export const FUNCTIONS_PREFIX = "";
 export class DataApi<T extends Entity> extends Api {
   collection: DataCollection<T>;
   cacheStore: string;

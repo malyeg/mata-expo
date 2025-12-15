@@ -5,6 +5,7 @@ import useAuth from "@/hooks/useAuth";
 import useChat from "@/hooks/useChat";
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
+import { randomUUID } from "expo-crypto";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   I18nManager,
@@ -55,7 +56,6 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   useEffect(() => {
     if (data && data.length > 0) {
       const nonRecievedMessages = getNonRecievedMessages(data);
-      console.log("nonRecievedMessages", nonRecievedMessages.length);
       if (nonRecievedMessages && nonRecievedMessages.length > 0) {
         updateMessagesRecieved(nonRecievedMessages);
       }
@@ -102,16 +102,27 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
 
   const onSend = useCallback(
     async (newMessages: IMessage[] = []) => {
-      const lastMessage = newMessages[newMessages.length - 1];
+      try {
+        const lastMessage = newMessages[newMessages.length - 1];
 
-      // Optimistically update the UI immediately
-      setChatMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, newMessages)
-      );
+        // Override GiftedChat's short ID with a proper UUID
+        const properMessage = {
+          ...lastMessage,
+          _id: randomUUID(),
+          id: randomUUID(),
+        };
 
-      // Then persist to database
-      const message = toMessage(lastMessage, deal);
-      await addMessage(message, deal);
+        // Optimistically update the UI immediately
+        setChatMessages((previousMessages) =>
+          GiftedChat.append(previousMessages, [properMessage])
+        );
+
+        // Then persist to database
+        const message = toMessage(properMessage, deal);
+        await addMessage(message, deal);
+      } catch (error) {
+        console.error(error);
+      }
     },
     [addMessage, deal, toMessage]
   );
@@ -143,6 +154,7 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
         <Composer
           {...props}
           textInputProps={{
+            ...props.textInputProps,
             returnKeyType: "send",
             style: [
               styles.textInput,

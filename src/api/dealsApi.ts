@@ -12,6 +12,7 @@ import { FUNCTIONS_PREFIX } from "./DataApi";
 import { DatabaseApi } from "./DatabaseApi";
 import { Item } from "./itemsApi";
 import { RatingWeight } from "./ratingApi";
+import { searchApi } from "./search/searchApi";
 export type DealStatus =
   | "new"
   | "accepted"
@@ -137,12 +138,16 @@ class DealsApi extends DatabaseApi<Deal> {
   };
 
   acceptOffer = async (dealId: string, rejectOtherOffers: boolean) => {
-    const prom = await callFunction(FUNCTIONS_PREFIX + "acceptOffer")({
-      dealId,
-      rejectOtherOffers,
-    });
-    Analytics.logEvent("accept_deal");
-    return prom;
+    try {
+      const prom = await callFunction(FUNCTIONS_PREFIX + "acceptOffer")({
+        dealId,
+        rejectOtherOffers,
+      });
+      Analytics.logEvent("accept_deal");
+      return prom;
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   rejectOffer = async (deal: Deal, reason: string) => {
@@ -179,7 +184,7 @@ class DealsApi extends DatabaseApi<Deal> {
     Analytics.logEvent("close_deal", {
       category: deal.item.category.name,
     });
-    await itemsSearchApi.clearCache();
+    await searchApi.clearCache();
     return result;
   };
 

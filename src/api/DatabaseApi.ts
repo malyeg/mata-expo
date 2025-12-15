@@ -117,9 +117,9 @@ export class DatabaseApi<T extends object> extends Api {
 
   /** Overwrite (or create) a document with a known ID */
   async set(id: string, data: T): Promise<void> {
-    delete (data as any).timestamp;
     const ref = doc(db, this.collectionName, id);
     const cleanedData = removeUndefinedValues(data);
+    (cleanedData as any).timestamp = serverTimestamp();
     await setDoc(ref, cleanedData);
   }
   /** Update specific fields of a document */
@@ -130,8 +130,8 @@ export class DatabaseApi<T extends object> extends Api {
         this.collectionName,
         id
       ) as unknown as FirebaseFirestoreTypes.DocumentReference<T>;
+      delete (data as any).timestamp;
       const cleanedData = removeUndefinedValues(data) as UpdateData<T>;
-      console.log("collectionName", this.collectionName);
       await updateDoc(ref, cleanedData);
     } catch (error) {
       console.error("Error updating document:", error);
