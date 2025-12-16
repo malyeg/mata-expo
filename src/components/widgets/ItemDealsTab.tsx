@@ -38,6 +38,10 @@ const ItemDealsTab = ({ item, style }: ItemDealsTabProps) => {
     }
   );
 
+  if (!deals || deals.length === 0) {
+    return null;
+  }
+
   const renderItem = ({ item }: any) => {
     const onPress = () => {
       setVisible(false);

@@ -26,6 +26,8 @@ export const callFunction = <TData = unknown, TResult = unknown>(
   name: string
 ) => {
   return (data?: TData) => {
+    console.log("Current user:", auth.currentUser?.uid);
+
     const callable = httpsCallable<TData, TResult>(functions, name);
     return callable(data);
   };

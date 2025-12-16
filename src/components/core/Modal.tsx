@@ -1,6 +1,8 @@
 import { theme } from "@/styles/theme";
 import React, { FC, useCallback } from "react";
 import {
+  Keyboard,
+  Pressable,
   StatusBar,
   StyleProp,
   StyleSheet,
@@ -91,65 +93,67 @@ const Modal: FC<ModalProps> = ({
       propagateSwipe={propagateSwipe}
     >
       <StatusBar backgroundColor="white" barStyle="dark-content" />
-      <View
-        style={[
-          styles.container,
-          { paddingBottom: bottom },
-          position === "full" ? { paddingTop: top } : undefined,
-          position === "bottom" ? styles.bottomStyle : styles.fullScreen,
-          containerStyle,
-        ]}
-      >
-        <View style={[styles.modalHeader]}>
-          {headerIcon && (
-            <SuccessIcon style={styles.headerIcon} name={headerIcon.name} />
-          )}
-          {showHeaderNav && position === "full" && (
-            <ChevronBackIcon
-              color={theme.colors.grey}
-              size={35}
-              style={styles.chevronBackIcon}
-              onPress={onBack}
-            />
-          )}
-          {!!title && (
-            <View
-              style={[
-                styles.modalTitleContainer,
-                headerIcon ? styles.titleWithHeaderIcon : {},
-              ]}
-            >
-              <Text
-                style={[
-                  styles.modalTitle,
-                  position === "bottom" ? styles.titleBottom : {},
-                ]}
-              >
-                {title}
-              </Text>
-              {position === "bottom" && !hideCloseIcon && (
-                <Icon
-                  name="chevron-down"
-                  color={theme.colors.grey}
-                  size={35}
-                  style={styles.chevronDownIcon}
-                  onPress={onBack}
-                  {...closeIcon}
-                />
-              )}
-            </View>
-          )}
-        </View>
+      <Pressable style={{ flex: 1 }} onPress={Keyboard.dismiss}>
         <View
           style={[
-            styles.body,
-            position === "full" ? styles.fullScreen : undefined,
-            bodyStyle,
+            styles.container,
+            { paddingBottom: bottom },
+            position === "full" ? { paddingTop: top } : undefined,
+            position === "bottom" ? styles.bottomStyle : styles.fullScreen,
+            containerStyle,
           ]}
         >
-          {children}
+          <View style={[styles.modalHeader]}>
+            {headerIcon && (
+              <SuccessIcon style={styles.headerIcon} name={headerIcon.name} />
+            )}
+            {showHeaderNav && position === "full" && (
+              <ChevronBackIcon
+                color={theme.colors.grey}
+                size={35}
+                style={styles.chevronBackIcon}
+                onPress={onBack}
+              />
+            )}
+            {!!title && (
+              <View
+                style={[
+                  styles.modalTitleContainer,
+                  headerIcon ? styles.titleWithHeaderIcon : {},
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.modalTitle,
+                    position === "bottom" ? styles.titleBottom : {},
+                  ]}
+                >
+                  {title}
+                </Text>
+                {position === "bottom" && !hideCloseIcon && (
+                  <Icon
+                    name="chevron-down"
+                    color={theme.colors.grey}
+                    size={35}
+                    style={styles.chevronDownIcon}
+                    onPress={onBack}
+                    {...closeIcon}
+                  />
+                )}
+              </View>
+            )}
+          </View>
+          <View
+            style={[
+              styles.body,
+              position === "full" ? styles.fullScreen : undefined,
+              bodyStyle,
+            ]}
+          >
+            {children}
+          </View>
         </View>
-      </View>
+      </Pressable>
     </ModalBase>
   );
 };

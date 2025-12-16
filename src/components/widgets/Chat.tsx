@@ -195,6 +195,7 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
     <View style={[styles.container, style]}>
       {data && (
         <GiftedChat
+          colorScheme="light"
           messagesContainerStyle={styles.messagesContainer}
           timeTextStyle={{ right: styles.rightText, left: styles.leftText }}
           renderBubble={renderBubble}
