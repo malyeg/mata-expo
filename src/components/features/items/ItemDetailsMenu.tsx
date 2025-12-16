@@ -18,6 +18,11 @@ const ItemDetailsMenu = ({ item }: ItemDetailsMenuProps) => {
   const { user } = useAuth();
   const isOwnItem = user?.id === itemOwnerId;
 
+  // Hide menu if item is archived
+  if (item.status === "archived") {
+    return null;
+  }
+
   return (
     <AppMenu>
       <ShareMenuItem link={`items/itemId`} />

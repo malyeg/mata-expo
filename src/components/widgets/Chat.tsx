@@ -9,6 +9,7 @@ import { randomUUID } from "expo-crypto";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   I18nManager,
+  Platform,
   StyleProp,
   StyleSheet,
   View,
@@ -27,6 +28,7 @@ import {
   SendProps,
   SystemMessage,
 } from "react-native-gifted-chat";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Icon } from "../core";
 
 interface ChatProps {
@@ -38,6 +40,7 @@ interface ChatProps {
 
 const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   const { t } = useLocale("widgets");
+  const insets = useSafeAreaInsets();
   const { data } = useCollectionSnapshot<Message>({
     collectionName: messagesApi.collectionName,
     query: (ref) => {
@@ -213,6 +216,10 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
           }}
           isSendButtonAlwaysVisible={!disableComposer}
           renderComposer={renderComposer}
+          keyboardAvoidingViewProps={{
+            enabled: true,
+            keyboardVerticalOffset: Platform.OS === "ios" ? insets.top + 90 : 0,
+          }}
         />
       )}
     </View>

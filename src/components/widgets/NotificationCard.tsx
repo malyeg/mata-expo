@@ -1,7 +1,7 @@
 import notificationsApi, { Notification } from "@/api/notificationsApi";
 import { patterns } from "@/config/constants";
 import theme from "@/styles/theme";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/DateUtils";
 import { useRouter } from "expo-router";
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
@@ -30,7 +30,7 @@ const notificationUrlToRoute = (url: string) => {
 };
 const NotificationCard = ({ notification, style }: NotificationCardProps) => {
   const router = useRouter();
-  const notificationDate = notification.timestamp?.getDate();
+  const notificationDate = notification.timestamp;
   const onPress = () => {
     notificationsApi.updateDelivery(notification?.id);
     if (notification.data?.url) {
@@ -47,7 +47,7 @@ const NotificationCard = ({ notification, style }: NotificationCardProps) => {
         </Text>
         {!!notificationDate && (
           <Text style={styles.date}>
-            {format(notificationDate, patterns.DATE_TIME)}
+            {formatDate(notificationDate, patterns.DATE)}
           </Text>
         )}
       </View>
