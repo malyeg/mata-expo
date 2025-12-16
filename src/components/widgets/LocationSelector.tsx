@@ -1,13 +1,12 @@
-import React, { useRef, useState } from "react";
-import { Platform, Pressable, StyleSheet, View, ViewProps } from "react-native";
-import MapView, { MapEvent, Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-// import Modal from 'react-native-modal';
 import locationApi, { Coordinate, Location } from "@/api/locationApi";
 import constants from "@/config/constants";
 import useAuth from "@/hooks/useAuth";
 import useController from "@/hooks/useController";
 import useLocale from "@/hooks/useLocale";
+import React, { useRef, useState } from "react";
+import { Platform, Pressable, StyleSheet, View, ViewProps } from "react-native";
+import MapView, { MapEvent, Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useImmer } from "use-immer";
 import { Button, Modal } from "../core";
 import { Error, KeyboardView } from "../form";
@@ -126,6 +125,7 @@ const LocationSelector = ({
     <View style={[styles.container, style]}>
       <Pressable style={styles.map} onPress={openModal}>
         <MapView
+          userInterfaceStyle="light"
           ref={mapSummaryRef}
           onPress={openModal}
           provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
@@ -178,6 +178,7 @@ const LocationSelector = ({
           }}
         />
         <MapView
+          userInterfaceStyle="light"
           ref={mapDetailsRef}
           provider={Platform.OS === "android" ? PROVIDER_GOOGLE : undefined}
           style={styles.map}

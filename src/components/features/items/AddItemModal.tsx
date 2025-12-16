@@ -32,7 +32,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { StyleSheet } from "react-native";
+import { Keyboard, Pressable, StyleSheet } from "react-native";
 import * as yup from "yup";
 
 type AddItemFormValues = {
@@ -276,105 +276,96 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       showHeaderNav
       onClose={onClose}
       hideCloseIcon={false}
-      bodyStyle={{
-        flex: 1,
-        justifyContent: "space-between",
-        // alignItems: "center",
-      }}
     >
-      <ItemImages
-        name="images"
-        templateSize={3}
-        onUpload={onUploadHandler}
-        control={control}
-        docId={itemIdRef.current!}
-        item={editItem ?? undefined}
-        onError={setImagesError}
-      />
-      {formState.errors.images && (
-        <Error
-          style={styles.imagesError}
-          error={imagesError ?? formState.errors.images}
+      <Pressable
+        style={{ flex: 1, justifyContent: "space-between" }}
+        onPress={Keyboard.dismiss}
+      >
+        <ItemImages
+          name="images"
+          templateSize={3}
+          onUpload={onUploadHandler}
+          control={control}
+          docId={itemIdRef.current!}
+          item={editItem ?? undefined}
+          onError={setImagesError}
         />
-      )}
-
-      <TextInput
-        name="name"
-        placeholder={t("name.placeholder")}
-        returnKeyType="next"
-        control={control}
-        onSubmitEditing={focusToDiscription}
-        hideLabel
-      />
-
-      <TextInput
-        name="description"
-        multiline
-        numberOfLines={2}
-        placeholder={t("description.placeholder")}
-        returnKeyType="next"
-        control={control}
-        hideLabel
-      />
-
-      <Picker
-        name="category"
-        items={categories}
-        searchable
-        placeholder={t("category.placeholder")}
-        modalTitle={t("category.modalTitle")}
-        control={control}
-        multiLevel
-        hideLabel
-      />
-
-      <ItemConditionPicker name="conditionType" control={control} />
-
-      <Picker
-        position="bottom"
-        name="swapOptionType"
-        items={swapTypes}
-        placeholder={t("swapType.placeholder")}
-        modalTitle={t("swapType.modalTitle")}
-        control={control}
-        onChange={onSwapChange}
-        hideLabel
-      />
-
-      {swapType === "swapWithAnother" && (
+        {formState.errors.images && (
+          <Error
+            style={styles.imagesError}
+            error={imagesError ?? formState.errors.images}
+          />
+        )}
+        <TextInput
+          name="name"
+          placeholder={t("name.placeholder")}
+          returnKeyType="next"
+          control={control}
+          onSubmitEditing={focusToDiscription}
+          hideLabel
+        />
+        <TextInput
+          name="description"
+          multiline
+          numberOfLines={2}
+          placeholder={t("description.placeholder")}
+          returnKeyType="next"
+          control={control}
+          hideLabel
+        />
         <Picker
-          name="swapCategory"
-          searchable
+          name="category"
           items={categories}
-          placeholder={t("swapCategory.placeholder")}
-          modalTitle={t("swapCategory.modalTitle")}
+          searchable
+          placeholder={t("category.placeholder")}
+          modalTitle={t("category.modalTitle")}
           control={control}
           multiLevel
           hideLabel
         />
-      )}
-
-      <LocationSelector
-        style={styles.location}
-        control={control}
-        defaultValue={editItem?.location}
-        onModalChange={onLocationModalChange}
-      />
-      <CheckBox
-        style={styles.draftCheckBox}
-        control={control}
-        name="status"
-        label={t("status.saveAsDraftLabel")}
-      />
-
-      <Button
-        title={isEditMode ? t("updateBtnTitle") : t("addBtnTitle")}
-        disabled={uploading || loading}
-        onPress={handleSubmit(onFormSuccess, onFormError)}
-      />
-
-      {loader}
-      <Sheet ref={sheetRef} />
+        <ItemConditionPicker name="conditionType" control={control} />
+        <Picker
+          position="bottom"
+          name="swapOptionType"
+          items={swapTypes}
+          placeholder={t("swapType.placeholder")}
+          modalTitle={t("swapType.modalTitle")}
+          control={control}
+          onChange={onSwapChange}
+          hideLabel
+        />
+        {swapType === "swapWithAnother" && (
+          <Picker
+            name="swapCategory"
+            searchable
+            items={categories}
+            placeholder={t("swapCategory.placeholder")}
+            modalTitle={t("swapCategory.modalTitle")}
+            control={control}
+            multiLevel
+            hideLabel
+          />
+        )}
+        <LocationSelector
+          style={styles.location}
+          control={control}
+          defaultValue={editItem?.location}
+          onModalChange={onLocationModalChange}
+        />
+        <CheckBox
+          style={styles.draftCheckBox}
+          control={control}
+          name="status"
+          label={t("status.saveAsDraftLabel")}
+        />
+        <Button
+          title={isEditMode ? t("updateBtnTitle") : t("addBtnTitle")}
+          disabled={uploading || loading}
+          onPress={handleSubmit(onFormSuccess, onFormError)}
+        />
+        {loader}
+        <Sheet ref={sheetRef} />
+      </Pressable>
     </Modal>
   );
 };
