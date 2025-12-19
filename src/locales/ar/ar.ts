@@ -621,7 +621,7 @@ export default {
     itemDescriptionTitle: "الوصف: ",
     addressTitle: "الموقع: ",
     categoryTitle: "الفئة: ",
-    itemConditionTitle: "الحالة: ",
+    itemConditionTitle: "حالة المنتج: ",
     pendingDialog: {
       header: "تحذير",
       body: "لديك صفقات معلقة على هذا المنتج، حذف المنتج سيلغي جميع الصفقات المعلقة",
@@ -656,7 +656,7 @@ export default {
     alreadyHasDealError: "لديك صفقة بالفعل لهذا المنتج",
     swapTypeTitle: "نوع المبادلة: ",
     swapCategoryTitle: "فئة المبادلة: ",
-    statusTitle: "الحالة: ",
+    statusTitle: "حالة النشر: ",
     sendSwapButton: "إرسال عرض مبادلة",
     menu: {
       shareLabel: "مشاركة",

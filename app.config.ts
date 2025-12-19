@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 202; // <--- Update this one number
-const APP_VERSION = "2.0.2";
+const BUILD_NUMBER = 204; // <--- Update this one number
+const APP_VERSION = "2.0.4";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,

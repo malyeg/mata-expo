@@ -38,7 +38,7 @@ export class SearchApi<T> {
     try {
       const searchOptions = this.toSearchOptions(query);
       // logger.debug("options filter", searchOptions.filters);
-
+      console.log(searchOptions);
       // Use the new v5 API: searchSingleIndex with indexName parameter
       const response = await this.client.searchSingleIndex({
         indexName: this.indexName,

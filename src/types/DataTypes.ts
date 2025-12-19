@@ -203,6 +203,9 @@ export interface Identity {
   name: string;
 }
 
+export interface LocalizedText {
+  [key: string]: string;
+}
 export interface Nestable {
   parent?: string;
   level?: number;
@@ -213,9 +216,9 @@ export interface Entity extends DataSearchable {
   // value: string;
   id: string;
   name?: string;
-  localizedName?: { [key: string]: string };
+  localizedName?: LocalizedText;
   timestamp?: Date;
-  userId: string; // TODO remove (deprecated in favor of user)
+  userId?: string; // TODO remove (deprecated in favor of user)
   user?: PublicUser;
 }
 

@@ -19,7 +19,6 @@ import useAppReview from "@/hooks/useAppReview";
 import useAuth from "@/hooks/useAuth";
 import useForm from "@/hooks/useForm";
 import useLocale from "@/hooks/useLocale";
-import useLocation from "@/hooks/useLocation";
 import useSheet from "@/hooks/useSheet";
 import useToast from "@/hooks/useToast";
 import { useAddItemStore } from "@/store/addItem-store";
@@ -65,7 +64,6 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   const { show, sheetRef } = useSheet();
   const itemIdRef = useRef<string | undefined>(null);
   const { loader, request } = useApi();
-  const { location } = useLocation();
   const { user, profile, addTargetCategory, getName } = useAuth();
   const { showSuccessToast, showErrorToast, hideToast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -169,14 +167,16 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
         });
         return;
       }
+      const category = categoriesApi.getById(data.category)!;
       const defaultImage =
         data.images.find((i) => i.isDefault) ?? data.images[0];
       const item: Omit<Item, "id"> = {
         name: data.name,
-        category: categoriesApi.getAll().find((c) => c.id === data.category)!,
+        category,
         condition: {
           type: data.conditionType,
         },
+
         description: data.description,
         images: data.images
           ?.filter((image) => !image.isTemplate)
@@ -225,7 +225,7 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
       } else {
         // Create new item
         savedItem = (await itemsApi.create(item)) as unknown as Item;
-        console.log("Submitted item", savedItem.id);
+        console.log("Submitted item", savedItem);
         Analytics.logEvent("add_item", {
           category: item.category.name,
         });
