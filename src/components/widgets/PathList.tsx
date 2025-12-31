@@ -1,7 +1,8 @@
+import useLocale from "@/hooks/useLocale";
 import sharedStyles from "@/styles/SharedStyles";
 import theme from "@/styles/theme";
-import { Nestable } from "@/types/DataTypes";
-import React, { useEffect, useState } from "react";
+import { Entity, LocalizedText, Nestable } from "@/types/DataTypes";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   FlatListProps,
@@ -13,7 +14,12 @@ import {
 import HightlightText from "../core/HightlightText";
 import Chevron from "../icons/Chevron";
 
-interface PathListProps<T extends Nestable>
+interface LocalizedNestable extends Nestable {
+  localizedName?: LocalizedText;
+  id?: string;
+}
+
+interface PathListProps<T extends LocalizedNestable>
   extends Omit<FlatListProps<T>, "renderItem"> {
   data: T[];
   searchText: string;
@@ -22,51 +28,102 @@ interface PathListProps<T extends Nestable>
 }
 
 const SEPARATOR = " » ";
-const PathList = <T extends Nestable>({
+const PathList = <T extends LocalizedNestable>({
   searchText,
   data,
   onSelect,
   // keyboardShouldPersistTaps,
   ...props
 }: PathListProps<T>) => {
+  const { locale } = useLocale();
   const [filterdItems, setFilterdItems] = useState<T[]>();
+
+  // Build a map of id -> item for quick parent lookup
+  const itemMap = useMemo(() => {
+    const map = new Map<string, T>();
+    data.forEach((item) => {
+      if (item.id) {
+        map.set(item.id, item);
+      }
+    });
+    return map;
+  }, [data]);
+
+  // Build localized path by traversing parent chain
+  const getLocalizedPath = useCallback(
+    (item: T): string[] => {
+      const pathParts: string[] = [];
+      let current: T | undefined = item;
+
+      while (current) {
+        const localizedName =
+          current.localizedName?.[locale] ||
+          current.localizedName?.en ||
+          (current as Entity).name ||
+          "";
+        pathParts.unshift(localizedName);
+        current = current.parent ? itemMap.get(current.parent) : undefined;
+      }
+
+      return pathParts;
+    },
+    [itemMap, locale]
+  );
+
+  // Helper to check if any part of the localized path matches the search text
+  const matchesSearch = useCallback(
+    (item: T, searchLower: string): boolean => {
+      const localizedPath = getLocalizedPath(item);
+      // Check both English path and localized path
+      const matchesEnglish = item.path?.some((p) =>
+        p.toLowerCase().includes(searchLower)
+      );
+      const matchesLocalized = localizedPath.some((p) =>
+        p.toLowerCase().includes(searchLower)
+      );
+      return matchesEnglish || matchesLocalized;
+    },
+    [getLocalizedPath]
+  );
 
   useEffect(() => {
     if (!!data && !!searchText) {
+      const searchLower = searchText.toLowerCase();
       const newItems = data.filter(
         (s) =>
           !!s.path?.length &&
           s.path?.length > 2 &&
-          s?.path[2].toLowerCase().includes(searchText.toLowerCase())
+          matchesSearch(s, searchLower)
       );
       const newParentItems = data.filter(
         (s) =>
           !!s.path?.length &&
           s.path?.length === 1 &&
-          s?.path[0].toLowerCase().includes(searchText.toLowerCase())
+          matchesSearch(s, searchLower)
       );
       console.log(newItems?.length, searchText);
       setFilterdItems([...newItems, ...newParentItems]);
       return;
     }
-  }, [data, searchText]);
+  }, [data, searchText, matchesSearch]);
 
   const renderItem = ({ item }: { item: T }) => {
+    const localizedPath = getLocalizedPath(item);
     return (
       <Pressable
         onPress={onSelect ? () => onSelect(item) : undefined}
         style={styles.itemContainer}
       >
         <Text style={styles.textContainer}>
-          {item.path?.map((path, index) => (
+          {localizedPath.map((pathSegment, index) => (
             <HightlightText
               key={index}
-              text={path}
+              text={pathSegment}
               textToHightlight={searchText}
               style={styles.pathText}
               ignoreCase
             >
-              {index < item.path?.length! - 1 ? (
+              {index < localizedPath.length - 1 ? (
                 <Text
                   style={[
                     styles.separator,
@@ -79,7 +136,7 @@ const PathList = <T extends Nestable>({
             </HightlightText>
           ))}
         </Text>
-        {item.path?.length! <= 2 && <Chevron style={styles.chevronFirst} />}
+        {localizedPath.length <= 2 && <Chevron style={styles.chevronFirst} />}
       </Pressable>
     );
   };
