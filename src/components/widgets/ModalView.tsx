@@ -24,7 +24,6 @@ const ModalView: FC<ModalViewProps> = ({
   onClose,
 }) => {
   const onBack = useCallback(() => {
-    console.log("onmodal bacck");
     if (onClose) {
       onClose();
     }

@@ -43,8 +43,6 @@ const ItemsScreen = () => {
     enabled: false,
   });
 
-  console.log("query", data?.items?.[0]);
-
   useEffect(() => {
     if (error) {
       showErrorToast(error);

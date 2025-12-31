@@ -156,7 +156,6 @@ class DealsApi extends DatabaseApi<Deal> {
         dealId: deal.id,
         reason,
       });
-      console.log(prom);
       Analytics.logEvent("reject_deal", {
         category: deal.item.category.name,
       });

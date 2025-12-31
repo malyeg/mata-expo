@@ -46,7 +46,6 @@ const useLoginForm = () => {
   };
 
   const loginWithCredentials = async (data: SignInFormValues) => {
-    console.log("loginWithCredentials", data);
     hideToast();
     const credentials: ICredentials = {
       username: data.username,

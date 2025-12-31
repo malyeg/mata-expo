@@ -6,7 +6,6 @@ const EditItemScreen = () => {
   const { id } = useLocalSearchParams<{
     id: string;
   }>();
-  console.log("EditItemScreen id", id);
   return (
     <View>
       <Text>EditItemScreen</Text>

@@ -38,11 +38,6 @@ export function useDocumentSnapshot<T = any>({
   id,
   query,
 }: UseDocumentSnapshotParams): UseDocumentSnapshotResult<T> {
-  console.log("useDocumentSnapshot called", {
-    collectionName,
-    id,
-    query,
-  });
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);

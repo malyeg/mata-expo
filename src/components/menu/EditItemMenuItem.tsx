@@ -26,7 +26,6 @@ const EditItemMenuItem = ({
 
     // Wait for menu to close completely
     setTimeout(() => {
-      console.log("Timeout done. Opening edit modal for:", item.id);
       openEditItemModal(item);
     }, 700);
   };

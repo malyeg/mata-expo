@@ -259,7 +259,6 @@ const ItemsFilter = ({
   }, [setValue, swapTypes]);
 
   const onSubmit = (data: ItemsFilterValues) => {
-    logger.log("data.stateIds", data.stateIds);
     const query = formValuesToQuery(data);
     onChange(query);
     setModalVisible(false);

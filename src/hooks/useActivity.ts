@@ -11,7 +11,6 @@ const useActivity = () => {
     const userId = authApi?.getUser()?.uid!;
 
     const handleAppStateInactiveChange = async (state: AppStateStatus) => {
-      logger.log("state", state);
       if (state === "background" || state === "inactive") {
         await activitiesApi.disconnect(userId);
       } else if (state === "active") {

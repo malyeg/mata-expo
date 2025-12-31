@@ -72,12 +72,6 @@ const InactiveItemModal = ({ item }: InactiveItemModalProps) => {
     if (!item || (archiveDuration > 0 && isAfter(maxDate, new Date()))) {
       return;
     } else if (user?.id === item.user.id) {
-      console.log(
-        "item",
-        JSON.stringify(item.timestamp),
-        maxDate,
-        archiveDuration
-      );
       setVisible(true);
     }
   }, [item, user?.id]);

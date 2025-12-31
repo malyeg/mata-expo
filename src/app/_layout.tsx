@@ -5,7 +5,6 @@ import { toastConfig } from "@/components/core/Toaster";
 import { initializeRTL } from "@/hooks/useLanguage";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
-import { getWarningsOff } from "@/utils/WarningsOff";
 import {
   Cairo_400Regular,
   Cairo_500Medium,
@@ -33,8 +32,6 @@ const queryClient = new QueryClient({
     },
   },
 });
-
-console.log("WarningsOff", getWarningsOff());
 
 const InitialLayout = () => {
   const { initializeLocation, isInitialized: isLocationInitialized } =

@@ -1,14 +1,14 @@
-import {useCallback, useEffect, useState} from 'react';
-import {Keyboard} from 'react-native';
+import { useCallback, useEffect, useState } from "react";
+import { Keyboard } from "react-native";
 
 const useKeyboard = () => {
   const [keyboardShown, setKeyboardShown] = useState(false);
 
   useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
       setKeyboardShown(true);
     });
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
       setKeyboardShown(false);
     });
 
@@ -19,7 +19,6 @@ const useKeyboard = () => {
   }, []);
 
   const hideKeyboard = useCallback(() => {
-    console.log('hideKeyboard');
     Keyboard.dismiss();
   }, []);
 

@@ -88,7 +88,6 @@ const EditProfileScreen = () => {
         await request<Profile>(() => loadProfile());
       }
       if (profile?.state) {
-        console.log("loading cities for state", profile.state.id);
         const newCities = await citiesApi.getByStateId(profile.state.id);
         if (newCities) {
           setCities(newCities);
@@ -184,7 +183,6 @@ const EditProfileScreen = () => {
 
   const showMarketingTip = !profile?.updated && !values.acceptMarketingFlag;
 
-  console.log(values.state);
   // return loader;
   return profile ? (
     <FormScreen style={styles.screen}>

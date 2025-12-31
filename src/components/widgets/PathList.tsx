@@ -101,7 +101,6 @@ const PathList = <T extends LocalizedNestable>({
           s.path?.length === 1 &&
           matchesSearch(s, searchLower)
       );
-      console.log(newItems?.length, searchText);
       setFilterdItems([...newItems, ...newParentItems]);
       return;
     }
