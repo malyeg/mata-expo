@@ -274,9 +274,7 @@ const EditProfileScreen = () => {
           control={control}
           style={styles.acceptMarketingFlag}
         />
-        {showMarketingTip && (
-          <Tooltip text="Please opt-in for updates and news about the swap community on Mata" />
-        )}
+        {true && <Tooltip text={t("marketingFlag.tooltip")} />}
       </View>
       <Button
         // disabled={!formState.isDirty}

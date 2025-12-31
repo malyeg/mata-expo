@@ -1,5 +1,6 @@
+import useLocale from "@/hooks/useLocale";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { I18nManager, StyleSheet, Text, View } from "react-native";
 import { theme } from "../styles/theme";
 
 interface TooltipProps {
@@ -14,11 +15,35 @@ const Tooltip = ({
   direction = "top",
   positionFromLeft = 15,
 }: TooltipProps) => {
+  const { locale } = useLocale();
+  const isLocaleRTL = locale === "ar";
+  const isSystemRTL = I18nManager.isRTL;
+
+  // Calculate correct textAlign based on system RTL state and desired visual alignment
+  // If System is RTL, 'left' aligns to the visual right, and 'right' aligns to visual left
+  let textAlign: "left" | "right" = "left";
+  if (isLocaleRTL) {
+    // Want Visual Right
+    textAlign = isSystemRTL ? "left" : "right";
+  } else {
+    // Want Visual Left
+    textAlign = isSystemRTL ? "right" : "left";
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.talkBubble}>
         <View style={styles.talkBubbleSquare}>
-          <Text style={styles.talkBubbleMessage}>{text}</Text>
+          <Text
+            style={[
+              styles.talkBubbleMessage,
+              {
+                textAlign: textAlign,
+              },
+            ]}
+          >
+            {text}
+          </Text>
         </View>
         <View
           style={[

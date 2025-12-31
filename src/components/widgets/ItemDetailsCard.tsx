@@ -48,13 +48,7 @@ const ItemDetailsCard = ({
       <View>
         <View style={styles.header}>
           <Text style={styles.title}>{title}</Text>
-          <Text
-            style={[styles.content, contentStyle]}
-            numberOfLines={2}
-            adjustsFontSizeToFit
-          >
-            {content}
-          </Text>
+          <Text style={[styles.content, contentStyle]}>{content}</Text>
         </View>
         {!!children && <View style={styles.childrenContainer}>{children}</View>}
       </View>
@@ -79,6 +73,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     // borderRadius: 5,
     paddingHorizontal: 10,
+    paddingEnd: 20,
     paddingVertical: 10,
     // backgroundColor: theme.colors.white,
     // borderColor: theme.colors.lightGrey,

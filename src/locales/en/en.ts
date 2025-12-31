@@ -558,6 +558,8 @@ export default {
       label: "Accepting marketing messages",
       required: "Status is required",
       invalid: "Invalid Status",
+      tooltip:
+        "Please opt-in for updates and news about the swap community on Mata",
     },
     isPublic: {
       label: "Allow others to see my profile",
