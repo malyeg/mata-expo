@@ -266,8 +266,9 @@ const AddItemModal = ({ isVisible, onClose }: AddItemModalProps) => {
   }, []);
 
   const categories = useMemo(() => categoriesApi.getAll(), []);
+
   const focusToDiscription = () => setFocus("description");
-  console.log(swapType);
+
   return (
     <Modal
       isVisible={isVisible}

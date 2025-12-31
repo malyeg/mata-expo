@@ -163,6 +163,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           useFrameworks: "static",
           forceStaticLinking: ["RNFBApp"],
         },
+        android: {
+          enableProguardInReleaseBuilds: true,
+        },
       },
     ],
     [
