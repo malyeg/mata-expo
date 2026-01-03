@@ -6,6 +6,7 @@ import { useFirestoreQuery } from "@/hooks/db/useFirestoreQuery";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
+import { orderBy, query, where } from "@react-native-firebase/firestore";
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
@@ -16,10 +17,13 @@ const NotificationsScreen = () => {
   const { data, loading } = useFirestoreQuery<Notification>(
     notificationsApi.collectionName,
     (ref) => {
-      return ref
-        .where("delivered", "==", false)
-        .where("targetUserId", "==", user?.id)
-        .orderBy("timestamp", "desc");
+      // Use modular query syntax
+      return query(
+        ref,
+        where("delivered", "==", false),
+        where("targetUserId", "==", user?.id),
+        orderBy("timestamp", "desc")
+      );
     }
   );
 

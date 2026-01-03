@@ -8,6 +8,7 @@ import {
   FirebaseAuthTypes,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   signOut as firebaseSignOut,
+  onAuthStateChanged,
   reauthenticateWithCredential,
   signInAnonymously,
   signInWithCredential,
@@ -140,7 +141,7 @@ class AuthApi extends Api {
   onAuthStateChanged = (
     listnerCallback: (user: FirebaseAuthTypes.User | null) => void
   ) => {
-    return auth.onAuthStateChanged(listnerCallback);
+    return onAuthStateChanged(auth, listnerCallback);
   };
 
   getUserRules = async () => {

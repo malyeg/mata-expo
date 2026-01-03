@@ -6,6 +6,7 @@ import ItemCard from "@/components/widgets/ItemCard";
 import ProfileCard from "@/components/widgets/ProfileCard";
 import { useFirestoreQuery } from "@/hooks/db/useFirestoreQuery";
 import { Profile } from "@/models/Profile.model";
+import { query, where } from "@react-native-firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -19,9 +20,12 @@ const UserItemsScreen = () => {
   const { data: items, loading } = useFirestoreQuery<Item>(
     itemsApi.collectionName,
     (ref) => {
-      return ref
-        .where("user.id", "==", params?.id)
-        .where("status", "==", "online");
+      // Use modular query syntax
+      return query(
+        ref,
+        where("user.id", "==", params?.id),
+        where("status", "==", "online")
+      );
     }
   );
 

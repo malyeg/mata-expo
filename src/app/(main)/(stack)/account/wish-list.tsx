@@ -5,6 +5,7 @@ import DataList from "@/components/widgets/DataList";
 import WishCard from "@/components/widgets/WishCard";
 import { useFirestoreQuery } from "@/hooks/db/useFirestoreQuery";
 import useAuth from "@/hooks/useAuth";
+import { query, where } from "@react-native-firebase/firestore";
 import React from "react";
 import { StyleSheet } from "react-native";
 
@@ -14,7 +15,8 @@ const WishListScreen = () => {
   const { data, loading } = useFirestoreQuery<Item>(
     listsApi.collectionName,
     (ref) => {
-      return ref.where("user.id", "==", user?.id);
+      // Use modular query syntax
+      return query(ref, where("user.id", "==", user?.id));
     }
   );
 

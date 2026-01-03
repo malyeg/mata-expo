@@ -1,5 +1,12 @@
 import { crashlytics, remoteConfig } from "@/firebase";
-import { FirebaseRemoteConfigTypes } from "@react-native-firebase/remote-config";
+import {
+  fetchAndActivate,
+  FirebaseRemoteConfigTypes,
+  getAll,
+  getValue,
+  setConfigSettings,
+  setDefaults,
+} from "@react-native-firebase/remote-config";
 import DeviceInfo from "react-native-device-info";
 import { LoggerFactory } from "../utils/logger";
 // import {firebase} from '@react-native-firebase/analytics';
@@ -60,14 +67,14 @@ const logger = LoggerFactory.getLogger("ConfigApi");
 class AppConfigApi {
   fetchConfig = async (minimumFetchIntervalMillis: number = 1000 * 60 * 5) => {
     try {
-      await remoteConfig.setConfigSettings({
+      await setConfigSettings(remoteConfig, {
         minimumFetchIntervalMillis,
       });
-      await remoteConfig.setDefaults(defaultConfig);
-      const fetchedRemotely = await remoteConfig.fetchAndActivate();
+      await setDefaults(remoteConfig, defaultConfig);
+      const fetchedRemotely = await fetchAndActivate(remoteConfig);
       if (fetchedRemotely) {
         logger.trace("Configs were retrieved from the backend and activated.");
-        logger.trace(remoteConfig.getAll());
+        logger.trace(getAll(remoteConfig));
       } else {
         logger.trace(
           "No configs were fetched from the backend, and the local configs were already activated."
@@ -81,11 +88,11 @@ class AppConfigApi {
   };
 
   getValue = (key: keyof typeof defaultConfig) => {
-    return remoteConfig.getValue(key as string);
+    return getValue(remoteConfig, key as string);
   };
 
   getConfig = () => {
-    return remoteConfig.getAll();
+    return getAll(remoteConfig);
   };
   getVersionInfo = () => {
     try {

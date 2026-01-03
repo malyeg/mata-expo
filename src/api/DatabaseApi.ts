@@ -17,13 +17,17 @@ import {
   collection,
   deleteDoc,
   doc,
-  Filter,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
+  startAfter,
   updateDoc,
+  where,
 } from "@react-native-firebase/firestore";
 import { crashlytics, db } from "../firebase";
 import { Api, APIOptions } from "./Api";
@@ -125,6 +129,7 @@ export class DatabaseApi<T extends object> extends Api {
   /** Update specific fields of a document */
   async update(id: string, data: UpdateData<T>): Promise<void> {
     try {
+      console.log("update", data);
       const ref = doc(
         db,
         this.collectionName,
@@ -134,7 +139,7 @@ export class DatabaseApi<T extends object> extends Api {
       const cleanedData = removeUndefinedValues(data) as UpdateData<T>;
       await updateDoc(ref, cleanedData);
     } catch (error) {
-      console.error("Error updating document:", error);
+      console.error("Error updating document:", this.collectionName, error);
       throw error;
     }
   }
@@ -159,7 +164,8 @@ export class DatabaseApi<T extends object> extends Api {
       ? this.getQuery(query, this.collection)
       : this.collection;
 
-    return collectionQuery.onSnapshot(
+    return onSnapshot(
+      collectionQuery as any,
       (snapshot) => {
         const data: T[] = snapshot.docs.map((doc) => {
           const timestamp = (doc.data()?.timestamp as any)?.toDate();
@@ -269,11 +275,39 @@ export class DatabaseApi<T extends object> extends Api {
   };
 
   fromQuery(
-    query: Query,
+    queryData: Query,
     collectionQuery: FirebaseFirestoreTypes.Query | DataCollection<T>
   ) {
-    if (query.filters && query.filters.length > 0) {
-      for (const filter of query.filters) {
+    // We start with the base collection/query object
+    // In modular v9+, we use the query() function to apply constraints
+    // but the input collectionQuery is a React Native Firebase v15+ object
+    // which still supports the chainable API for compatibility but prefers modular.
+    // However, the warning specifically says "Method called was `where`... Please use `where()` instead".
+    // This implies we should build an array of constraints or apply them using the modular functions.
+
+    // Important: React Native Firebase (RNFB) v18+ still uses namespaced objects for references,
+    // but we can pass them to the modular functions imported from the package.
+    // Let's import the necessary modular functions at the top of the file first.
+
+    /*
+      Correct usage for RNFB v15+ modular style:
+      import { query, where, orderBy, limit, startAfter } from '@react-native-firebase/firestore';
+      
+      const q = query(
+        collectionRef,
+        where('field', '==', 'value'),
+        orderBy('field', 'desc'),
+        limit(10)
+      );
+    */
+
+    // Since we are receiving `collectionQuery` which might already be a query or a collection reference,
+    // and `query()` takes a collection or query as the first argument, we can just wrap it.
+
+    const constraints: any[] = [];
+
+    if (queryData.filters && queryData.filters.length > 0) {
+      for (const filter of queryData.filters) {
         if (!!filter.field && filter.value !== undefined) {
           const idField = filter.field === "id" ? "__name__" : filter.field;
           const newFilter: QueryFilter<T> = { ...filter, field: idField };
@@ -281,31 +315,36 @@ export class DatabaseApi<T extends object> extends Api {
             ? newFilter.operation
             : Operation.EQUAL;
 
-          const whereFilter = Filter(
+          const whereFilter = where(
             newFilter.field as any,
             operation.toString() as FirebaseFirestoreTypes.WhereFilterOp,
             newFilter.value
           );
-          collectionQuery = collectionQuery.where(whereFilter);
+          constraints.push(whereFilter);
         }
       }
     }
-    if (query.orderBy && query.orderBy.length > 0) {
-      for (const sort of query.orderBy) {
-        collectionQuery = collectionQuery.orderBy(
-          sort.field as unknown as FirebaseFirestoreTypes.FieldPath,
-          sort.direction || "asc"
+    if (queryData.orderBy && queryData.orderBy.length > 0) {
+      for (const sort of queryData.orderBy) {
+        constraints.push(
+          orderBy(
+            sort.field as unknown as FirebaseFirestoreTypes.FieldPath,
+            sort.direction || "asc"
+          )
         );
       }
     }
-    if (query.afterDoc) {
-      collectionQuery = collectionQuery.startAfter(query.afterDoc);
+    if (queryData.afterDoc) {
+      constraints.push(startAfter(queryData.afterDoc));
     }
-    collectionQuery = collectionQuery.limit(
-      query.limit ?? constants.firebase.MAX_QUERY_LIMIT
+
+    constraints.push(
+      limit(queryData.limit ?? constants.firebase.MAX_QUERY_LIMIT)
     );
 
-    return collectionQuery;
+    // Apply all constraints using the modular `query` function
+    // Cast to any to avoid strict typing issues during migration if types mismatch slightly
+    return query(collectionQuery as any, ...constraints);
   }
 
   logEvent(event: AnalyticsEvent, actionType: ActionType, error?: Error) {

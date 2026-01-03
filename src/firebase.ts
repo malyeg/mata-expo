@@ -1,7 +1,7 @@
 // src/firebase.ts
 import { getAnalytics } from "@react-native-firebase/analytics";
 import { getApp } from "@react-native-firebase/app";
-import { getAuth } from "@react-native-firebase/auth";
+import { getAuth, onAuthStateChanged } from "@react-native-firebase/auth";
 import { getCrashlytics } from "@react-native-firebase/crashlytics";
 import { getFirestore } from "@react-native-firebase/firestore";
 import { getFunctions, httpsCallable } from "@react-native-firebase/functions";
@@ -52,7 +52,7 @@ const getCachedToken = async (): Promise<string> => {
 };
 
 // Clear token cache on auth state change
-auth.onAuthStateChanged(() => {
+onAuthStateChanged(auth, () => {
   cachedToken = null;
   tokenExpiryTime = 0;
 });

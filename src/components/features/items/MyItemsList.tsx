@@ -9,6 +9,7 @@ import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import { useAddItemStore } from "@/store/addItem-store";
 import { theme } from "@/styles/theme";
+import { query, where } from "@react-native-firebase/firestore";
 import React, { useMemo } from "react";
 import { StyleSheet } from "react-native";
 
@@ -23,7 +24,12 @@ export const MyItemsList = ({ status }: MyItemsListProps) => {
   const { data: items, loading } = useFirestoreQuery<Item>(
     itemsApi.collectionName,
     (ref) => {
-      return ref.where("user.id", "==", user?.id).where("status", "in", status);
+      // Use modular query syntax
+      return query(
+        ref,
+        where("user.id", "==", user?.id),
+        where("status", "in", status)
+      );
     }
   );
 
@@ -90,5 +96,4 @@ const styles = StyleSheet.create({
 });
 
 export default MyItemsList;
-
 

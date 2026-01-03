@@ -1,5 +1,9 @@
 import { db } from "@/firebase";
-import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
+import {
+  collection,
+  FirebaseFirestoreTypes,
+  onSnapshot,
+} from "@react-native-firebase/firestore";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // Types for the hook parameters
@@ -91,14 +95,18 @@ export function useCollectionSnapshot<T, R = T>({
     setFromCache(false);
 
     try {
-      let collectionRef: FirebaseFirestoreTypes.Query =
-        db.collection(collectionName);
+      // Use modular collection()
+      let collectionRef: any = collection(db, collectionName);
 
       if (queryRef.current && typeof queryRef.current === "function") {
-        collectionRef = queryRef.current(db.collection(collectionName));
+        // Pass the modular collection ref to the query builder
+        // The query builder should return a modular Query object (or namespaced one, both likely work with onSnapshot but let's be safe)
+        collectionRef = queryRef.current(collectionRef);
       }
 
-      const unsubscribe = collectionRef.onSnapshot(
+      // Use modular onSnapshot()
+      const unsubscribe = onSnapshot(
+        collectionRef,
         { includeMetadataChanges: true },
         (querySnapshot: FirebaseFirestoreTypes.QuerySnapshot) => {
           try {

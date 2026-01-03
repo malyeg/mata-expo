@@ -1,8 +1,9 @@
+import { db } from "@/firebase";
 import {
   collection,
   FirebaseFirestoreTypes,
+  onSnapshot,
 } from "@react-native-firebase/firestore";
-import { db } from "@/firebase";
 import { useEffect, useRef, useState } from "react";
 
 /**
@@ -94,10 +95,14 @@ export const useFirestoreQuery = <T = any>(
     setError(null);
 
     try {
-      const collectionRef = collection(db, collectionPath) as FirebaseFirestoreTypes.CollectionReference;
+      const collectionRef = collection(
+        db,
+        collectionPath
+      ) as FirebaseFirestoreTypes.CollectionReference;
       const query = queryBuilder ? queryBuilder(collectionRef) : collectionRef;
 
-      const unsubscribe = query.onSnapshot(
+      const unsubscribe = onSnapshot(
+        query as any,
         (snapshot) => {
           if (!isMounted.current) return;
 

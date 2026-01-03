@@ -4,6 +4,7 @@ import { useFirestoreQuery } from "@/hooks/db/useFirestoreQuery";
 import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
+import { query, where } from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -32,9 +33,12 @@ const ItemDealsTab = ({ item, style }: ItemDealsTabProps) => {
   const { data: deals, loading } = useFirestoreQuery<Deal>(
     dealsApi.collectionName,
     (ref) => {
-      return ref
-        .where("item.id", "==", item.id)
-        .where("status", "in", ["new", "accepted"]);
+      // Use modular query syntax
+      return query(
+        ref,
+        where("item.id", "==", item.id),
+        where("status", "in", ["new", "accepted"])
+      );
     }
   );
 

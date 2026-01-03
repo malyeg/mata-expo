@@ -5,6 +5,7 @@ import useAuth from "@/hooks/useAuth";
 import useChat from "@/hooks/useChat";
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
+import { orderBy, query, where } from "@react-native-firebase/firestore";
 import { randomUUID } from "expo-crypto";
 import React, { useCallback, useEffect, useState } from "react";
 import {
@@ -44,7 +45,12 @@ const Chat = ({ deal, disableComposer, style, alwaysShowSend }: ChatProps) => {
   const { data } = useCollectionSnapshot<Message>({
     collectionName: messagesApi.collectionName,
     query: (ref) => {
-      return ref.where("dealId", "==", deal.id).orderBy("timestamp", "desc");
+      // Use modular query syntax
+      return query(
+        ref,
+        where("dealId", "==", deal.id),
+        orderBy("timestamp", "desc")
+      );
     },
   });
   const { profile, user } = useAuth();
