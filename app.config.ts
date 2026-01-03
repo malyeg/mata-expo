@@ -22,6 +22,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     appleTeamId: "VX43W4S7M9", // Mata Aotearoa Limited - for automatic code signing
     googleServicesFile: "./firebase/GoogleService-Info.plist",
     infoPlist: {
+      CFBundleDisplayName: "Mata",
       UIDesignRequiresCompatibility: true,
       ITSAppUsesNonExemptEncryption: false,
       NSCameraUsageDescription:
@@ -119,7 +120,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         appID: process.env.EXPO_PUBLIC_FACEBOOK_APP_ID,
         clientToken: process.env.EXPO_PUBLIC_FACEBOOK_CLIENT_TOKEN,
-        displayName: "mata-app",
+        displayName: "Mata",
         scheme: `fb${process.env.EXPO_PUBLIC_FACEBOOK_APP_ID}`,
         advertiserIDCollectionEnabled: false,
         autoLogAppEventsEnabled: false,
