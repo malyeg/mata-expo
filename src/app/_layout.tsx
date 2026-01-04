@@ -3,6 +3,7 @@
 import configApi from "@/api/AppConfig";
 import { toastConfig } from "@/components/core/Toaster";
 import { initializeRTL } from "@/hooks/useLanguage";
+import { initSentry, navigationIntegration, Sentry } from "@/lib/sentry";
 import { useAuthStore } from "@/store/auth-store";
 import useLocationStore from "@/store/location-store";
 import {
@@ -13,13 +14,16 @@ import {
   useFonts,
 } from "@expo-google-fonts/cairo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, useNavigationContainerRef } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
+
+// Initialize Sentry
+initSentry();
 
 void SplashScreen.preventAutoHideAsync();
 
@@ -42,6 +46,7 @@ const InitialLayout = () => {
     isInitialized: isAuthInitialized,
   } = useAuthStore();
   const [isLanguageInitialized, setIsLanguageInitialized] = useState(false);
+  const navigationRef = useNavigationContainerRef();
 
   useEffect(() => {
     const initialize = async () => {
@@ -64,6 +69,13 @@ const InitialLayout = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Register navigation container with Sentry for navigation tracking
+  useEffect(() => {
+    if (navigationRef?.current) {
+      navigationIntegration.registerNavigationContainer(navigationRef);
+    }
+  }, [navigationRef]);
 
   if (!isAuthInitialized || !isLocationInitialized || !isLanguageInitialized) {
     return null;
@@ -113,7 +125,7 @@ const RootLayout = () => {
   );
 };
 
-export default RootLayout;
+export default Sentry.wrap(RootLayout);
 
 const styles = StyleSheet.create({
   container: {

@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 205; // <--- Update this one number
-const APP_VERSION = "2.0.5";
+const BUILD_NUMBER = 206; // <--- Update this one number
+const APP_VERSION = "2.0.6";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -180,6 +180,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "com.zhiliaoapp.musically",
         ],
         enableBase64ShareAndroid: true,
+      },
+    ],
+    [
+      "@sentry/react-native/expo",
+      {
+        url: "https://sentry.io/",
+        project: "mata",
+        organization: "medyour",
       },
     ],
     "expo-web-browser",

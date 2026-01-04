@@ -3,6 +3,7 @@ import authApi from "@/api/authApi";
 import profilesApi from "@/api/profileApi";
 import { fromFirebaseUser, User } from "@/contexts/user-model";
 import { auth } from "@/firebase";
+import { clearSentryUser, setSentryUser } from "@/lib/sentry";
 import { Profile } from "@/models/Profile.model";
 import { onAuthStateChanged } from "@react-native-firebase/auth";
 import { create } from "zustand";
@@ -224,6 +225,7 @@ export const useAuthStore = create<AuthStore>()(
       const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         try {
           if (!currentUser) {
+            clearSentryUser();
             set({
               user: null,
               profile: null,
@@ -240,6 +242,14 @@ export const useAuthStore = create<AuthStore>()(
           if (!get().profile) {
             profile = await profilesApi.getById(appUser.id);
           }
+
+          // Set Sentry user context
+          setSentryUser({
+            id: appUser.id,
+            email: appUser.email,
+            username: profile?.name,
+          });
+
           set({
             user: appUser,
             profile: profile,
