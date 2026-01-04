@@ -1,5 +1,6 @@
 import { Icon } from "@/components/core";
 import { ChevronLeftIcon, ChevronRightIcon } from "@/components/core/Icon";
+import DealsMenu from "@/components/features/deals/DealsMenu";
 import { headerBackIconSize } from "@/components/HeaderBack";
 import GuestModal from "@/components/modals/GuestModal";
 import useAuth from "@/hooks/useAuth";
@@ -153,6 +154,8 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <Icon name="handshake" size={20} color={color} />
             ),
+            headerRight: () => <DealsMenu />,
+            headerRightContainerStyle: { paddingRight: 15 },
           }}
           listeners={{
             tabPress: handleTabPress,

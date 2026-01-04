@@ -9,9 +9,9 @@ const DealsLayout = () => {
   return (
     <Stack screenOptions={screenOptions}>
       <Stack.Screen
-        name="index"
+        name="archived"
         options={{
-          title: t("screens.deals"),
+          title: t("screens.archivedDeals"),
         }}
       />
       <Stack.Screen

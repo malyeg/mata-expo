@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 204; // <--- Update this one number
-const APP_VERSION = "2.0.4";
+const BUILD_NUMBER = 205; // <--- Update this one number
+const APP_VERSION = "2.0.5";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     buildNumber: String(BUILD_NUMBER),
     icon: "./assets/images/ios-icon.png", // Add this
-    supportsTablet: true,
+    supportsTablet: false,
     bundleIdentifier: "com.mata.mataapp",
     appleTeamId: "VX43W4S7M9", // Mata Aotearoa Limited - for automatic code signing
     googleServicesFile: "./firebase/GoogleService-Info.plist",

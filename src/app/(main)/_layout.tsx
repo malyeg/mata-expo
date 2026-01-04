@@ -1,8 +1,10 @@
 // app/(app)/_layout.tsx
 import profilesApi from "@/api/profileApi";
 import Intro from "@/components/widgets/Intro";
+import Sheet from "@/components/widgets/Sheet";
 import useActivity from "@/hooks/useActivity";
 import useAppExit from "@/hooks/useAppExit";
+import useNotificationListener from "@/hooks/useNotificationListener";
 import usePushTokenSync from "@/hooks/usePushTokenSync";
 import DrawerContent from "@/navigation/DrawerContent";
 import { DrawerNavigationOptions } from "@react-navigation/drawer";
@@ -31,6 +33,7 @@ const AppLayout = () => {
   useActivity();
   useAppExit();
   usePushTokenSync();
+  const { sheetRef } = useNotificationListener();
 
   const [showIntro, setShowIntro] = useState<boolean | null>(null);
 
@@ -53,13 +56,16 @@ const AppLayout = () => {
   }
 
   return (
-    <Drawer
-      backBehavior="history"
-      screenOptions={drawerOptions}
-      drawerContent={(props) => <DrawerContent {...props} />}
-    >
-      <Drawer.Screen name="(stack)" />
-    </Drawer>
+    <>
+      <Drawer
+        backBehavior="history"
+        screenOptions={drawerOptions}
+        drawerContent={(props) => <DrawerContent {...props} />}
+      >
+        <Drawer.Screen name="(stack)" />
+      </Drawer>
+      <Sheet ref={sheetRef} />
+    </>
   );
 };
 

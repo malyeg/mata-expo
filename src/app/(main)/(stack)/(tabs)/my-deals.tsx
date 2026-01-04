@@ -41,9 +41,6 @@ const DealsTabs = () => {
         options={{
           tabBarLabel: t("screens.outgoingDeals"),
           tabBarLabelStyle: sharedStyles.tabbarLabel,
-          // tabBarBadge: () => (
-          //   <Badge count={newMessages?.outgoing} style={styles.badge} />
-          // ),
         }}
       />
       <Tab.Screen
@@ -52,13 +49,6 @@ const DealsTabs = () => {
         options={{
           tabBarLabel: t("screens.incomingDeals"),
           tabBarLabelStyle: sharedStyles.tabbarLabel,
-          // tabBarBadge: () => (
-          //   <Badge
-          //     type="notification"
-          //     count={newMessages?.incoming}
-          //     style={styles.badge}
-          //   />
-          // ),
         }}
       />
     </Tab.Navigator>
