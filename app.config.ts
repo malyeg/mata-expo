@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 206; // <--- Update this one number
-const APP_VERSION = "2.0.6";
+const BUILD_NUMBER = 207; // <--- Update this one number
+const APP_VERSION = "2.0.7";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -165,6 +165,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           forceStaticLinking: ["RNFBApp"],
         },
         android: {
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
           enableProguardInReleaseBuilds: true,
         },
       },
@@ -187,7 +189,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         url: "https://sentry.io/",
         project: "mata",
-        organization: "medyour",
+        organization: "mata-oq",
       },
     ],
     "expo-web-browser",

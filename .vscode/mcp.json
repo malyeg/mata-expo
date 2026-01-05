@@ -1,7 +1,7 @@
 {
   "servers": {
     "Sentry": {
-      "url": "https://mcp.sentry.dev/mcp/medyour/mata",
+      "url": "https://mcp.sentry.dev/mcp/mata-oq/mata",
       "type": "http"
     }
   }
