@@ -26,6 +26,10 @@ const MainStackLayout = () => {
         <Stack.Screen name="users" options={{ headerShown: false }} />
         <Stack.Screen name="account" options={{ headerShown: false }} />
         <Stack.Screen name="add-item" options={{ headerShown: true }} />
+        <Stack.Screen
+          name="system"
+          options={{ headerShown: true, title: "System" }}
+        />
       </Stack>
       <AddItemModal
         isVisible={isAddItemModalVisible}

@@ -32,8 +32,6 @@ interface NotificationData {
  * - Initial notification (app launched from notification)
  */
 const useNotificationListener = () => {
-  console.log("=== useNotificationListener hook called ===");
-  logger.debug("useNotificationListener hook called");
   const router = useRouter();
   const {
     setLastNotification,
@@ -182,35 +180,28 @@ const useNotificationListener = () => {
   });
 
   useEffect(() => {
-    logger.debug("Setting up notification listeners...");
-
     // 1. Handle notifications received while app is in foreground
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         handleForegroundNotificationRef.current(notification);
       });
-    logger.debug("Foreground notification listener registered");
 
     // 2. Handle notification taps (app opened from background or killed state)
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
         handleNotificationResponseRef.current(response);
       });
-    logger.debug("Response listener registered");
 
     // 3. Check for initial notification (app was killed, launched via notification)
     Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response) {
-        logger.debug("App launched from notification:", response);
         handleNotificationResponseRef.current(response);
       }
     });
 
     setIsInitialized(true);
-    logger.debug("Notification listeners setup complete");
 
     return () => {
-      logger.debug("Cleaning up notification listeners...");
       notificationListener.current?.remove();
       responseListener.current?.remove();
     };

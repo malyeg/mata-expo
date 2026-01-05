@@ -665,6 +665,10 @@ export default {
       header: "Warning",
       body: "Block item [{{itemName}}] to not be seen by others and item owner won't be able to edit it",
     },
+    unblockItemConfirmation: {
+      header: "Confirm",
+      body: "Unblock item [{{itemName}}] to make it visible again",
+    },
     swapHeader: "New Offer",
     swapConfirmTitle: "Send",
     swapCategoryBody:
@@ -684,6 +688,7 @@ export default {
       dealsLabel: "My Ongoing Deals",
       archivedDealsLabel: "My Archived Deals",
       blockLabel: "Block Item",
+      unblockLabel: "Unblock Item",
     },
     itemPickerTitle: "Select Item",
   },

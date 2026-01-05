@@ -2,6 +2,7 @@ import authApi from "@/api/authApi";
 import profilesApi from "@/api/profileApi";
 import { Profile } from "@/models/Profile.model";
 import { useAuthStore } from "@/store/auth-store";
+import { serverTimestamp } from "@react-native-firebase/firestore";
 import { ICredentials } from "../contexts/AuthReducer";
 
 const useAuth = () => {
@@ -19,8 +20,26 @@ const useAuth = () => {
     await authApi.changePassword(credentials, newPassword);
   };
   const updateProfile = async (newProfile: Profile) => {
-    await profilesApi.update(newProfile.id, newProfile);
-    // TODO move to profilesapi
+    try {
+      await profilesApi.update(newProfile.id, newProfile as any);
+    } catch (error: any) {
+      // If the profile document doesn't exist, create it with all required fields
+      if (error?.code === "firestore/not-found") {
+        const fullProfile = {
+          ...newProfile,
+          id: newProfile.id,
+          userId: newProfile.userId ?? newProfile.id,
+          email: session.user?.email ?? session.user?.username ?? "",
+          acceptMarketingFlag: newProfile.acceptMarketingFlag ?? false,
+          acceptTermsFlag: newProfile.acceptTermsFlag ?? false,
+          updated: true,
+          timestamp: serverTimestamp(),
+        };
+        await profilesApi.set(newProfile.id, fullProfile as any);
+      } else {
+        throw error;
+      }
+    }
     await profilesApi.saveToStorage(newProfile);
   };
 

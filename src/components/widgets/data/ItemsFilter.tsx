@@ -1,6 +1,6 @@
 import categoriesApi, { Category } from "@/api/categoriesApi";
 import countriesApi from "@/api/countriesApi";
-import { conditionList, swapList, SwapType } from "@/api/itemsApi";
+import { conditionList, statusList, swapList, SwapType } from "@/api/itemsApi";
 import { Button, Modal } from "@/components/core";
 import { Picker, TextInput } from "@/components/form";
 import useAuth from "@/hooks/useAuth";
@@ -38,6 +38,7 @@ export interface ItemsFilterValues {
   stateIds?: string[];
   countryId?: string;
   conditionTypes?: string[];
+  status?: string;
 }
 export interface ItemsFilterProps {
   onChange: (query: Query) => void;
@@ -52,9 +53,21 @@ const logger = LoggerFactory.getLogger("ItemsFilter");
 
 // Helper function to convert Query filters to ItemsFilterValues
 const queryToFormValues = (query?: Query): ItemsFilterValues => {
-  if (!query?.filters) return {};
+  // Initialize all fields to empty to ensure form properly resets
+  const formValues: ItemsFilterValues = {
+    searchInput: "",
+    categoryId: "",
+    swapTypes: [],
+    swapCategoryId: "",
+    stateIds: [],
+    countryId: "",
+    conditionTypes: [],
+    status: "",
+  };
 
-  const formValues: ItemsFilterValues = {};
+  if (!query?.filters) {
+    return formValues;
+  }
 
   query.filters.forEach((filter) => {
     switch (filter.field) {
@@ -63,18 +76,17 @@ const queryToFormValues = (query?: Query): ItemsFilterValues => {
         const category = categoriesApi
           .getAll()
           .find((c) => c.name === filter.value);
-        formValues.categoryId = category?.id?.toString();
+        formValues.categoryId = category?.id?.toString() ?? "";
         break;
       case "countryId":
-        formValues.countryId = filter.value?.toString();
+        formValues.countryId = filter.value?.toString() ?? "";
         break;
       case "stateId":
       case "location.state.id":
-        if (!formValues.stateIds) formValues.stateIds = [];
         if (filter.operation === Operation.IN && Array.isArray(filter.value)) {
           formValues.stateIds = filter.value;
         } else {
-          formValues.stateIds.push(filter.value?.toString());
+          formValues.stateIds = [filter.value?.toString()];
         }
         break;
       case "conditionType":
@@ -95,7 +107,10 @@ const queryToFormValues = (query?: Query): ItemsFilterValues => {
         const swapCategory = categoriesApi
           .getAll()
           .find((c) => c.name === filter.value);
-        formValues.swapCategoryId = swapCategory?.id?.toString();
+        formValues.swapCategoryId = swapCategory?.id?.toString() ?? "";
+        break;
+      case "status":
+        formValues.status = filter.value?.toString() ?? "";
         break;
     }
   });
@@ -170,6 +185,14 @@ const formValuesToQuery = (data: ItemsFilterValues): Query => {
     query.searchText = data.searchInput;
   }
 
+  if (data.status) {
+    query.filters?.push({
+      field: "status",
+      value: data.status,
+      operation: Operation.EQUAL,
+    });
+  }
+
   return query;
 };
 
@@ -214,6 +237,7 @@ const ItemsFilter = ({
         stateIds: yup.array(),
         countryId: yup.string().trim(),
         conditionTypes: yup.array(),
+        status: yup.string().trim(),
       })
     );
   const countryId = watch("countryId");
@@ -288,15 +312,9 @@ const ItemsFilter = ({
     }
   };
 
-  const countries = useMemo(
-    () =>
-      countriesApi
-        .getCountries()
-        .filter((c) => ["nz", "au"].includes(c.code.toLowerCase())),
-    []
-  );
+  const countries = useMemo(() => countriesApi.getCountries(), []);
 
-  const isCountryPickerVisible = !location || user?.isAdmin;
+  const isCountryPickerVisible = !location || user?.isAdmin || !!countryId;
 
   return (
     <Modal
@@ -385,6 +403,17 @@ const ItemsFilter = ({
                 modalTitle={t("itemsFilter.swapCategory.modalTitle")}
                 control={control}
                 multiLevel
+                showReset
+              />
+            )}
+
+            {user?.isAdmin && (
+              <Picker
+                name="status"
+                items={statusList}
+                placeholder={t("itemsFilter.status.placeholder")}
+                modalTitle={t("itemsFilter.status.modalTitle")}
+                control={control}
                 showReset
               />
             )}

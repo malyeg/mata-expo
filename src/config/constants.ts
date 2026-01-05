@@ -132,7 +132,7 @@ export const screens = {
   PRIVACY: "PrivacyScreen" as "PrivacyScreen",
   TERMS: "TermsScreen" as "TermsScreen",
 
-  SYSTEM: "SystemScreen" as "SystemScreen",
+  SYSTEM: "system" as "system",
   NO_CONNECTION: "NoConnectionScreen" as "NoConnectionScreen",
   NO_LOCACTION: "NoLocationScreen" as "NoLocationScreen",
 

@@ -1,5 +1,6 @@
 import { Item } from "@/api/itemsApi";
 import AppMenu from "@/components/menu/AppMenu";
+import { BlockItemMenuItem } from "@/components/menu/BlockItemMenuItem";
 import { DeleteItemMenuItem } from "@/components/menu/DeleteItemMenuItem";
 import { EditItemMenuItem } from "@/components/menu/EditItemMenuItem";
 import SendComplainItem from "@/components/menu/SendComplainMenuItem";
@@ -17,6 +18,7 @@ const ItemDetailsMenu = ({ item }: ItemDetailsMenuProps) => {
   const itemName = item.name;
   const { user } = useAuth();
   const isOwnItem = user?.id === itemOwnerId;
+  const isAdmin = user?.rules?.includes("admin");
 
   // Hide menu if item is archived
   if (item.status === "archived") {
@@ -30,6 +32,13 @@ const ItemDetailsMenu = ({ item }: ItemDetailsMenuProps) => {
 
       {isOwnItem && <EditItemMenuItem item={item} />}
       {isOwnItem && <DeleteItemMenuItem itemId={itemId} itemName={itemName} />}
+      {isAdmin && (
+        <BlockItemMenuItem
+          itemId={itemId}
+          itemName={itemName}
+          isBlocked={item.status === "blocked"}
+        />
+      )}
     </AppMenu>
   );
 };

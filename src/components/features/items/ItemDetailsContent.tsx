@@ -317,12 +317,18 @@ const ItemDetailsContent = ({
             })
           }
         />
-        {item.userId === user.id && (
+        {(item.userId === user.id || item.status === "blocked") && (
           <ItemDetailsCard
             title={t("statusTitle")}
             content={item.status}
             icon="cast-connected"
-            contentStyle={item.status === "online" ? styles.greenText : {}}
+            contentStyle={
+              item.status === "online"
+                ? styles.greenText
+                : item.status === "blocked"
+                ? styles.blockedText
+                : {}
+            }
           />
         )}
 
@@ -582,4 +588,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   sinceText: {},
+  blockedText: {
+    color: theme.colors.error,
+  },
 });

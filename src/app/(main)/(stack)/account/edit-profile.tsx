@@ -16,6 +16,7 @@ import useAuth from "@/hooks/useAuth";
 import useForm from "@/hooks/useForm";
 import useLocale from "@/hooks/useLocale";
 import useToast from "@/hooks/useToast";
+import { Sentry } from "@/lib/sentry";
 import { Profile } from "@/models/Profile.model";
 import { Country } from "@/models/place.model";
 import { theme } from "@/styles/theme";
@@ -169,6 +170,10 @@ const EditProfileScreen = () => {
         },
       });
     } catch (err) {
+      Sentry.captureException(err, {
+        tags: { screen: "edit-profile" },
+        extra: { userId: user?.id },
+      });
       showToast({
         type: "error",
         code: (err as any).code,
@@ -274,7 +279,7 @@ const EditProfileScreen = () => {
           control={control}
           style={styles.acceptMarketingFlag}
         />
-        {true && <Tooltip text={t("marketingFlag.tooltip")} />}
+        {showMarketingTip && <Tooltip text={t("marketingFlag.tooltip")} />}
       </View>
       <Button
         // disabled={!formState.isDirty}

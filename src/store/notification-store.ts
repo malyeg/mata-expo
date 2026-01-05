@@ -188,8 +188,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     const { isInitialized } = get();
     if (isInitialized) return;
 
-    logger.debug("Initializing notification store...");
-
     // Register for push notifications
     await get().registerForPushNotifications();
 
@@ -226,7 +224,6 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     // Remove existing listener if any
     get().stopTokenListener();
 
-    logger.debug("Starting push token listener...");
     const subscription = Notifications.addPushTokenListener((tokenData) => {
       const newToken = tokenData.data;
       logger.debug("Push token changed:", newToken);

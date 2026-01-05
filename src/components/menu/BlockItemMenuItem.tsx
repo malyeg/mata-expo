@@ -5,7 +5,6 @@ import useLocale from "@/hooks/useLocale";
 import useSheet from "@/hooks/useSheet";
 import useToast from "@/hooks/useToast";
 import { theme } from "@/styles/theme";
-import { useRouter } from "expo-router";
 import React from "react";
 import { View } from "react-native";
 import { BlockIcon } from "../core/Icon";
@@ -15,13 +14,17 @@ import AppMenuItem from "./AppMenuItem";
 type BlockItemMenuItemProps = {
   itemId: string;
   itemName?: string;
+  isBlocked?: boolean;
   closeMenu?: () => void;
+  onBlocked?: () => void;
 };
 
 const BlockItemMenuItem = ({
   itemId,
   itemName,
+  isBlocked = false,
   closeMenu,
+  onBlocked,
   ...props
 }: BlockItemMenuItemProps) => {
   const { t } = useLocale("itemDetailsScreen");
@@ -29,12 +32,16 @@ const BlockItemMenuItem = ({
   const { request, loader } = useApi();
   const { show, sheetRef } = useSheet();
   const { showToast, showErrorToast } = useToast();
-  const router = useRouter();
 
   const handleBlockItem = async () => {
+    const confirmationKey = isBlocked
+      ? "unblockItemConfirmation"
+      : "blockItemConfirmation";
+    const actionLabel = isBlocked ? "menu.unblockLabel" : "menu.blockLabel";
+
     show({
-      header: t("blockItemConfirmation.header"),
-      body: t("blockItemConfirmation.body", {
+      header: t(`${confirmationKey}.header`),
+      body: t(`${confirmationKey}.body`, {
         params: { itemName: itemName ?? "" },
       }),
       cancelCallback: () => {
@@ -45,12 +52,16 @@ const BlockItemMenuItem = ({
         try {
           const item = await request(() => itemsApi.getById(itemId));
           if (item) {
-            await request(() => itemsApi.blockItem(itemId));
+            if (isBlocked) {
+              await request(() => itemsApi.unblockItem(itemId));
+            } else {
+              await request(() => itemsApi.blockItem(itemId));
+            }
             showToast({
-              message: t("menu.blockLabel"),
+              message: t(actionLabel),
               type: "success",
             });
-            router.back();
+            onBlocked?.();
           }
         } catch (error) {
           showErrorToast(error);
@@ -64,16 +75,19 @@ const BlockItemMenuItem = ({
     return null;
   }
 
+  const menuLabel = isBlocked ? t("menu.unblockLabel") : t("menu.blockLabel");
+  const iconColor = isBlocked ? theme.colors.green : theme.colors.error;
+
   return (
     <>
       <AppMenuItem
         {...props}
-        title={t("menu.blockLabel")}
+        title={menuLabel}
         onPress={handleBlockItem}
         icon={() => (
           <View
             style={{
-              backgroundColor: theme.colors.error,
+              backgroundColor: iconColor,
               justifyContent: "center",
               alignItems: "center",
               borderRadius: 15,

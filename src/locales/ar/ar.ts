@@ -649,6 +649,10 @@ export default {
       header: "تحذير",
       body: "حظر المنتج [{{itemName}}] حتى لا يراه الآخرون ولن يتمكن مالك المنتج من تعديله",
     },
+    unblockItemConfirmation: {
+      header: "تأكيد",
+      body: "إلغاء حظر المنتج [{{itemName}}] لجعله مرئياً مرة أخرى",
+    },
     swapHeader: "عرض جديد",
     swapConfirmTitle: "إرسال",
     swapCategoryBody:
@@ -668,6 +672,7 @@ export default {
       dealsLabel: "صفقاتي الجارية",
       archivedDealsLabel: "صفقاتي المؤرشفة",
       blockLabel: "حظر المنتج",
+      unblockLabel: "إلغاء حظر المنتج",
     },
     itemPickerTitle: "اختر منتجًا",
   },

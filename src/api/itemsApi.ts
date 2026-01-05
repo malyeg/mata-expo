@@ -18,6 +18,55 @@ export type ItemStatus =
 export type ConditionType = "new" | "goodAsNew" | "used" | "usedWithIssues";
 export type SwapOptionType = "free" | "swapWithAnother" | "swapWithAny";
 
+interface StatusOption {
+  id: ItemStatus;
+  name: string;
+  localizedName: { [key: string]: string };
+}
+
+export const statusList: StatusOption[] = [
+  {
+    id: "online",
+    name: "Online",
+    localizedName: {
+      en: "Online",
+      ar: "متاح",
+    },
+  },
+  {
+    id: "blocked",
+    name: "Blocked",
+    localizedName: {
+      en: "Blocked",
+      ar: "محظور",
+    },
+  },
+  {
+    id: "pending",
+    name: "Pending",
+    localizedName: {
+      en: "Pending",
+      ar: "قيد الانتظار",
+    },
+  },
+  {
+    id: "draft",
+    name: "Draft",
+    localizedName: {
+      en: "Draft",
+      ar: "مسودة",
+    },
+  },
+  {
+    id: "archived",
+    name: "Archived",
+    localizedName: {
+      en: "Archived",
+      ar: "مؤرشف",
+    },
+  },
+];
+
 interface ItemCondition {
   id: ConditionType;
   name: string;
@@ -266,6 +315,12 @@ class ItemsApi extends DatabaseApi<Item> {
   blockItem(itemId: string) {
     const prom = callFunction("blockItem")({ itemId });
     Analytics.logEvent("block_item");
+    return prom;
+  }
+
+  unblockItem(itemId: string) {
+    const prom = callFunction("unblockItem")({ itemId });
+    Analytics.logEvent("unblock_item");
     return prom;
   }
 

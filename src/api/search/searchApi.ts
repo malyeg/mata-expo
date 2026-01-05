@@ -132,6 +132,16 @@ export class SearchApi<T> {
     } else if ((f.name || f.field) && typeof f.value === "string") {
       const key = f.name ?? f.field;
 
+      // Special case: status='online' should also include items without a status field
+      // This covers legacy items that don't have a status property
+      if (key === "status" && f.value === "online") {
+        return `(${buildFilterString(
+          key,
+          f.value,
+          f.operation
+        )} OR NOT _exists_:status)`;
+      }
+
       return buildFilterString(key, f.value, f.operation);
     } else {
       logger.error("invalid filter data", f);

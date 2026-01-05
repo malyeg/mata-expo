@@ -1,7 +1,8 @@
 import categoriesApi from "@/api/categoriesApi";
 import countriesApi from "@/api/countriesApi";
-import { conditionList, Item, swapList } from "@/api/itemsApi";
+import { conditionList, Item, statusList, swapList } from "@/api/itemsApi";
 import { Icon, Text } from "@/components/core";
+import useAuth from "@/hooks/useAuth";
 import useLocale from "@/hooks/useLocale";
 import theme from "@/styles/theme";
 import { Query } from "@/types/DataTypes";
@@ -15,6 +16,7 @@ interface FilterLabelProps {
 const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
   const filters = query?.filters || [];
   const { locale } = useLocale();
+  const { user } = useAuth();
   const deleteItem = (field: string) => {
     if (onDelete) {
       onDelete(field);
@@ -41,6 +43,17 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
     return states.map((s) => s.name).join(", ");
   };
   const swapTypesFilter = filters.filter((f) => f.field === "swapOptionType");
+  const statusFilter = filters.find((f) => f.field === "status");
+  const countryFilter = filters.find((f) => f.field === "countryId");
+
+  // Get country label for admin
+  const countryLabel = useMemo(() => {
+    if (!countryFilter) return "";
+    const country = countriesApi.getById(countryFilter.value?.toString());
+    return (
+      country?.localizedName?.[locale] ?? country?.name ?? countryFilter.value
+    );
+  }, [countryFilter, locale]);
 
   const swapOptionLabel = useMemo(() => {
     return swapTypesFilter
@@ -80,6 +93,14 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
       })
       .join(", ");
   }, [conditionTypesFilter]);
+
+  const statusLabel = useMemo(() => {
+    if (!statusFilter) return "";
+    const status = statusList.find((s) => s.id === statusFilter.value);
+    return (
+      status?.localizedName?.[locale] ?? status?.name ?? statusFilter.value
+    );
+  }, [statusFilter, locale]);
 
   return (
     <View style={styles.container}>
@@ -128,6 +149,22 @@ const SelectedFilters = ({ query, onDelete }: FilterLabelProps) => {
             onDelete={deleteItem}
           />
         )}
+      {statusFilter && statusFilter.value && (
+        <FilterComponent
+          field="status"
+          value={String(statusFilter.value)}
+          label={statusLabel}
+          onDelete={deleteItem}
+        />
+      )}
+      {user?.isAdmin && countryFilter && countryFilter.value && (
+        <FilterComponent
+          field="countryId"
+          value={String(countryFilter.value)}
+          label={countryLabel}
+          onDelete={deleteItem}
+        />
+      )}
     </View>
   );
 };

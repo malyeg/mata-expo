@@ -25,7 +25,7 @@ const DrawerContent = ({
   const { notificationsCount } = useNotificationStore();
   const router = useRouter();
   const openEditProfile = useCallback(() => {
-    router.navigate("/(main)/account");
+    router.navigate("/(main)/(stack)/account");
   }, [router]);
 
   const signInLink = () => {
@@ -50,6 +50,11 @@ const DrawerContent = ({
       )}
       {!user?.isAnonymous && (
         <>
+          <DrawerItem
+            label={t("drawer.searchItemsLabel")}
+            icon="magnify"
+            to="/items"
+          />
           <DrawerItem
             label={t("drawer.myItemsLabel")}
             icon="view-list-outline"
@@ -94,9 +99,6 @@ const DrawerContent = ({
         icon="lock-alert-outline"
         to={screens.LEGAL_INFORMATION}
       />
-
-      <LanguageSwitcher />
-
       {(user?.isAdmin || user?.isTester) && (
         <DrawerItem
           label="System"
@@ -104,9 +106,12 @@ const DrawerContent = ({
           to={screens.SYSTEM}
         />
       )}
-      {__DEV__ && user?.isAdmin && (
+
+      <LanguageSwitcher />
+
+      {/* {__DEV__ && user?.isAdmin && (
         <DrawerItem label="Test" icon="information-outline" to={screens.TEST} />
-      )}
+      )} */}
     </DrawerContentScrollView>
   );
 };

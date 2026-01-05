@@ -237,7 +237,9 @@ export const useAuthStore = create<AuthStore>()(
             return;
           }
 
-          const appUser = fromFirebaseUser(currentUser);
+          // Fetch user rules to restore them on session restore
+          const userRules = await authApi.getUserRules();
+          const appUser = fromFirebaseUser(currentUser, userRules);
           let profile = get().profile;
           if (!get().profile) {
             profile = await profilesApi.getById(appUser.id);

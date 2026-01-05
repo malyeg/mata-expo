@@ -1,14 +1,19 @@
 import theme from "@/styles/theme";
 import { BaseViewProps } from "@/types/ReactTypes";
+import Constants from "expo-constants";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import DeviceInfo from "react-native-device-info";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 interface AppInfoProps extends BaseViewProps {}
 const AppInfo = ({ style }: AppInfoProps) => {
+  const buildNumber =
+    Platform.OS === "ios"
+      ? Constants.expoConfig?.ios?.buildNumber
+      : Constants.expoConfig?.android?.versionCode;
+
   return (
     <View style={[styles.container, style]}>
-      <Text>{DeviceInfo.getBuildNumber()}</Text>
+      <Text>{buildNumber}</Text>
     </View>
   );
 };
