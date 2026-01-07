@@ -27,7 +27,7 @@ const ItemDetailsMenu = ({ item }: ItemDetailsMenuProps) => {
 
   return (
     <AppMenu>
-      <ShareMenuItem link={`items/itemId`} />
+      <ShareMenuItem link={`/items/${itemId}`} />
       {!isOwnItem && <SendComplainItem itemId={itemId} />}
 
       {isOwnItem && <EditItemMenuItem item={item} />}

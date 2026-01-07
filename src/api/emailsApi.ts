@@ -5,6 +5,7 @@ export interface Email extends Entity {
   subject: string;
   text: string;
   type: string;
+  category?: string;
   metadata?: {
     dealId?: string;
     itemId?: string;

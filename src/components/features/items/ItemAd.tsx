@@ -12,6 +12,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import { CustomAdBanner } from "../ads/CustomAdBanner";
 // import NativeBannerView from '@/components/widgets/adMob/NativeBannerView';
 
 interface ItemAdProps {
@@ -37,7 +38,7 @@ const ItemAd = ({ style }: ItemAdProps) => {
 
   return showAd && !!ad ? (
     <View style={style}>
-      {/* {ad?.type === "admob" ? <NativeBannerView /> : <CustomAd ad={ad} />} */}
+      {ad?.type === "admob" ? <CustomAdBanner /> : <CustomAd ad={ad} />}
     </View>
   ) : null;
 };

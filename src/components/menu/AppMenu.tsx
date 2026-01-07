@@ -1,7 +1,7 @@
 import useLocale from "@/hooks/useLocale";
 import { theme } from "@/styles/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import React, { useRef } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Modal, Separator } from "../core";
@@ -13,12 +13,29 @@ const AppMenu = ({ children }: AppMenuProps) => {
   const [visible, setVisible] = React.useState(false);
   const { t } = useLocale("common");
   const { bottom } = useSafeAreaInsets();
+  const pendingActionRef = useRef<(() => void) | null>(null);
+
   const openMenu = () => {
     setVisible(true);
   };
 
   const closeMenu = React.useCallback(() => {
     setVisible(false);
+  }, []);
+
+  // Close menu and execute action after modal is fully hidden
+  const closeMenuWithAction = React.useCallback((action: () => void) => {
+    pendingActionRef.current = action;
+    setVisible(false);
+  }, []);
+
+  const handleModalHide = React.useCallback(() => {
+    if (pendingActionRef.current) {
+      const action = pendingActionRef.current;
+      pendingActionRef.current = null;
+      // Small delay to ensure modal is fully cleaned up
+      setTimeout(action, 50);
+    }
   }, []);
 
   // Clone children and pass closeMenu function to each child
@@ -30,6 +47,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
       if (React.isValidElement(child)) {
         const clonedChild = React.cloneElement(child, {
           closeMenu,
+          closeMenuWithAction,
         } as Record<string, unknown>);
         result.push(clonedChild);
 
@@ -46,7 +64,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
     });
 
     return result;
-  }, [children, closeMenu]);
+  }, [children, closeMenu, closeMenuWithAction]);
 
   return (
     <>
@@ -64,6 +82,7 @@ const AppMenu = ({ children }: AppMenuProps) => {
         isVisible={visible}
         onBackdropPress={() => closeMenu()}
         onClose={() => closeMenu()}
+        onModalHide={handleModalHide}
         containerStyle={[
           styles.modalContentContainer,
           {

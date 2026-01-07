@@ -109,9 +109,16 @@ const DrawerContent = ({
 
       <LanguageSwitcher />
 
-      {/* {__DEV__ && user?.isAdmin && (
-        <DrawerItem label="Test" icon="information-outline" to={screens.TEST} />
-      )} */}
+      {__DEV__ && user?.isAdmin && (
+        <>
+          <DrawerItem
+            label="Test"
+            icon="information-outline"
+            to={screens.TEST}
+          />
+        </>
+      )}
+      <DrawerItem label="AdsScreen" icon="information-outline" to={"ads"} />
     </DrawerContentScrollView>
   );
 };

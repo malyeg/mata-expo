@@ -16,7 +16,7 @@ const SendComplainItem = ({ itemId, ...props }: MenuItemProps) => {
   const sendComplain = () => {
     router.navigate({
       pathname: "/contact",
-      params: { itemId, type: "complain" },
+      params: { itemId, category: "complain" },
     });
   };
   return (

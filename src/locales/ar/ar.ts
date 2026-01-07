@@ -718,6 +718,11 @@ export default {
       placeholder: "الموضوع",
       required: "الموضوع مطلوب",
     },
+    type: {
+      modalTitle: "النوع",
+      placeholder: "النوع",
+      required: "النوع مطلوب",
+    },
     body: {
       placeholder: "الرسالة",
       required: "الرسالة مطلوبة",

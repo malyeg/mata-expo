@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 207; // <--- Update this one number
-const APP_VERSION = "2.0.7";
+const BUILD_NUMBER = 208; // <--- Update this one number
+const APP_VERSION = "2.0.8";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -73,6 +73,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           { scheme: "https", host: "www.mataup.com", pathPrefix: "/contact" },
           { scheme: "https", host: "www.mataup.com", pathPrefix: "/account" },
           { scheme: "https", host: "www.mataup.com", pathPrefix: "/add-item" },
+          { scheme: "https", host: "www.mataup.com", pathPrefix: "/newItem" },
           // Non-www domain (redirects to www, but included for safety)
           { scheme: "https", host: "mataup.com", pathPrefix: "/items" },
           { scheme: "https", host: "mataup.com", pathPrefix: "/deals" },
@@ -81,26 +82,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           { scheme: "https", host: "mataup.com", pathPrefix: "/contact" },
           { scheme: "https", host: "mataup.com", pathPrefix: "/account" },
           { scheme: "https", host: "mataup.com", pathPrefix: "/add-item" },
-          // Legacy Firebase domain
-          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/items" },
-          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/deals" },
-          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/users" },
-          { scheme: "https", host: "mataapp.page.link", pathPrefix: "/home" },
-          {
-            scheme: "https",
-            host: "mataapp.page.link",
-            pathPrefix: "/contact",
-          },
-          {
-            scheme: "https",
-            host: "mataapp.page.link",
-            pathPrefix: "/account",
-          },
-          {
-            scheme: "https",
-            host: "mataapp.page.link",
-            pathPrefix: "/add-item",
-          },
+          { scheme: "https", host: "mataup.com", pathPrefix: "/newItem" },
         ],
         category: ["BROWSABLE", "DEFAULT"],
       },
@@ -190,6 +172,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         url: "https://sentry.io/",
         project: "mata",
         organization: "mata-oq",
+      },
+    ],
+    [
+      "react-native-google-mobile-ads",
+      {
+        androidAppId:
+          process.env.EXPO_PUBLIC_GOOGLE_ADMOB_ANDROID_APP_ID ||
+          "ca-app-pub-5199524323474789~1174103414",
+        iosAppId:
+          process.env.EXPO_PUBLIC_GOOGLE_ADMOB_IOS_APP_ID ||
+          "ca-app-pub-5199524323474789~9805441909",
       },
     ],
     "expo-web-browser",

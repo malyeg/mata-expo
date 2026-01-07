@@ -6,8 +6,3 @@ const ActiveItems = () => {
 };
 
 export default ActiveItems;
-
-
-
-
-

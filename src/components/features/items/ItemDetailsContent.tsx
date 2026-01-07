@@ -4,8 +4,7 @@ import { I18nManager, StyleSheet, View } from "react-native";
 import { ApiResponse } from "@/api/Api";
 import dealsApi, { Deal } from "@/api/dealsApi";
 import { conditionList, Item, swapList } from "@/api/itemsApi";
-import { Button, Icon, Loader, Modal, Screen, Text } from "@/components/core";
-import PressableOpacity from "@/components/core/PressableOpacity";
+import { Button, Loader, Modal, Screen, Text } from "@/components/core";
 import ItemDealsTab from "@/components/widgets/ItemDealsTab";
 import ItemDetailsCard from "@/components/widgets/ItemDetailsCard";
 import ItemPicker from "@/components/widgets/ItemPicker";
@@ -269,28 +268,20 @@ const ItemDetailsContent = ({
         )}
 
         <View>
-          <ItemImagesCarousel item={item} />
-          {showWishIcon && (
-            <PressableOpacity
-              hitSlop={5}
-              onPress={handleToggleWishList}
-              style={styles.wishListIcon}
-            >
-              <Icon
-                name={wishItemId ? "heart" : "heart-outline"}
-                size={30}
-                color={theme.colors.salmon}
-              />
-            </PressableOpacity>
+          <ItemImagesCarousel
+            item={item}
+            wishItemId={wishItemId}
+            showWishIcon={showWishIcon}
+            onToggleWishList={handleToggleWishList}
+          />
+          {timeAgoString && (
+            <View style={styles.sinceContainer}>
+              <Text style={styles.sinceText}>
+                {t("sinceLabel", { params: { time: timeAgoString } })}
+              </Text>
+            </View>
           )}
         </View>
-        {timeAgoString && (
-          <View style={styles.sinceContainer}>
-            <Text style={styles.sinceText}>
-              {t("sinceLabel", { params: { time: timeAgoString } })}
-            </Text>
-          </View>
-        )}
 
         {item.userId !== user.id && (
           <ItemDetailsCard
@@ -539,10 +530,17 @@ const styles = StyleSheet.create({
   },
   wishListIcon: {
     position: "absolute",
-    bottom: 12,
-    right: 10,
+    bottom: 55,
+    right: 25,
     zIndex: 1,
     elevation: 5,
+    backgroundColor: theme.colors.white,
+    borderRadius: 20,
+    padding: 6,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   swapContainer: {
     height: 60,
@@ -573,8 +571,23 @@ const styles = StyleSheet.create({
     fontWeight: theme.fontWeight.bold,
   },
   sinceContainer: {
-    marginVertical: 5,
-    alignItems: "flex-start",
+    position: "absolute",
+    top: 25,
+    left: 25,
+    backgroundColor: theme.colors.white,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  sinceText: {
+    color: theme.colors.darkGrey,
+    fontWeight: theme.fontWeight.semiBold,
+    ...theme.styles.scale.body2,
   },
   archivedButtonsContainer: {
     flexDirection: "row",
@@ -587,7 +600,7 @@ const styles = StyleSheet.create({
   blockedModalText: {
     paddingVertical: 20,
   },
-  sinceText: {},
+
   blockedText: {
     color: theme.colors.error,
   },

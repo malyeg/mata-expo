@@ -19,6 +19,9 @@ type ItemImagesCarouselProps = Omit<
 > & {
   item: Item;
   contentFit?: ImageProps["contentFit"];
+  wishItemId?: string;
+  showWishIcon?: boolean;
+  onToggleWishList?: () => void;
 };
 
 const { width: windowWidth, height: windowHeight } = Dimensions.get("window");
@@ -29,6 +32,9 @@ const ItemImagesCarousel = ({
   item,
   contentFit = "contain",
   style,
+  wishItemId,
+  showWishIcon = false,
+  onToggleWishList,
   ...props
 }: ItemImagesCarouselProps) => {
   const progress = useSharedValue<number>(0);
@@ -120,7 +126,7 @@ const ItemImagesCarousel = ({
           snapEnabled={true}
           loop={false}
           width={itemWidth}
-          height={250}
+          height={200}
           renderItem={renderItem}
           onSnapToItem={onSnapToItem}
           style={styles.slideWrapper}
@@ -147,6 +153,14 @@ const ItemImagesCarousel = ({
           style={styles.fullscreenIcon}
           onPress={openFullScreenModal}
         />
+        {showWishIcon && (
+          <Icon
+            name={wishItemId ? "heart" : "heart-outline"}
+            size={24}
+            style={styles.wishListIcon}
+            onPress={onToggleWishList}
+          />
+        )}
       </Card>
 
       {/* Fullscreen Image Modal */}
@@ -227,7 +241,7 @@ const styles = StyleSheet.create({
   image: {
     overflow: "hidden",
     width: "100%",
-    aspectRatio: 1.1,
+    aspectRatio: 1.2,
   },
   PaginationContainer: {
     padding: 0,
@@ -255,9 +269,31 @@ const styles = StyleSheet.create({
   },
   fullscreenIcon: {
     position: "absolute",
-    bottom: 1,
-    left: 1,
+    bottom: 10,
+    left: 10,
     color: theme.colors.salmon,
+    backgroundColor: theme.colors.white,
+    borderRadius: 20,
+    padding: 5,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  wishListIcon: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    color: theme.colors.salmon,
+    backgroundColor: theme.colors.white,
+    borderRadius: 20,
+    padding: 5,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   SafeAreaView: {
     // position: 'absolute',

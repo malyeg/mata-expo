@@ -382,6 +382,11 @@ export default {
       placeholder: "Subject",
       required: "Subject is required",
     },
+    type: {
+      modalTitle: "Type",
+      placeholder: "Type",
+      required: "Type is required",
+    },
     body: {
       placeholder: "Message",
       required: "Message is required",

@@ -293,7 +293,7 @@ class ItemsApi extends DatabaseApi<Item> {
   }
 
   getShareLinkById(itemId: string) {
-    return `https://mataapp.page.link/?link=https%3A%2F%2Fmataup.com/items%3Fid%3D${itemId}&apn=com.mata.mataapp`;
+    return `https://${constants.BASE_URL}/items/${itemId}`;
   }
 
   getInvalidContent(...args: (string | undefined)[]) {

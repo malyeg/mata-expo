@@ -1,10 +1,8 @@
 // useShare.ts
-import { useCallback } from "react";
-import { Platform } from "react-native";
-import type { ShareOptions } from "react-native-share";
-import Share from "react-native-share";
-import * as Sharing from "expo-sharing";
 import constants from "@/config/constants";
+import * as Sharing from "expo-sharing";
+import { useCallback } from "react";
+import { Platform, Share } from "react-native";
 
 type ShareResult = {
   success: boolean;
@@ -25,17 +23,18 @@ export function useShare(): UseShareHook {
   const shareMessage = useCallback(
     async (message: string, title?: string): Promise<ShareResult> => {
       try {
-        const shareOptions: ShareOptions = {
-          title,
-          message
-        };
-        const shareResponse = await Share.open(shareOptions);
-        console.log("Share response:", shareResponse);
-        return { success: true };
+        console.log("Share message:", title, message);
+        const result = await Share.share(
+          { message, title },
+          { dialogTitle: title }
+        );
+        console.log("Share response:", result);
+        return { success: result.action === Share.sharedAction };
       } catch (error) {
+        console.error("Share error:", error);
         return {
           success: false,
-          error: error instanceof Error ? error : new Error(String(error))
+          error: error instanceof Error ? error : new Error(String(error)),
         };
       }
     },
@@ -49,20 +48,31 @@ export function useShare(): UseShareHook {
       text: string = ""
     ): Promise<ShareResult> => {
       try {
+        console.log("Share link:", path, queryParams, text);
         // Generate a web URL for universal links
         const baseUrl = constants.BASE_URL;
         const queryString = new URLSearchParams(queryParams).toString();
         const url = queryString
-          ? `${baseUrl}${path}?${queryString}`
+          ? `${baseUrl}/${path}?${queryString}`
           : `${baseUrl}${path}`;
 
-        const message = text ? `${text} ${url}` : url;
-        await Share.open({ message });
-        return { success: true };
+        // On iOS, pass text in message and URL separately to avoid duplicate links
+        // On Android, include URL in message since Android doesn't support the url property
+        const message =
+          Platform.OS === "ios" ? text || "" : text ? `${text} ${url}` : url;
+        const result = await Share.share(
+          {
+            message,
+            url: Platform.OS === "ios" ? url : undefined,
+          },
+          { dialogTitle: "Share" }
+        );
+        return { success: result.action === Share.sharedAction };
       } catch (error) {
+        console.error("Share link error:", error);
         return {
           success: false,
-          error: error instanceof Error ? error : new Error(String(error))
+          error: error instanceof Error ? error : new Error(String(error)),
         };
       }
     },
@@ -76,7 +86,7 @@ export function useShare(): UseShareHook {
           success: false,
           error: new Error(
             "File sharing is not supported on web via this method."
-          )
+          ),
         };
       }
 
@@ -88,13 +98,13 @@ export function useShare(): UseShareHook {
         } else {
           return {
             success: false,
-            error: new Error("Sharing is not available on this device.")
+            error: new Error("Sharing is not available on this device."),
           };
         }
       } catch (error) {
         return {
           success: false,
-          error: error instanceof Error ? error : new Error(String(error))
+          error: error instanceof Error ? error : new Error(String(error)),
         };
       }
     },
@@ -104,6 +114,6 @@ export function useShare(): UseShareHook {
   return {
     shareMessage,
     shareLink,
-    shareFile
+    shareFile,
   };
 }

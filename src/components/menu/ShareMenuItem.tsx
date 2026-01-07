@@ -8,19 +8,36 @@ import AppMenuItem from "./AppMenuItem";
 
 type ShareMenuItemProps = {
   link: string;
+  closeMenu?: () => void;
+  closeMenuWithAction?: (action: () => void) => void;
 };
 
-const ShareMenuItem = ({ link, ...props }: ShareMenuItemProps) => {
+const ShareMenuItem = ({
+  link,
+  closeMenuWithAction,
+  ...props
+}: ShareMenuItemProps) => {
   const { shareLink } = useShare();
   const { t } = useLocale("common");
+
   const share = () => {
-    void shareLink(link);
+    // Use closeMenuWithAction to wait for modal to close before sharing
+    if (closeMenuWithAction) {
+      closeMenuWithAction(() => {
+        void shareLink(link);
+      });
+    } else {
+      // Fallback if closeMenuWithAction is not available
+      void shareLink(link);
+    }
   };
+
   return (
     <AppMenuItem
       {...props}
       title={t("appMenu.shareLabel")}
       onPress={share}
+      closeMenu={() => {}} // Prevent double close from AppMenuItem
       icon={() => (
         <View
           style={{
