@@ -283,6 +283,9 @@ const ItemDetailsContent = ({
           )}
         </View>
 
+        {/* Ad banner with visual separation - placed high in content, away from action buttons */}
+        <ItemAd style={styles.adBanner} />
+
         {item.userId !== user.id && (
           <ItemDetailsCard
             title={t("ownerTitle")}
@@ -359,8 +362,6 @@ const ItemDetailsContent = ({
           }
           icon="google-maps"
         />
-
-        <ItemAd style={styles.banner} />
 
         {!!item && item.userId !== user.id && (
           <OwnerItems item={item} style={styles.ownerItems} />
@@ -449,6 +450,14 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginTop: 10,
+  },
+  adBanner: {
+    marginTop: 24,
+    marginBottom: 24,
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: theme.colors.lightGrey,
   },
   carousel: {
     height: 200,

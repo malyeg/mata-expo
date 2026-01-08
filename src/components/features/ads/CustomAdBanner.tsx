@@ -17,30 +17,40 @@ import {
 } from "react-native-google-mobile-ads";
 
 // Use test IDs in development, production IDs from env in production
-const NATIVE_AD_UNIT_ID = __DEV__
-  ? TestIds.NATIVE
-  : Platform.select({
-      ios: process.env.EXPO_PUBLIC_GOOGLE_ADMOB_IOS_UNIT_NATIVE_IMAGE_ID,
-      android:
-        process.env.EXPO_PUBLIC_GOOGLE_ADMOB_ANDROID_UNIT_NATIVE_IMAGE_ID,
-    }) ?? TestIds.NATIVE;
+// const NATIVE_AD_UNIT_ID = __DEV__
+console.log(
+  "NATIVE_AD_UNIT_ID",
+  process.env.EXPO_PUBLIC_GOOGLE_ADMOB_IOS_UNIT_NATIVE_IMAGE_ID
+);
+const NATIVE_AD_UNIT_ID =
+  Platform.select({
+    ios: process.env.EXPO_PUBLIC_GOOGLE_ADMOB_IOS_UNIT_NATIVE_IMAGE_ID,
+    android: process.env.EXPO_PUBLIC_GOOGLE_ADMOB_ANDROID_UNIT_NATIVE_IMAGE_ID,
+  }) ?? TestIds.NATIVE;
 
 export const CustomAdBanner = () => {
   // 1. State to hold the loaded ad object
   const [nativeAd, setNativeAd] = useState<NativeAd | null>(null);
+  const [adError, setAdError] = useState<boolean>(false);
 
   useEffect(() => {
+    // Log the ad unit ID being used for debugging
+    console.log("Loading ad with unit ID:", NATIVE_AD_UNIT_ID);
+
     // 2. Load the ad manually using the static method
     // This returns a Promise that resolves when the ad is ready
     let adObject: NativeAd | null = null;
 
     NativeAd.createForAdRequest(NATIVE_AD_UNIT_ID)
       .then((loadedAd) => {
+        console.log("Ad loaded successfully");
         adObject = loadedAd;
         setNativeAd(loadedAd);
       })
       .catch((error) => {
         console.error("Ad failed to load:", error);
+        console.error("Ad unit ID was:", NATIVE_AD_UNIT_ID);
+        setAdError(true); // Hide placeholder on error
       });
 
     // 3. Cleanup: You MUST destroy the ad when the component unmounts
@@ -49,9 +59,14 @@ export const CustomAdBanner = () => {
     };
   }, []);
 
-  // 4. If ad isn't loaded yet, return null (or a skeleton placeholder)
+  // 4. If ad failed to load, return nothing (hide the component)
+  if (adError) {
+    return null;
+  }
+
+  // 5. If ad isn't loaded yet, return nothing (will appear when ready)
   if (!nativeAd) {
-    return <View style={styles.placeholder} />;
+    return null;
   }
 
   return (
