@@ -116,9 +116,9 @@ const DrawerContent = ({
             icon="information-outline"
             to={screens.TEST}
           />
+          <DrawerItem label="AdsScreen" icon="information-outline" to={"ads"} />
         </>
       )}
-      <DrawerItem label="AdsScreen" icon="information-outline" to={"ads"} />
     </DrawerContentScrollView>
   );
 };

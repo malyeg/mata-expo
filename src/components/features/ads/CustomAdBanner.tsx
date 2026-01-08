@@ -1,6 +1,13 @@
 import theme from "@/styles/theme";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import {
   NativeAd,
   NativeAdView,
@@ -8,6 +15,15 @@ import {
   NativeAssetType,
   TestIds,
 } from "react-native-google-mobile-ads";
+
+// Use test IDs in development, production IDs from env in production
+const NATIVE_AD_UNIT_ID = __DEV__
+  ? TestIds.NATIVE
+  : Platform.select({
+      ios: process.env.EXPO_PUBLIC_GOOGLE_ADMOB_IOS_UNIT_NATIVE_IMAGE_ID,
+      android:
+        process.env.EXPO_PUBLIC_GOOGLE_ADMOB_ANDROID_UNIT_NATIVE_IMAGE_ID,
+    }) ?? TestIds.NATIVE;
 
 export const CustomAdBanner = () => {
   // 1. State to hold the loaded ad object
@@ -18,7 +34,7 @@ export const CustomAdBanner = () => {
     // This returns a Promise that resolves when the ad is ready
     let adObject: NativeAd | null = null;
 
-    NativeAd.createForAdRequest(TestIds.NATIVE) // Replace with your Real ID
+    NativeAd.createForAdRequest(NATIVE_AD_UNIT_ID)
       .then((loadedAd) => {
         adObject = loadedAd;
         setNativeAd(loadedAd);
