@@ -17,7 +17,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useNavigationContainerRef } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StatusBar, StyleSheet } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast from "react-native-toast-message";
 import { authGuards } from "../navigation/guards";
@@ -117,6 +117,7 @@ const RootLayout = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <StatusBar barStyle="dark-content" />
       <GestureHandlerRootView style={styles.container}>
         <InitialLayout />
         <Toast config={toastConfig} />
