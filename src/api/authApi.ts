@@ -15,7 +15,13 @@ import {
   signInWithEmailAndPassword,
   updatePassword,
 } from "@react-native-firebase/auth";
-import { AccessToken, LoginManager } from "react-native-fbsdk-next";
+import { CryptoDigestAlgorithm, digestStringAsync } from "expo-crypto";
+import { Platform } from "react-native";
+import {
+  AccessToken,
+  AuthenticationToken,
+  LoginManager,
+} from "react-native-fbsdk-next";
 import { ICredentials } from "../contexts/AuthReducer";
 import { fromFirebaseUser, User } from "../contexts/user-model";
 import { auth, callFunction } from "../firebase";
@@ -37,7 +43,7 @@ class AuthApi extends Api {
       const userCredentials = await signInWithEmailAndPassword(
         auth,
         credentials.username,
-        credentials.password
+        credentials.password,
       );
       const userRules = await this.getUserRules();
       if (userCredentials) {
@@ -67,13 +73,13 @@ class AuthApi extends Api {
 
   signUp = async (
     credentials: ICredentials,
-    newProfile: Omit<Profile, "id">
+    newProfile: Omit<Profile, "id">,
   ) => {
     try {
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         credentials.username,
-        credentials.password
+        credentials.password,
       );
 
       if (userCredentials) {
@@ -105,11 +111,11 @@ class AuthApi extends Api {
       const authCredential: FirebaseAuthTypes.AuthCredential =
         EmailAuthProvider.credential(
           crednetials.username,
-          crednetials.password
+          crednetials.password,
         );
       const userCredential = await reauthenticateWithCredential(
         user!,
-        authCredential
+        authCredential,
       );
       await updatePassword(userCredential.user, newPassword);
       Analytics.logEvent("change_password");
@@ -139,7 +145,7 @@ class AuthApi extends Api {
   };
 
   onAuthStateChanged = (
-    listnerCallback: (user: FirebaseAuthTypes.User | null) => void
+    listnerCallback: (user: FirebaseAuthTypes.User | null) => void,
   ) => {
     return onAuthStateChanged(auth, listnerCallback);
   };
@@ -158,34 +164,66 @@ class AuthApi extends Api {
 
   facebookSignIn = async () => {
     try {
-      // Request login permissions
-      const result = await LoginManager.logInWithPermissions([
-        "public_profile",
-        "email",
-      ]);
+      let facebookCredential: FirebaseAuthTypes.AuthCredential;
 
-      if (result.isCancelled) {
-        throw {
-          code: "auth/facebook/loginCanceled",
-          message: "Login was cancelled",
-        };
+      if (Platform.OS === "ios") {
+        // iOS: Use Limited Login with nonce (required by fbsdk v13+)
+        const nonce = Math.random().toString(36).substring(2, 10);
+        const nonceSha256 = await digestStringAsync(
+          CryptoDigestAlgorithm.SHA256,
+          nonce,
+        );
+
+        const result = await LoginManager.logInWithPermissions(
+          ["public_profile", "email"],
+          "limited",
+          nonceSha256,
+        );
+
+        if (result.isCancelled) {
+          throw {
+            code: "auth/facebook/loginCanceled",
+            message: "Login was cancelled",
+          };
+        }
+
+        const authToken = await AuthenticationToken.getAuthenticationTokenIOS();
+        if (!authToken) {
+          throw new Error(
+            "Something went wrong obtaining authentication token",
+          );
+        }
+
+        facebookCredential = FacebookAuthProvider.credential(
+          authToken.authenticationToken,
+          nonce,
+        );
+      } else {
+        // Android: Use classic login with AccessToken
+        const result = await LoginManager.logInWithPermissions([
+          "public_profile",
+          "email",
+        ]);
+
+        if (result.isCancelled) {
+          throw {
+            code: "auth/facebook/loginCanceled",
+            message: "Login was cancelled",
+          };
+        }
+
+        const data = await AccessToken.getCurrentAccessToken();
+        if (!data) {
+          throw new Error("Something went wrong obtaining access token");
+        }
+
+        facebookCredential = FacebookAuthProvider.credential(data.accessToken);
       }
-
-      // Get the access token
-      const data = await AccessToken.getCurrentAccessToken();
-      if (!data) {
-        throw new Error("Something went wrong obtaining access token");
-      }
-
-      // Create Firebase credential
-      const facebookCredential = FacebookAuthProvider.credential(
-        data.accessToken
-      );
 
       // Sign in with Firebase
       const userCredential = await signInWithCredential(
         auth,
-        facebookCredential
+        facebookCredential,
       );
       const userRules = await this.getUserRules();
       const { user, profile } = this.fromFaceBook(userCredential, userRules);
@@ -223,7 +261,7 @@ class AuthApi extends Api {
       // Create Firebase credential using modular API
       const appleCredential = AppleAuthProvider.credential(
         identityToken,
-        nonce!
+        nonce!,
       );
 
       // Sign in with credential using modular API
@@ -257,7 +295,7 @@ class AuthApi extends Api {
 
   fromFaceBook = (
     faceBookUser: FirebaseAuthTypes.UserCredential,
-    rules?: string[]
+    rules?: string[],
   ) => {
     const fbUser = faceBookUser.user;
     const fbProfile = faceBookUser.additionalUserInfo?.profile;
