@@ -8,6 +8,7 @@ import {
   FirebaseAuthTypes,
   sendPasswordResetEmail as firebaseSendPasswordResetEmail,
   signOut as firebaseSignOut,
+  getIdTokenResult,
   onAuthStateChanged,
   reauthenticateWithCredential,
   signInAnonymously,
@@ -152,8 +153,9 @@ class AuthApi extends Api {
 
   getUserRules = async () => {
     const rules = ["user"];
-    const idTokenResult = await auth.currentUser?.getIdTokenResult();
-    if (idTokenResult) {
+    const currentUser = auth.currentUser;
+    if (currentUser) {
+      const idTokenResult = await getIdTokenResult(currentUser);
       const claims = idTokenResult.claims;
       if (claims.admin && claims.admin === true) {
         rules.push("admin");
@@ -316,14 +318,25 @@ class AuthApi extends Api {
       email: fbUser.email!,
     };
     if (fbProfile) {
-      profile.image = {
-        ...fbProfile?.picture.data,
-        isSilhouette: fbProfile?.picture.data.is_silhouette ?? true,
-      };
-      profile.fullName = fbProfile.display_name!;
-      profile.firstName = fbProfile.first_name;
-      profile.lastName = fbProfile.last_name;
-      // profile.middleName = fbProfile.middle_name;
+      const pictureData = fbProfile?.picture?.data;
+      if (pictureData) {
+        profile.image = {
+          ...pictureData,
+          isSilhouette: pictureData.is_silhouette ?? true,
+        };
+      } else if (fbUser.photoURL) {
+        profile.image = {
+          url: fbUser.photoURL,
+          isSilhouette: false,
+        };
+      }
+      profile.fullName =
+        fbProfile.display_name ?? fbUser.displayName ?? undefined;
+      profile.firstName =
+        fbProfile.first_name ?? fbUser.displayName?.split(" ")[0];
+      profile.lastName =
+        fbProfile.last_name ??
+        fbUser.displayName?.split(" ").slice(1).join(" ");
     }
 
     if (rules && rules.length > 0) {
