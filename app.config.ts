@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { ConfigContext, ExpoConfig } from "expo/config";
 
-const BUILD_NUMBER = 211; // <--- Update this one number
-const APP_VERSION = "2.0.11";
+const BUILD_NUMBER = 212; // <--- Update this one number
+const APP_VERSION = "2.0.12";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
@@ -13,7 +13,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: "./assets/images/logo.png",
   scheme: "mataapp",
   userInterfaceStyle: "automatic",
-  newArchEnabled: true,
   ios: {
     buildNumber: String(BUILD_NUMBER),
     icon: "./assets/images/ios-icon.png", // Add this
